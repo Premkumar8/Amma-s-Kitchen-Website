@@ -65,20 +65,6 @@ flask run
 
 Open your browser at http://127.0.0.1:5000 to view the website.
 
-Folder Structure
-Amma's-Kitchen/
-│
-├── app/                  # Flask app modules
-│   ├── static/           # CSS, JS, images
-│   ├── templates/        # HTML templates
-│   ├── routes.py         # Route definitions
-│   └── models.py         # Database models
-│
-├── venv/                 # Virtual environment
-├── requirements.txt      # Python dependencies
-├── run.py                # App runner
-└── README.md             # Project documentation
-
 Future Enhancements
 
 User authentication and account management
