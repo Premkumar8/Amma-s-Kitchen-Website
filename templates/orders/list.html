@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Orders</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th><th>User</th><th>Product</th><th>Total</th><th>Address</th><th>Status</th><th>Created</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.user.name }}</td>
+                <td>{{ order.product.name }}</td>
+                <td>₹{{ order.total }}</td>
+                <td>{{ order.address }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.created.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a href="{{ url_for('order_edit', id=order.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="{{ url_for('order_delete', id=order.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

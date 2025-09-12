@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Add Banner</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label>Title</label>
+            <input type="text" name="title" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>Image</label>
+            <input type="file" name="image" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Add Banner</button>
+    </form>
+</div>
+{% endblock %}

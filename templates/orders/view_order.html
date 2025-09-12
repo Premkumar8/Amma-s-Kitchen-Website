@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Order Details - #{{ order.id }}</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5>Products in this Order</h5>
+                </div>
+                <div class="card-body">
+                    {% if order.products %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price (₹)</th>
+                                    <th>Subtotal (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.products %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ url_for('static', filename='images/' ~ item.product.product_image1) }}"
+                                             alt="{{ item.product.name }}" class="img-thumbnail" style="width: 80px;">
+                                    </td>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.product.price }}</td>
+                                    <td>{{ item.quantity * item.product.price }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <p class="text-muted">No products found in this order.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Order ID:</strong> {{ order.id }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if order.status == 'Pending' %}
+                            <span class="badge bg-warning text-dark">{{ order.status }}</span>
+                        {% elif order.status == 'Delivered' %}
+                            <span class="badge bg-success">{{ order.status }}</span>
+                        {% elif order.status == 'Cancelled' %}
+                            <span class="badge bg-danger">{{ order.status }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ order.status }}</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Total:</strong> ₹{{ order.total }}</p>
+                    <p><strong>Shipping Address:</strong> {{ order.address }}</p>
+                    <p><strong>Ordered On:</strong> {{ order.created.strftime('%d-%m-%Y') }}</p>
+
+                    {% if order.status == 'Pending' %}
+                        <a href="{{ url_for('cancel_order', order_id=order.id) }}" class="btn btn-danger w-100 mt-3">Cancel Order</a>
+                    {% endif %}
+                    <a href="{{ url_for('orders') }}" class="btn btn-secondary w-100 mt-2">Back to Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Order #{{ order.id }}</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label>Status</label>
+            <select name="status" class="form-control" required>
+                <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>Pending</option>
+                <option value="Shipped" {% if order.status=='Shipped' %}selected{% endif %}>Shipped</option>
+                <option value="Delivered" {% if order.status=='Delivered' %}selected{% endif %}>Delivered</option>
+                <option value="Cancelled" {% if order.status=='Cancelled' %}selected{% endif %}>Cancelled</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Order</button>
+    </form>
+</div>
+{% endblock %}

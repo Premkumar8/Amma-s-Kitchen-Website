@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Your Orders</h2>
+
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Total (₹)</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.total }}</td>
+                    <td>{{ order.address }}</td>
+                    <td>
+                        {% if order.status == 'Pending' %}
+                            <span class="badge bg-warning text-dark">{{ order.status }}</span>
+                        {% elif order.status == 'Delivered' %}
+                            <span class="badge bg-success">{{ order.status }}</span>
+                        {% elif order.status == 'Cancelled' %}
+                            <span class="badge bg-danger">{{ order.status }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ order.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ order.created.strftime('%d-%m-%Y') }}</td>
+                    <td>
+                        <a href="{{ url_for('view_order', order_id=order.id) }}" class="btn btn-sm btn-primary">View</a>
+                        {% if order.status == 'Pending' %}
+                        <a href="{{ url_for('cancel_order', order_id=order.id) }}" class="btn btn-sm btn-danger">Cancel</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            You have no orders yet. <a href="{{ url_for('index') }}">Shop now!</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

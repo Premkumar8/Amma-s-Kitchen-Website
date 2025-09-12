@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Banners</h2>
+    <a href="{{ url_for('banner_add') }}" class="btn btn-success mb-3">Add Banner</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th><th>Title</th><th>Image</th><th>Created</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for banner in banners %}
+            <tr>
+                <td>{{ banner.id }}</td>
+                <td>{{ banner.title }}</td>
+                <td><img src="{{ url_for('static', filename='images/' ~ banner.image) }}" height="50"></td>
+                <td>{{ banner.created.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a href="{{ url_for('banner_edit', id=banner.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="{{ url_for('banner_delete', id=banner.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
