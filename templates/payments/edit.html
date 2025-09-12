@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Payment #{{ payment.id }}</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label>Status</label>
+            <select name="status" class="form-control" required>
+                <option value="Pending" {% if payment.status=='Pending' %}selected{% endif %}>Pending</option>
+                <option value="Completed" {% if payment.status=='Completed' %}selected{% endif %}>Completed</option>
+                <option value="Failed" {% if payment.status=='Failed' %}selected{% endif %}>Failed</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Payment</button>
+    </form>
+</div>
+{% endblock %}
