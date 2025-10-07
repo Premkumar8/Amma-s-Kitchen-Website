@@ -2,14 +2,19 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+import os
 
+# -------------------------------
+# App Initialization
+# -------------------------------
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'
+app.secret_key = 'your_super_secret_key_change_me'
 
 # -------------------------------
 # Database Config
 # -------------------------------
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://username:password@localhost/db_name'
+# Make sure you have a database named 'amma' created in MySQL.
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -21,7 +26,7 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column(db.String(20), unique=True, nullable=False)
     address1 = db.Column(db.String(200))
@@ -37,8 +42,17 @@ class Product(db.Model):
     mrp = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, default=0)
+    
+    # --- Fields added to match index.html ---
+    category = db.Column(db.String(50), nullable=False) # e.g., 'masalas', 'snacks', 'dairy'
+    qty = db.Column(db.String(100)) # e.g., '50g / 100g / 250g'
+    rating = db.Column(db.Float, default=4.5)
+    # ----------------------------------------
+    
     created = db.Column(db.DateTime, default=datetime.utcnow)
-    images = db.relationship("ProductImage", backref="product", lazy=True)
+    images = db.relationship("ProductImage", backref="product", lazy=True, cascade="all, delete-orphan")
+    orders = db.relationship("Order", backref="product", lazy=True)
+
 
 class ProductImage(db.Model):
     __tablename__ = "product_images"
@@ -46,18 +60,21 @@ class ProductImage(db.Model):
     image_url = db.Column(db.String(255), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
 
+# NOTE: This is an unconventional cart/order model. 
+# Each "Order" record with a 'Pending' status acts as a single item in the cart.
+# A more robust system would use a separate Cart/OrderItem model.
 class Order(db.Model):
     __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
+    quantity = db.Column(db.Integer, default=1, nullable=False)
     total = db.Column(db.Float, nullable=False)
-    address = db.Column(db.String(255), nullable=False)
+    address = db.Column(db.String(255))
     note = db.Column(db.Text)
-    status = db.Column(db.String(50), default="Pending")
+    status = db.Column(db.String(50), default="Pending") # 'Pending' acts as "in cart"
     created = db.Column(db.DateTime, default=datetime.utcnow)
-    product = db.relationship("Product", backref="orders", lazy=True)
-    payment = db.relationship("Payment", backref="order", uselist=False)
+    payment = db.relationship("Payment", backref="order", uselist=False, cascade="all, delete-orphan")
 
 class Payment(db.Model):
     __tablename__ = "payments"
@@ -72,11 +89,123 @@ class Banner(db.Model):
     name = db.Column(db.String(150), nullable=False)
     image = db.Column(db.String(255), nullable=False)
 
+
+# -------------------------------
+# Helper Functions
+# -------------------------------
+def build_cart_context(user_id):
+    """
+    Builds the cart summary from 'Pending' orders for a given user.
+    """
+    cart_items = []
+    cart_total = 0.0
+    cart_count = 0
+    
+    pending_orders = Order.query.filter_by(user_id=user_id, status='Pending').all()
+    
+    for order in pending_orders:
+        product = order.product
+        if not product:
+            continue
+            
+        cart_total += order.total
+        cart_count += order.quantity
+        
+        # Get the first image, or a placeholder if none exists
+        image_url = product.images[0].image_url if product.images else 'images/placeholder.svg'
+        
+        cart_items.append({
+            'order_id': order.id,
+            'product_id': product.id,
+            'name': product.name,
+            'qty': order.quantity,
+            'price': product.price,
+            'subtotal': order.total,
+            'image': image_url
+        })
+        
+    return cart_items, cart_total, cart_count
+
+# -------------------------------
+# Main Routes
+# -------------------------------
+@app.route('/')
+def index():
+    db_products = Product.query.order_by(Product.created.desc()).all()
+
+    # Pre-process products to pass clean data to the template
+    products_for_template = []
+    for p in db_products:
+        products_for_template.append({
+            'id': p.id,
+            'name': p.name,
+            'qty': p.qty,
+            'rating': p.rating,
+            'price': p.price,
+            'category': p.category,
+            'image_url': p.images[0].image_url if p.images else 'images/placeholder.svg'
+        })
+
+    cart_items, cart_total, cart_count = ([], 0.0, 0)
+    if 'user_id' in session:
+        cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
+        
+    return render_template(
+        'index.html', 
+        products=products_for_template, 
+        cart_items=cart_items, 
+        cart_total=cart_total, 
+        cart_count=cart_count
+    )
+
+@app.route('/add_to_cart/<int:product_id>', methods=['POST'])
+def add_to_cart(product_id):
+    if 'user_id' not in session:
+        flash("Please log in to add items to your cart.", "warning")
+        return redirect(url_for('login'))
+
+    product = Product.query.get_or_404(product_id)
+    quantity = int(request.form.get('quantity', 1))
+
+    if quantity > product.stock:
+        flash('Not enough stock available!', 'danger')
+        return redirect(url_for('index'))
+
+    user_id = session['user_id']
+    
+    # Check if this product is already in the user's cart (as a 'Pending' order)
+    existing_order = Order.query.filter_by(user_id=user_id, product_id=product.id, status='Pending').first()
+    
+    if existing_order:
+        # Update existing order
+        existing_order.quantity += quantity
+        existing_order.total = existing_order.quantity * product.price
+    else:
+        # Create a new order record to act as a cart item
+        new_order = Order(
+            user_id=user_id,
+            product_id=product.id,
+            quantity=quantity,
+            total=quantity * product.price,
+            status='Pending' # This indicates it's in the cart
+        )
+        db.session.add(new_order)
+    
+    # NOTE: Stock should ideally be reduced upon successful payment, not on cart addition.
+    # This is a simplified approach.
+    product.stock -= quantity
+    db.session.commit()
+
+    flash(f'"{product.name}" has been added to your cart!', 'success')
+    return redirect(url_for('index'))
+
 # -------------------------------
 # Auth Routes
 # -------------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'user_id' in session:
+        return redirect(url_for('index'))
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -84,75 +213,55 @@ def login():
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['user_name'] = user.name
-            flash("Logged in successfully!", "success")
+            flash(f"Welcome back, {user.name}!", "success")
             return redirect(url_for('index'))
-        flash("Invalid credentials", "danger")
+        flash("Invalid email or password.", "danger")
     return render_template('login.html')
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    flash("Logged out successfully!", "success")
-    return redirect(url_for('login'))
-
-# -------------------------------
-# Index
-# -------------------------------
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-# -------------------------------
-# User CRUD
-# -------------------------------
-@app.route('/users')
-def users_list():
-    users = User.query.all()
-    return render_template('users/list.html', users=users)
-
-@app.route('/users/add', methods=['GET', 'POST'])
-def user_add():
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if 'user_id' in session:
+        return redirect(url_for('index'))
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         phone = request.form['phone']
-        password = generate_password_hash(request.form['password'])
-        user = User(name=name, email=email, phone=phone, password=password)
-        db.session.add(user)
-        db.session.commit()
-        flash("User added successfully", "success")
-        return redirect(url_for('users_list'))
-    return render_template('users/add.html')
+        password = request.form['password']
+        
+        # Check if user already exists
+        if User.query.filter_by(email=email).first() or User.query.filter_by(phone=phone).first():
+            flash("An account with that email or phone number already exists.", "danger")
+            return redirect(url_for('register'))
 
-@app.route('/users/edit/<int:id>', methods=['GET', 'POST'])
-def user_edit(id):
-    user = User.query.get_or_404(id)
-    if request.method == 'POST':
-        user.name = request.form['name']
-        user.email = request.form['email']
-        user.phone = request.form['phone']
-        if request.form['password']:
-            user.password = generate_password_hash(request.form['password'])
+        hashed_password = generate_password_hash(password)
+        new_user = User(name=name, email=email, phone=phone, password=hashed_password)
+        db.session.add(new_user)
         db.session.commit()
-        flash("User updated successfully", "success")
-        return redirect(url_for('users_list'))
-    return render_template('users/edit.html', user=user)
+        
+        flash("Registration successful! Please log in.", "success")
+        return redirect(url_for('login'))
+        
+    return render_template('register.html')
 
-@app.route('/users/delete/<int:id>')
-def user_delete(id):
-    user = User.query.get_or_404(id)
-    db.session.delete(user)
-    db.session.commit()
-    flash("User deleted successfully", "success")
-    return redirect(url_for('users_list'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash("You have been logged out.", "success")
+    return redirect(url_for('login'))
+
 
 # -------------------------------
-# Product CRUD
+# Admin / CRUD Routes (Example)
 # -------------------------------
-@app.route('/products')
+# These routes are for managing data and would typically be protected by an admin login.
+# For simplicity, they are left open here.
+
+@app.route('/admin/products')
 def products_list():
     products = Product.query.all()
     return render_template('products/list.html', products=products)
+
 
 @app.route('/products/add', methods=['GET', 'POST'])
 def product_add():
@@ -190,193 +299,71 @@ def product_delete(id):
     return redirect(url_for('products_list'))
 
 # -------------------------------
-# Orders, Payment, Banner CRUD
-# Similar routes can be created like Users & Products
+# Product Detail Page
 # -------------------------------
-# -------------------------------
-# Orders CRUD
-# -------------------------------
-@app.route('/orders')
-def orders_list():
-    orders = Order.query.all()
-    return render_template('orders/list.html', orders=orders)
-
-@app.route('/orders/add', methods=['GET', 'POST'])
-def order_add():
-    users = User.query.all()
-    products = Product.query.all()
-    if request.method == 'POST':
-        user_id = request.form['user_id']
-        product_id = request.form['product_id']
-        total = request.form['total']
-        address = request.form['address']
-        note = request.form['note']
-        status = request.form.get('status', 'Pending')
-        order = Order(user_id=user_id, product_id=product_id, total=total, address=address, note=note, status=status)
-        db.session.add(order)
-        db.session.commit()
-        flash("Order added successfully", "success")
-        return redirect(url_for('orders_list'))
-    return render_template('orders/add.html', users=users, products=products)
-
-@app.route('/orders/edit/<int:id>', methods=['GET', 'POST'])
-def order_edit(id):
-    order = Order.query.get_or_404(id)
-    users = User.query.all()
-    products = Product.query.all()
-    if request.method == 'POST':
-        order.user_id = request.form['user_id']
-        order.product_id = request.form['product_id']
-        order.total = request.form['total']
-        order.address = request.form['address']
-        order.note = request.form['note']
-        order.status = request.form.get('status', order.status)
-        db.session.commit()
-        flash("Order updated successfully", "success")
-        return redirect(url_for('orders_list'))
-    return render_template('orders/edit.html', order=order, users=users, products=products)
-
-@app.route('/orders/delete/<int:id>')
-def order_delete(id):
-    order = Order.query.get_or_404(id)
-    db.session.delete(order)
-    db.session.commit()
-    flash("Order deleted successfully", "success")
-    return redirect(url_for('orders_list'))
-
-# -------------------------------
-# Payments CRUD
-# -------------------------------
-@app.route('/payments')
-def payments_list():
-    payments = Payment.query.all()
-    return render_template('payments/list.html', payments=payments)
-
-@app.route('/payments/add', methods=['GET', 'POST'])
-def payment_add():
-    orders = Order.query.all()
-    if request.method == 'POST':
-        order_id = request.form['order_id']
-        status = request.form.get('status', 'Unpaid')
-        payment = Payment(order_id=order_id, status=status)
-        db.session.add(payment)
-        db.session.commit()
-        flash("Payment added successfully", "success")
-        return redirect(url_for('payments_list'))
-    return render_template('payments/add.html', orders=orders)
-
-@app.route('/payments/edit/<int:id>', methods=['GET', 'POST'])
-def payment_edit(id):
-    payment = Payment.query.get_or_404(id)
-    orders = Order.query.all()
-    if request.method == 'POST':
-        payment.order_id = request.form['order_id']
-        payment.status = request.form.get('status', payment.status)
-        db.session.commit()
-        flash("Payment updated successfully", "success")
-        return redirect(url_for('payments_list'))
-    return render_template('payments/edit.html', payment=payment, orders=orders)
-
-@app.route('/payments/delete/<int:id>')
-def payment_delete(id):
-    payment = Payment.query.get_or_404(id)
-    db.session.delete(payment)
-    db.session.commit()
-    flash("Payment deleted successfully", "success")
-    return redirect(url_for('payments_list'))
-
-# -------------------------------
-# Banners CRUD
-# -------------------------------
-@app.route('/banners')
-def banners_list():
-    banners = Banner.query.all()
-    return render_template('banners/list.html', banners=banners)
-
-@app.route('/banners/add', methods=['GET', 'POST'])
-def banner_add():
-    if request.method == 'POST':
-        name = request.form['name']
-        image = request.form['image']  # You can integrate file upload here
-        banner = Banner(name=name, image=image)
-        db.session.add(banner)
-        db.session.commit()
-        flash("Banner added successfully", "success")
-        return redirect(url_for('banners_list'))
-    return render_template('banners/add.html')
-
-@app.route('/banners/edit/<int:id>', methods=['GET', 'POST'])
-def banner_edit(id):
-    banner = Banner.query.get_or_404(id)
-    if request.method == 'POST':
-        banner.name = request.form['name']
-        banner.image = request.form['image']
-        db.session.commit()
-        flash("Banner updated successfully", "success")
-        return redirect(url_for('banners_list'))
-    return render_template('banners/edit.html', banner=banner)
-
-@app.route('/banners/delete/<int:id>')
-def banner_delete(id):
-    banner = Banner.query.get_or_404(id)
-    db.session.delete(banner)
-    db.session.commit()
-    flash("Banner deleted successfully", "success")
-    return redirect(url_for('banners_list'))
-
-# -------------------------------
-# Product Detail Page & User Orders
-# -------------------------------
-@app.route('/product/<int:product_id>', methods=['GET', 'POST'])
+@app.route('/product/<int:product_id>')
 def product_detail(product_id):
     product = Product.query.get_or_404(product_id)
     
-    # Get images
-    images = ProductImage.query.filter_by(product_id=product.id).all()
-    
-    # Fetch orders for logged-in user
-    orders = []
+    # Pre-process the product for the template
+    product_data = {
+        'id': product.id,
+        'name': product.name,
+        'qty': product.qty,
+        'rating': product.rating,
+        'price': product.price,
+        'mrp': product.mrp,
+        'stock': product.stock,
+        'category': product.category,
+        'image_url': product.images[0].image_url if product.images else 'images/placeholder.svg'
+    }
+
+    # Fetch cart details to display in the header
+    cart_items, cart_total, cart_count = ([], 0.0, 0)
     if 'user_id' in session:
-        orders = Order.query.filter_by(user_id=session['user_id']).all()
+        cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
 
-    return render_template('orders/orders.html', product=product, images=images, orders=orders)
-
-
-# -------------------------------
-# Add to Cart / Place Order
-# -------------------------------
-@app.route('/add_to_cart/<int:product_id>', methods=['POST'])
-def add_to_cart(product_id):
-    if 'user_id' not in session:
-        flash("Please login to place an order", "danger")
-        return redirect(url_for('login'))
-
-    product = Product.query.get_or_404(product_id)
-    quantity = int(request.form.get('quantity', 1))
-    
-    if quantity > product.stock:
-        flash('Not enough stock available!', 'danger')
-        return redirect(url_for('product_detail', product_id=product.id))
-
-    total_price = quantity * product.price
-
-    # Create order
-    new_order = Order(
-        user_id=session['user_id'],
-        product_id=product.id,
-        total=total_price,
-        address=request.form.get('address', ''),
-        note=request.form.get('note', ''),
-        status='Pending'
+    return render_template(
+        'product_detail.html', 
+        product=product_data,
+        cart_items=cart_items, 
+        cart_total=cart_total, 
+        cart_count=cart_count
     )
-    db.session.add(new_order)
 
-    # Reduce stock
-    product.stock -= quantity
-    db.session.commit()
+# -------------------------------
+# Database Initialization & App Start
+# -------------------------------
+with app.app_context():
+    db.create_all()
+    # Check if there are any products in the database. If not, add some dummy data.
+    if not Product.query.first():
+        print("Database is empty. Populating with sample products...")
+        
+        # --- Create Sample Products ---
+        products_data = [
+            {'name': 'Sambar Powder', 'mrp': 70.00, 'price': 60.00, 'stock': 100, 'category': 'masalas', 'qty': '50g/100g/250g', 'rating': 4.8, 'img': 'images/prod-sambar.svg'},
+            {'name': 'Rasam Powder', 'mrp': 70.00, 'price': 60.00, 'stock': 100, 'category': 'masalas', 'qty': '50g/100g/250g', 'rating': 4.7, 'img': 'images/prod-rasam.svg'},
+            {'name': 'Biryani Masala', 'mrp': 80.00, 'price': 70.00, 'stock': 80, 'category': 'masalas', 'qty': '50g/100g', 'rating': 4.9, 'img': 'images/prod-biryani.svg'},
+            {'name': 'Sweet Paniyaram', 'mrp': 130.00, 'price': 120.00, 'stock': 50, 'category': 'snacks', 'qty': '1 Unit', 'rating': 4.6, 'img': 'images/prod-paniyaram.svg'},
+            {'name': 'Murukku', 'mrp': 120.00, 'price': 110.00, 'stock': 60, 'category': 'snacks', 'qty': '1 Unit', 'rating': 4.8, 'img': 'images/prod-murukku.svg'},
+            {'name': 'Homemade Ghee', 'mrp': 380.00, 'price': 350.00, 'stock': 40, 'category': 'dairy', 'qty': '500ml', 'rating': 5.0, 'img': 'images/prod-ghee.svg'},
+            {'name': 'Fresh Curd', 'mrp': 50.00, 'price': 40.00, 'stock': 70, 'category': 'dairy', 'qty': '1 Unit', 'rating': 4.5, 'img': 'images/prod-curd.svg'},
+            {'name': 'Dosa Mix', 'mrp': 100.00, 'price': 90.00, 'stock': 90, 'category': 'dosa', 'qty': '1kg', 'rating': 4.6, 'img': 'images/prod-dosa-mix.svg'},
+            {'name': 'Masoor Dal', 'mrp': 100.00, 'price': 90.00, 'stock': 120, 'category': 'dhall', 'qty': '1kg', 'rating': 4.4, 'img': 'images/prod-masoor.svg'}
+        ]
 
-    flash(f'Added {quantity} x {product.name} to your orders!', 'success')
-    return redirect(url_for('product_detail', product_id=product.id))
+        for data in products_data:
+            new_prod = Product(name=data['name'], mrp=data['mrp'], price=data['price'], stock=data['stock'], category=data['category'], qty=data['qty'], rating=data['rating'])
+            db.session.add(new_prod)
+            db.session.commit() # Commit to get the product ID
+            
+            # Add image for the product
+            new_img = ProductImage(image_url=data['img'], product_id=new_prod.id)
+            db.session.add(new_img)
+        
+        db.session.commit()
+        print("Sample products added successfully!")
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5003)
+    app.run(debug=True)

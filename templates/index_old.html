@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="py-3" style="background-image:url('{{ url_for('static', filename='images/background-pattern.jpg') }}'); background-repeat:no-repeat; background-size:cover;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="banner-blocks">
+
+                    <div class="banner-ad large bg-light block-1 rounded-4 overflow-hidden shadow-sm">
+                        <div class="swiper main-swiper">
+                            <div class="swiper-wrapper">
+
+                                {% if banners %}
+                                    {% for banner in banners %}
+                                    <div class="swiper-slide" style="background-image: url({{ url_for('static', filename=banner.image) }}); background-size: cover; background-position: center;">
+                                        <div class="row banner-content p-5 align-items-center">
+                                            <div class="content-wrapper col-md-7">
+                                                <div class="categories my-2 text-danger fw-bold">{{ banner.name }}</div>
+                                                <h3 class="display-5 fw-bold">Authentic Flavors, Delivered Fresh.</h3>
+                                                <p class="lead">Handmade with love, just like Amma's.</p>
+                                                <a href="#products-section" class="btn btn-dark btn-lg text-uppercase fs-6 rounded-2 px-4 py-3 mt-2">Shop Now</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="swiper-slide">
+                                        <div class="row banner-content p-5 align-items-center">
+                                            <div class="content-wrapper col-md-7">
+                                                <div class="categories my-2 text-danger fw-bold">100% Homemade</div>
+                                                <h3 class="display-5 fw-bold">Freshly Ground Masalas. Healthy. Tasty.</h3>
+                                                <p class="lead">Hand-roasted, stone-ground, and packed same-day for bold, authentic flavour.</p>
+                                                <a href="#products-section" class="btn btn-dark btn-lg text-uppercase fs-6 rounded-2 px-4 py-3 mt-2">Shop Masalas</a>
+                                            </div>
+                                            <div class="col-md-5 d-none d-md-block">
+                                                </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="banner-ad bg-success-subtle block-2 rounded-4 overflow-hidden shadow-sm">
+                        <div class="row banner-content p-5 align-items-center">
+                            <div class="content-wrapper col-12">
+                                <div class="categories sale mb-2 text-success fw-bold">20% off</div>
+                                <h3 class="banner-title h2 mb-2">Masalas</h3>
+                                <a href="#products-section" class="d-inline-flex align-items-center nav-link px-0 fw-semibold">Shop Collection
+                                    <svg width="24" height="24" class="ms-1"><use xlink:href="#arrow-right"></use></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="banner-ad bg-danger text-white block-3 rounded-4 overflow-hidden shadow-sm">
+                        <div class="row banner-content p-5 align-items-center">
+                            <div class="content-wrapper col-12">
+                                <div class="categories sale mb-2 fw-bold text-white-50">15% off</div>
+                                <h3 class="item-title h2 mb-2">Ghee</h3>
+                                <a href="#products-section" class="d-inline-flex align-items-center nav-link text-white px-0 fw-semibold">Shop Now
+                                    <svg width="24" height="24" class="ms-1"><use xlink:href="#arrow-right"></use></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 overflow-hidden">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-header d-flex flex-wrap justify-content-between mb-5">
+                    <h2 class="section-title">Category</h2>
+                    <div class="d-flex align-items-center">
+                        <a href="#products-section" class="btn-link text-decoration-none">View All Categories →</a>
+                        <div class="swiper-buttons">
+                            <button class="swiper-prev category-carousel-prev btn btn-yellow">❮</button>
+                            <button class="swiper-next category-carousel-next btn btn-yellow">❯</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="category-carousel swiper">
+                    <div class="swiper-wrapper">
+                        <a href="#products-section" class="nav-link category-item swiper-slide">
+                            <img src="{{ url_for('static', filename='images/cat-masalas.svg') }}" alt="Masalas">
+                            <h3 class="category-title">Masalas</h3>
+                        </a>
+                        <a href="#products-section" class="nav-link category-item swiper-slide">
+                            <img src="{{ url_for('static', filename='images/cat-ghee.svg') }}" alt="Ghee">
+                            <h3 class="category-title">Ghee</h3>
+                        </a>
+                        <a href="#products-section" class="nav-link category-item swiper-slide">
+                            <img src="{{ url_for('static', filename='images/cat-chettinad-snacks.svg') }}" alt="Chettinad Snacks">
+                            <h3 class="category-title">Chettinad Snacks</h3>
+                        </a>
+                        <a href="#products-section" class="nav-link category-item swiper-slide">
+                            <img src="{{ url_for('static', filename='images/cat-dairy.svg') }}" alt="Dairy">
+                            <h3 class="category-title">Dairy</h3>
+                        </a>
+                        <a href="#products-section" class="nav-link category-item swiper-slide">
+                            <img src="{{ url_for('static', filename='images/cat-dosa-and-instant-mix.svg') }}" alt="Dosa & Instant Mix">
+                            <h3 class="category-title">Dosa & Instant</h3>
+                        </a>
+                        <a href="#products-section" class="nav-link category-item swiper-slide">
+                            <img src="{{ url_for('static', filename='images/cat-dhall.svg') }}" alt="Dhall">
+                            <h3 class="category-title">Dhall</h3>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" id="products-section">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bootstrap-tabs product-tabs">
+                    <div class="tabs-header d-flex justify-content-between border-bottom my-5">
+                        <h3>Trending Products</h3>
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <a href="#" class="nav-link text-uppercase fs-6 active" id="nav-all-tab" data-bs-toggle="tab" data-bs-target="#nav-all">All</a>
+                                <a href="#" class="nav-link text-uppercase fs-6" id="nav-masalas-tab" data-bs-toggle="tab" data-bs-target="#nav-masalas">Masalas & Spices</a>
+                                <a href="#" class="nav-link text-uppercase fs-6" id="nav-snacks-tab" data-bs-toggle="tab" data-bs-target="#nav-snacks">Chettinad Snacks</a>
+                                <a href="#" class="nav-link text-uppercase fs-6" id="nav-dairy-tab" data-bs-toggle="tab" data-bs-target="#nav-dairy">Dairy Products</a>
+                                <a href="#" class="nav-link text-uppercase fs-6" id="nav-dosa-tab" data-bs-toggle="tab" data-bs-target="#nav-dosa">Dosa & Idli</a>
+                                <a href="#" class="nav-link text-uppercase fs-6" id="nav-dhall-tab" data-bs-toggle="tab" data-bs-target="#nav-dhall">Dhall</a>
+                            </div>
+                        </nav>
+                    </div>
+
+                    {% macro product_card(product) %}
+                    <div class="col">
+                        <div class="product-item">
+                            <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                            <figure>
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" title="{{ product.name }}">
+                                    <img src="{{ url_for('static', filename=product.image_url) }}" class="tab-image" alt="{{ product.name }}">
+                                </a>
+                            </figure>
+                            <h3>{{ product.name }}</h3>
+                            <span class="qty">{{ product.qty }}</span>
+                            <span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> {{ product.rating }}</span>
+                            <span class="price">₹{{ "%.2f"|format(product.price) }}</span>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="d-flex w-100 justify-content-between">
+                                    <div class="input-group product-qty">
+                                        <input type="number" name="quantity" class="form-control input-number" value="1" min="1" max="{{ product.stock }}">
+                                    </div>
+                                    <button type="submit" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endmacro %}
+
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
+                            <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                                {% for product in products %}
+                                    {{ product_card(product) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="nav-masalas" role="tabpanel" aria-labelledby="nav-masalas-tab">
+                            <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                                {% for product in products if product.category == 'masalas' %}
+                                    {{ product_card(product) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="nav-snacks" role="tabpanel" aria-labelledby="nav-snacks-tab">
+                            <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                                {% for product in products if product.category == 'snacks' %}
+                                    {{ product_card(product) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="nav-dairy" role="tabpanel" aria-labelledby="nav-dairy-tab">
+                             <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                                {% for product in products if product.category == 'dairy' %}
+                                    {{ product_card(product) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="nav-dosa" role="tabpanel" aria-labelledby="nav-dosa-tab">
+                             <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                                {% for product in products if product.category == 'dosa' %}
+                                    {{ product_card(product) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="nav-dhall" role="tabpanel" aria-labelledby="nav-dhall-tab">
+                            <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                                {% for product in products if product.category == 'dhall' %}
+                                    {{ product_card(product) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container-fluid">
+        <div class="py-5 my-5 rounded-5 text-dark" style="background: linear-gradient(135deg,#fef3c7,#fde68a,#fca5a5); background-size:cover;">
+            <div class="container my-5">
+                <div class="row align-items-center">
+                    <div class="col-md-6 p-5">
+                        <div class="section-header mb-4">
+                            <h2 class="section-title display-5 fw-bold"> Get <span class="text-danger-one">25% Discount</span> on your first order of <span class="text-danger-one">Homemade Masalas & Snacks</span> </h2>
+                        </div>
+                        <p class="lead"> Amma’s Kitchen brings you authentic, homemade masalas and Chettinad snacks, freshly prepared and delivered to your doorstep. Taste tradition with every bite! </p>
+                    </div>
+                    <div class="col-md-6 p-5 bg-white rounded-4 shadow">
+                        <form>
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-bold">Name</label>
+                                <input type="text" class="form-control form-control-lg" name="name" id="name" placeholder="Please enter your name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold">Email</label>
+                                <input type="email" class="form-control form-control-lg" name="email" id="email" placeholder="Please enter your email address">
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-dark btn-lg">Claim My Discount</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-header d-flex flex-wrap justify-content-between mb-5">
+                    <h2 class="section-title">Customer Reviews</h2>
+                    <div class="d-flex align-items-center">
+                        <a href="#" class="btn-link text-decoration-none">Read All Reviews →</a>
+                        <div class="swiper-buttons">
+                            <button class="swiper-prev testimonial-carousel-prev btn btn-yellow">❮</button>
+                            <button class="swiper-next testimonial-carousel-next btn btn-yellow">❯</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="testimonial-carousel swiper">
+                    <div class="swiper-wrapper">
+                        
+                        {% if reviews %}
+                            {% for review in reviews %}
+                            <div class="swiper-slide">
+                                <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="rounded-circle bg-info-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">
+                                                {{ review.customer_name[0]|upper if review.customer_name }}
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-0">{{ review.customer_name }}</h5>
+                                                <small class="text-muted">{{ review.location }} · <span class="text-success">Verified Purchase</span></small>
+                                            </div>
+                                            <div class="ms-auto d-flex">
+                                                {% for i in range(review.rating) %}
+                                                    <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <p class="mb-3">“{{ review.comment|safe }}”</p>
+                                        {% if review.product_name_tag %}
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-light text-dark">{{ review.product_name_tag }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </article>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                             <div class="swiper-slide">
+                                 <p class="text-center">No reviews yet. Be the first to write one!</p>
+                             </div>
+                        {% endif %}
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" style="background-color: #fca5a5;">
+    <div class="container-fluid">
+        <div class="row text-center">
+            <div class="col-md-3 col-sm-6">
+                <div class="perk-card h-100">
+                    <h5 class="perk-title mb-0">Free Shipping</h5>
+                    <p class="perk-text">On orders above ₹500 across India.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="perk-card h-100">
+                    <h5 class="perk-title mb-0">100% Secure Payment</h5>
+                    <p class="perk-text">UPI / Cards / Net-banking with encrypted checkout.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="perk-card h-100">
+                    <h5 class="perk-title mb-0">Freshness Guarantee</h5>
+                    <p class="perk-text">Made in small batches. We'll replace it if it's not fresh.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="perk-card h-100">
+                    <h5 class="perk-title mb-0">Daily Offers</h5>
+                    <p class="perk-text">Discover new deals every day and save more.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

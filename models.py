@@ -112,3 +112,7 @@ class Banner(db.Model):
 
     def __repr__(self):
         return f"<Banner {self.name}>"
+    
+with app.app_context():
+    db.create_all()
+    print("Database tables created successfully!")
