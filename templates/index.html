@@ -1,19 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
     <!-- Hero / Promo Carousel -->
-    <section class="py-3" style="background-image:url('static/images/background-pattern.jpg');background-repeat:no-repeat;background-size:cover;">
+    <!-- <section class="py-3" style="background-image:url('static/images/background-pattern.jpg');background-repeat:no-repeat;background-size:cover;">
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
 
             <div class="banner-blocks">
 
-              <!-- MAIN CAROUSEL -->
               <div class="banner-ad large bg-light block-1 rounded-4 overflow-hidden shadow-sm">
                 <div class="swiper main-swiper">
                   <div class="swiper-wrapper">
 
-                    <!-- Slide 1: Masalas -->
                     <div class="swiper-slide">
                       <div class="row banner-content align-items-center">
                         <div class="content-wrapper col-md-7">
@@ -23,8 +21,7 @@
                           <a href="#" class="btn btn-dark btn-sm text-uppercase">Shop Masalas</a>
                         </div>
                         <div class="col-md-5 d-none d-md-block">
-                          <!-- SVG: Masala bowl + spices -->
-                          <svg viewBox="0 0 560 360" width="100%" height="auto" role="img" aria-label="Masala Illustration">
+                          <svg viewBox="0 0 560 360" width="100%" role="img" aria-label="Masala Illustration">
                             <defs>
                               <linearGradient id="g1" x1="0" x2="1">
                                 <stop offset="0" stop-color="#F59E0B"/>
@@ -40,7 +37,6 @@
                               <ellipse cx="210" cy="210" rx="190" ry="50" fill="#b45309"/>
                               <ellipse cx="210" cy="200" rx="190" ry="50" fill="url(#g1)"/>
                               <ellipse cx="210" cy="160" rx="140" ry="34" fill="url(#g2)" stroke="#f59e0b" stroke-width="3"/>
-                              <!-- spices -->
                               <circle cx="120" cy="130" r="14" fill="#b45309"/>
                               <circle cx="170" cy="120" r="10" fill="#a16207"/>
                               <circle cx="220" cy="130" r="16" fill="#92400e"/>
@@ -52,7 +48,6 @@
                       </div>
                     </div>
 
-                    <!-- Slide 2: Homemade Ghee -->
                     <div class="swiper-slide">
                       <div class="row banner-content p-5 align-items-center">
                         <div class="content-wrapper col-md-7">
@@ -62,8 +57,7 @@
                           <a href="#" class="btn btn-dark btn-lg text-uppercase fs-6 rounded-2 px-4 py-3 mt-2">Shop Ghee</a>
                         </div>
                         <div class="col-md-5 d-none d-md-block">
-                          <!-- SVG: Ghee jar -->
-                          <svg viewBox="0 0 560 360" width="100%" height="auto" role="img" aria-label="Ghee Illustration">
+                          <svg viewBox="0 0 560 360" width="100%" role="img" aria-label="Ghee Illustration">
                             <defs>
                               <linearGradient id="gj" x1="0" x2="0" y1="0" y2="1">
                                 <stop offset="0" stop-color="#fde047"/>
@@ -83,7 +77,6 @@
                       </div>
                     </div>
 
-                    <!-- Slide 3: Dairy -->
                     <div class="swiper-slide">
                       <div class="row banner-content p-5 align-items-center">
                         <div class="content-wrapper col-md-7">
@@ -93,8 +86,7 @@
                           <a href="#" class="btn btn-dark btn-lg text-uppercase fs-6 rounded-2 px-4 py-3 mt-2">Shop Dairy</a>
                         </div>
                         <div class="col-md-5 d-none d-md-block">
-                          <!-- SVG: Milk, curd, butter -->
-                          <svg viewBox="0 0 560 360" width="100%" height="auto" role="img" aria-label="Dairy Illustration">
+                          <svg viewBox="0 0 560 360" width="100%" role="img" aria-label="Dairy Illustration">
                             <defs>
                               <linearGradient id="dm" x1="0" x2="0" y1="0" y2="1">
                                 <stop offset="0" stop-color="#ffffff"/>
@@ -107,13 +99,10 @@
                             </defs>
                             <ellipse cx="300" cy="300" rx="210" ry="40" fill="#e5e7eb"/>
                             <g transform="translate(120,70)">
-                              <!-- milk bottle -->
                               <rect x="40" y="20" width="80" height="200" rx="20" fill="url(#dm)" stroke="#cbd5e1" stroke-width="4"/>
                               <rect x="40" y="0" width="80" height="30" rx="8" fill="#60a5fa"/>
-                              <!-- curd pot -->
                               <ellipse cx="220" cy="70" rx="80" ry="20" fill="#cbd5e1"/>
                               <rect x="140" y="70" width="160" height="120" rx="18" fill="url(#dm)" stroke="#cbd5e1" stroke-width="4"/>
-                              <!-- butter slab -->
                               <rect x="180" y="210" width="100" height="40" rx="8" fill="url(#db)" stroke="#b45309" stroke-width="3"/>
                             </g>
                           </svg>
@@ -122,13 +111,9 @@
                     </div>
 
                   </div>
-
-                  <!-- No bullets; remove if you want dots -->
-                  <!-- <div class="swiper-pagination"></div> -->
                 </div>
               </div>
 
-              <!-- RIGHT PROMOS -->
               <div class="banner-ad bg-success-subtle block-2 rounded-4 overflow-hidden shadow-sm">
                 <div class="row banner-content p-5 align-items-center">
                   <div class="content-wrapper col-12">
@@ -139,8 +124,7 @@
                     </a>
                   </div>
                   <div class="col-12 mt-3">
-                    <!-- small spice svg -->
-                    <svg viewBox="0 0 300 120" width="100%" height="auto" aria-hidden="true">
+                    <svg viewBox="0 0 300 120" width="100%" aria-hidden="true">
                       <ellipse cx="160" cy="100" rx="120" ry="14" fill="#d1d5db"/>
                       <circle cx="90" r="0"/>
                       <g transform="translate(40,20)">
@@ -165,8 +149,7 @@
                     </a>
                   </div>
                   <div class="col-12 mt-3">
-                    <!-- small ghee jar svg -->
-                    <svg viewBox="0 0 300 120" width="100%" height="auto" aria-hidden="true">
+                    <svg viewBox="0 0 300 120" width="100%" aria-hidden="true">
                       <defs>
                         <linearGradient id="sm" x1="0" x2="0" y1="0" y2="1">
                           <stop offset="0" stop-color="#fde047"/>
@@ -185,12 +168,51 @@
               </div>
 
             </div>
-            <!-- / Banner Blocks -->
 
           </div>
         </div>
       </div>
+    </section> -->
+    <section class="carousel-amma py-5" style="padding-left:0; padding-right:0; margin-left:0; margin-right:0;">
+      <div style="width:90%; margin:0 auto;">
+        <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+
+            <!-- Slide 1: Masalas Image -->
+            <div class="carousel-item active">
+              <img src="{{ url_for('static', filename='images/car11.png') }}" 
+                  alt="Freshly Ground Masalas" 
+                  class="d-block w-100 shadow"
+                  style="height:480px; object-fit:cover; border-radius:0;" />
+            </div>
+
+            <!-- Slide 2: Ghee Image -->
+            <div class="carousel-item">
+              <img src="{{ url_for('static', filename='images/car2.png') }}" 
+                  alt="Homemade Ghee — Golden & Granular" 
+                  class="d-block w-100 shadow"
+                  style="height:480px; object-fit:cover; border-radius:0;" />
+            </div>
+
+            <!-- Slide 3: Dairy Image -->
+            <div class="carousel-item">
+              <img src="{{ url_for('static', filename='images/car333.png') }}" 
+                  alt="Pure Dairy Products" 
+                  class="d-block w-100 shadow"
+                  style="height:480px; object-fit:cover; border-radius:0;" />
+            </div>
+            
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+          </button>
+        </div>
+      </div>
     </section>
+    <br>
 
     <section class="py-5 overflow-hidden">
       <div class="container-fluid">
@@ -215,33 +237,26 @@
           <div class="col-md-12">
             <div class="category-carousel swiper">
               <div class="swiper-wrapper">
-                  <a href="index.html" class="nav-link category-item swiper-slide">
-                    <img src="{{ url_for('static', filename='images/cat-masalas.svg') }}" alt="Masalas">
-                    <h3 class="category-title">Masalas</h3>
+                  <a href="{{ url_for('category_products', category_name='masalas') }}" class="nav-link category-item swiper-slide">
+                    <img src="{{ url_for('static', filename='images/category-masalas.png') }}" alt="Masalas">
                   </a>
-                  <a href="index.html" class="nav-link category-item swiper-slide">
-                    <img src="{{ url_for('static', filename='images/cat-ghee.svg') }}" alt="Ghee">
-                    <h3 class="category-title">Ghee</h3>
+                  <a href="{{ url_for('category_products', category_name='ghee') }}" class="nav-link category-item swiper-slide">
+                    <img src="{{ url_for('static', filename='images/category/ghee.png') }}" alt="Ghee">
                   </a>
-                  <a href="index.html" class="nav-link category-item swiper-slide">
-                    <img src="{{ url_for('static', filename='images/cat-chettinad-snacks.svg') }}" alt="Chettinad Snacks">
-                    <h3 class="category-title">Chettinad Snacks</h3>
+                  <a href="{{ url_for('category_products', category_name='chettinad') }}" class="nav-link category-item swiper-slide">
+                    <img src="{{ url_for('static', filename='images/category/chettinad.png') }}" alt="Chettinad Snacks">
                   </a>
-                  <a href="index.html" class="nav-link category-item swiper-slide">
-                    <img src="{{ url_for('static', filename='images/cat-dairy.svg') }}" alt="Dairy">
-                    <h3 class="category-title">Dairy</h3>
+                  <a href="{{ url_for('category_products', category_name='dairy') }}" class="nav-link category-item swiper-slide">
+                    <img src="{{ url_for('static', filename='images/category/dairy.png') }}" alt="Dairy">
                   </a>
-                  <a href="index.html" class="nav-link category-item swiper-slide">
-                    <img src="{{ url_for('static', filename='images/cat-dosa-and-instant-mix.svg') }}" alt="Dosa & Instant Mix">
-                    <h3 class="category-title">Dosa & Instant</h3>
+                  <a href="{{ url_for('category_products', category_name='dosa') }}" class="nav-link category-item swiper-slide">
+                    <img src="{{ url_for('static', filename='images/category/dosa.png') }}" alt="Dosa & Instant Mix">
                   </a>
-                  <a href="index.html" class="nav-link category-item swiper-slide">
-                    <img src="{{ url_for('static', filename='images/cat-millet-noodles.svg') }}" alt="Millet Noodles">
-                    <h3 class="category-title">Millet Noodles</h3>
+                  <a href="{{ url_for('category_products', category_name='millet') }}" class="nav-link category-item swiper-slide">
+                    <img src="{{ url_for('static', filename='images/category/millet.png') }}" alt="Millet Noodles">
                   </a>
-                  <a href="index.html" class="nav-link category-item swiper-slide">
-                    <img src="{{ url_for('static', filename='images/cat-dhall.svg') }}" alt="Dhall">
-                    <h3 class="category-title">Dhall</h3>
+                  <a href="{{ url_for('category_products', category_name='dhall') }}" class="nav-link category-item swiper-slide">
+                    <img src="{{ url_for('static', filename='images/category/dhall.png') }}" alt="Dhall">
                   </a>
               </div>
             </div>
@@ -250,1281 +265,131 @@
       </div>
     </section>
 
+    <section id="trending-products" class="py-5">
+      <div class="container-fluid">
+        <div class="row mb-4">
+          <div class="col text-center">
+            <h3 class="mb-0 fw-bold" style="color:#be123c;">Trending Products</h3>
+          </div>
+        </div>
+        <div class="row g-4" id="product-list">
+          {% for p in products %}
+          <div class="col-6 col-md-4 col-lg-3 col-xl-2 product-card mb-4">
+            <div class="card h-100 shadow rounded-4">
+              <a href="{{ url_for('product_detail', product_id=p.id) }}">
+                <img src="{{ url_for('static', filename=p.image_url) }}"
+                    class="card-img-top" alt="{{ p.name }}">
+              </a>
+              <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                  <h5 class="card-title">{{ p.name }}</h5>
+                  <div class="small text-muted">{{ p.qty }}</div>
+                  <div class="d-flex align-items-center mt-1">
+                    <span class="badge bg-warning text-dark me-2">{{ p.rating }}</span>
+                    <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
+                  </div>
+                  <div class="fw-bold fs-5 mt-2" style="color:#b91c1c;">₹{{ p.price }}</div>
+                </div>
+                <form class="add-to-cart-form d-flex align-items-center gap-2 mt-3"
+                      data-product-id="{{ p.id }}"
+                      data-product-name="{{ p.name }}"
+                      data-product-price="{{ p.price }}">
+                  <div class="input-group input-group-sm w-50">
+                    <button type="button" class="btn btn-outline-secondary btn-qty" data-action="decrease">-</button>
+                    <input type="number" min="1" value="1" class="form-control text-center qty-input" style="max-width:50px;">
+                    <button type="button" class="btn btn-outline-secondary btn-qty" data-action="increase">+</button>
+                  </div>
+                  <button type="submit" class="btn btn-success btn-sm flex-fill">
+                    <i class="bi bi-cart"></i> Add to Cart
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% if has_next %}
+        <div class="text-center mt-4 w-100">
+          <button id="load-more-btn" class="btn btn-outline-primary btn-lg"
+                  data-next-page="{{ next_page }}">
+            Load More
+          </button>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+
     <section class="py-5">
       <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="bootstrap-tabs product-tabs">
-              <div class="tabs-header d-flex justify-content-between border-bottom my-5">
-                <h3>Trending Products</h3>
-                <nav>
-                  <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a href="#" class="nav-link text-uppercase fs-6 active" id="nav-all-tab" data-bs-toggle="tab" data-bs-target="#nav-all">All</a>
-                    <a href="#" class="nav-link text-uppercase fs-6" id="nav-masalas-tab" data-bs-toggle="tab" data-bs-target="#nav-masalas">Masalas & Spices</a>
-                    <a href="#" class="nav-link text-uppercase fs-6" id="nav-snacks-tab" data-bs-toggle="tab" data-bs-target="#nav-snacks">Chettinad Snacks</a>
-                    <a href="#" class="nav-link text-uppercase fs-6" id="nav-dairy-tab" data-bs-toggle="tab" data-bs-target="#nav-dairy">Dairy Products</a>
-                    <a href="#" class="nav-link text-uppercase fs-6" id="nav-dosa-tab" data-bs-toggle="tab" data-bs-target="#nav-dosa">Dosa & Idli</a>
-                    <a href="#" class="nav-link text-uppercase fs-6" id="nav-dhall-tab" data-bs-toggle="tab" data-bs-target="#nav-dhall">Dhall</a>
-                  </div>
-                </nav>
-              </div>
-              <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
-                  <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                    
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Sambar Powder">
-                  <img src="{{ url_for('static', filename='images/prod-sambar.svg') }}" class="tab-image" alt="Sambar Powder">
-                </a>
-              </figure>
-              <h3>Sambar Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹60.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
+        <div class="row g-4">
+          <!-- Masala Banner -->
+          <div class="col-md-6">
+            <div class="p-0 rounded-4 overflow-hidden" style="min-height:300px;">
+              <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/e8268c81-27ba-4c8f-b54b-f72d69fece37.png" 
+                  alt="Homemade Masalas Amma's Kitchen" 
+                  class="w-100 h-100 object-fit-cover" style="min-height:300px;">
             </div>
           </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Rasam Powder">
-                  <img src="{{ url_for('static', filename='images/prod-rasam.svg') }}" class="tab-image" alt="Rasam Powder">
-                </a>
-              </figure>
-              <h3>Rasam Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹60.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Biryani Masala">
-                  <img src="{{ url_for('static', filename='images/prod-biryani.svg') }}" class="tab-image" alt="Biryani Masala">
-                </a>
-              </figure>
-              <h3>Biryani Masala</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹70.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Chicken Biryani Masala">
-                  <img src="{{ url_for('static', filename='images/prod-chicken-biryani.svg') }}" class="tab-image" alt="Chicken Biryani Masala">
-                </a>
-              </figure>
-              <h3>Chicken Biryani Masala</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹75.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Curry Masala Powder">
-                  <img src="{{ url_for('static', filename='images/prod-curry.svg') }}" class="tab-image" alt="Curry Masala Powder">
-                </a>
-              </figure>
-              <h3>Curry Masala Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹60.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Idli Podi">
-                  <img src="{{ url_for('static', filename='images/prod-idli-podi.svg') }}" class="tab-image" alt="Idli Podi">
-                </a>
-              </figure>
-              <h3>Idli Podi</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹65.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Homemade Ghee">
-                  <img src="{{ url_for('static', filename='images/prod-ghee.svg') }}" class="tab-image" alt="Homemade Ghee">
-                </a>
-              </figure>
-              <h3>Homemade Ghee</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹350.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Sweet Paniyaram">
-                  <img src="{{ url_for('static', filename='images/prod-paniyaram.svg') }}" class="tab-image" alt="Sweet Paniyaram">
-                </a>
-              </figure>
-              <h3>Sweet Paniyaram</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹120.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Dosa Mix">
-                  <img src="{{ url_for('static', filename='images/prod-dosa-mix.svg') }}" class="tab-image" alt="Dosa Mix">
-                </a>
-              </figure>
-              <h3>Dosa Mix</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹90.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Masoor Dal">
-                  <img src="{{ url_for('static', filename='images/prod-masoor.svg') }}" class="tab-image" alt="Masoor Dal">
-                </a>
-              </figure>
-              <h3>Masoor Dal</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹90.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-                  </div>
-                </div>
-                <div class="tab-pane fade" id="nav-masalas" role="tabpanel" aria-labelledby="nav-masalas-tab">
-                  <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                    
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Sambar Powder">
-                  <img src="{{ url_for('static', filename='images/prod-sambar.svg') }}" class="tab-image" alt="Sambar Powder">
-                </a>
-              </figure>
-              <h3>Sambar Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹60.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Rasam Powder">
-                  <img src="{{ url_for('static', filename='images/prod-rasam.svg') }}" class="tab-image" alt="Rasam Powder">
-                </a>
-              </figure>
-              <h3>Rasam Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹60.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Biryani Masala">
-                  <img src="{{ url_for('static', filename='images/prod-biryani.svg') }}" class="tab-image" alt="Biryani Masala">
-                </a>
-              </figure>
-              <h3>Biryani Masala</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹70.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Chicken Biryani Masala">
-                  <img src="{{ url_for('static', filename='images/prod-chicken-biryani.svg') }}" class="tab-image" alt="Chicken Biryani Masala">
-                </a>
-              </figure>
-              <h3>Chicken Biryani Masala</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹75.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Curry Masala Powder">
-                  <img src="{{ url_for('static', filename='images/prod-curry.svg') }}" class="tab-image" alt="Curry Masala Powder">
-                </a>
-              </figure>
-              <h3>Curry Masala Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹60.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Idli Podi">
-                  <img src="{{ url_for('static', filename='images/prod-idli-podi.svg') }}" class="tab-image" alt="Idli Podi">
-                </a>
-              </figure>
-              <h3>Idli Podi</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹65.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Mutton Masala">
-                  <img src="{{ url_for('static', filename='images/prod-mutton.svg') }}" class="tab-image" alt="Mutton Masala">
-                </a>
-              </figure>
-              <h3>Mutton Masala</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹80.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Curry Leaves Powder">
-                  <img src="{{ url_for('static', filename='images/prod-curry-leaves.svg') }}" class="tab-image" alt="Curry Leaves Powder">
-                </a>
-              </figure>
-              <h3>Curry Leaves Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹70.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Murungai Keerai Powder">
-                  <img src="{{ url_for('static', filename='images/prod-murungai.svg') }}" class="tab-image" alt="Murungai Keerai Powder">
-                </a>
-              </figure>
-              <h3>Murungai Keerai Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹85.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Chilli Powder">
-                  <img src="{{ url_for('static', filename='images/prod-chilli.svg') }}" class="tab-image" alt="Chilli Powder">
-                </a>
-              </figure>
-              <h3>Chilli Powder</h3>
-              <span class="qty">50g / 100g / 250g / 500g / 1kg</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹55.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-                  </div>
-                </div>
-                <div class="tab-pane fade" id="nav-snacks" role="tabpanel" aria-labelledby="nav-snacks-tab">
-                  <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                    
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Sweet Paniyaram">
-                  <img src="{{ url_for('static', filename='images/prod-paniyaram.svg') }}" class="tab-image" alt="Sweet Paniyaram">
-                </a>
-              </figure>
-              <h3>Sweet Paniyaram</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹120.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Thenkuzhal">
-                  <img src="{{ url_for('static', filename='images/prod-thenkuzhal.svg') }}" class="tab-image" alt="Thenkuzhal">
-                </a>
-              </figure>
-              <h3>Thenkuzhal</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹110.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Murukku">
-                  <img src="{{ url_for('static', filename='images/prod-murukku.svg') }}" class="tab-image" alt="Murukku">
-                </a>
-              </figure>
-              <h3>Murukku</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹110.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Seedai">
-                  <img src="{{ url_for('static', filename='images/prod-seedai.svg') }}" class="tab-image" alt="Seedai">
-                </a>
-              </figure>
-              <h3>Seedai</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹95.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Mixture">
-                  <img src="{{ url_for('static', filename='images/prod-mixture.svg') }}" class="tab-image" alt="Mixture">
-                </a>
-              </figure>
-              <h3>Mixture</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹120.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-                  </div>
-                </div>
-                <div class="tab-pane fade" id="nav-dairy" role="tabpanel" aria-labelledby="nav-dairy-tab">
-                  <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                    
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Milk">
-                  <img src="{{ url_for('static', filename='images/prod-milk.svg') }}" class="tab-image" alt="Milk">
-                </a>
-              </figure>
-              <h3>Milk</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹30.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Curd">
-                  <img src="{{ url_for('static', filename='images/prod-curd.svg') }}" class="tab-image" alt="Curd">
-                </a>
-              </figure>
-              <h3>Curd</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹40.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Butter">
-                  <img src="{{ url_for('static', filename='images/prod-butter.svg') }}" class="tab-image" alt="Butter">
-                </a>
-              </figure>
-              <h3>Butter</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹120.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Homemade Ghee">
-                  <img src="{{ url_for('static', filename='images/prod-ghee.svg') }}" class="tab-image" alt="Homemade Ghee">
-                </a>
-              </figure>
-              <h3>Homemade Ghee</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹350.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-                  </div>
-                </div>
-                <div class="tab-pane fade" id="nav-dosa" role="tabpanel" aria-labelledby="nav-dosa-tab">
-                  <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                    
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Dosa Mix">
-                  <img src="{{ url_for('static', filename='images/prod-dosa-mix.svg') }}" class="tab-image" alt="Dosa Mix">
-                </a>
-              </figure>
-              <h3>Dosa Mix</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹90.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Ragi Dosa Mix">
-                  <img src="{{ url_for('static', filename='images/prod-ragi-dosa.svg') }}" class="tab-image" alt="Ragi Dosa Mix">
-                </a>
-              </figure>
-              <h3>Ragi Dosa Mix</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹95.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-                  </div>
-                </div>
-                <div class="tab-pane fade" id="nav-dhall" role="tabpanel" aria-labelledby="nav-dhall-tab">
-                  <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                    
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Masoor Dal">
-                  <img src="{{ url_for('static', filename='images/prod-masoor.svg') }}" class="tab-image" alt="Masoor Dal">
-                </a>
-              </figure>
-              <h3>Masoor Dal</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹90.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Chana Dal">
-                  <img src="{{ url_for('static', filename='images/prod-chana.svg') }}" class="tab-image" alt="Chana Dal">
-                </a>
-              </figure>
-              <h3>Chana Dal</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹95.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Black Peas">
-                  <img src="{{ url_for('static', filename='images/prod-black-peas.svg') }}" class="tab-image" alt="Black Peas">
-                </a>
-              </figure>
-              <h3>Black Peas</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹85.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Chickpeas">
-                  <img src="{{ url_for('static', filename='images/prod-chickpeas.svg') }}" class="tab-image" alt="Chickpeas">
-                </a>
-              </figure>
-              <h3>Chickpeas</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹90.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Pasi Payaru">
-                  <img src="{{ url_for('static', filename='images/prod-pasi.svg') }}" class="tab-image" alt="Pasi Payaru">
-                </a>
-              </figure>
-              <h3>Pasi Payaru</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹95.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="product-item">
-              
-              <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-              <figure>
-                <a href="#" title="Thattai Payaru">
-                  <img src="{{ url_for('static', filename='images/prod-thattai.svg') }}" class="tab-image" alt="Thattai Payaru">
-                </a>
-              </figure>
-              <h3>Thattai Payaru</h3>
-              <span class="qty">1 Unit</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> 4.7</span>
-              <span class="price">₹90.00</span>
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="input-group product-qty">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                      <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                    </button>
-                  </span>
-                  <input type="text" class="form-control input-number" value="1">
-                  <span class="input-group-btn">
-                    <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                    </button>
-                  </span>
-                </div>
-                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-              </div>
-            </div>
-          </div>
-                  </div>
-                </div>
-              </div>
+          <!-- Chettinad Snacks Banner -->
+          <div class="col-md-6">
+            <div class="p-0 rounded-4 overflow-hidden" style="min-height:300px;">
+              <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/efa2fea4-4f03-4f9b-ac52-120770bf8e85.png" 
+                  alt="Chettinad Snacks Amma's Kitchen" 
+                  class="w-100 h-100 object-fit-cover" style="min-height:300px;">
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="py-5">
+    <section class="py-5" style="background: radial-gradient(circle at 65% 20%, #fff7e6 60%, #fecaca 100%);">
       <div class="container-fluid">
-      <div class="row g-4">
-
-
-      <!-- Masala Banner -->
-      <div class="col-md-6">
-      <div class="p-5 text-white rounded-4 position-relative"
-      style="background: linear-gradient(135deg,#b91c1c,#f59e0b); min-height:300px; overflow:hidden;">
-      <!-- Decorative spice shapes -->
-      <div class="position-absolute top-0 end-0 opacity-25" style="font-size:200px; line-height:1;">🌶️</div>
-      <h2 class="fw-bold display-6">Homemade Masalas</h2>
-      <p class="lead">Taste the tradition in every spoon. Freshly ground, pure, and authentic.</p>
-      <span class="badge bg-light-one text-dark fs-5 mb-3">30% OFF + Free Home Delivery</span><br>
-      <a href="#" class="btn btn-light text-uppercase fw-bold">Shop Masalas</a>
-      </div>
-      </div>
-
-
-      <!-- Chettinad Snacks Banner -->
-      <div class="col-md-6">
-      <div class="p-5 text-dark rounded-4 position-relative"
-      style="background: linear-gradient(135deg,#fcd34d,#f87171); min-height:300px; overflow:hidden;">
-      <!-- Decorative snack shapes -->
-      <div class="position-absolute top-0 end-0 opacity-25" style="font-size:180px; line-height:1;">🥟</div>
-      <h2 class="fw-bold display-6">Chettinad Snacks</h2>
-      <p class="lead">Crispy, crunchy, and made at home with love. Authentic taste of Chettinad.</p>
-      <span class="badge bg-dark-one text-white-one fs-5 mb-3">30% OFF + Free Home Delivery</span><br>
-      <a href="#" class="btn btn-dark text-uppercase fw-bold">Shop Snacks</a>
-      </div>
-      </div>
-
-
-      </div>
-      </div>
-    </section>
-
-    <section class="py-5">
-      <div class="container-fluid">
-
-        <div class="py-5 my-5 rounded-5 text-dark" 
-            style="background: linear-gradient(135deg,#fef3c7,#fde68a,#fca5a5); background-size:cover;">
+        <div class="py-5 my-5 rounded-5 border-0 shadow-lg text-dark"
+            style="background: rgba(255,255,255,0.8); box-shadow: 0 4px 32px 0 #fca5a533;">
           <div class="container my-5">
-            <div class="row align-items-center">
+            <div class="row align-items-center justify-content-center">
 
               <!-- Left Content -->
-              <div class="col-md-6 p-5">
+              <div class="col-lg-6 p-5">
                 <div class="section-header mb-4">
-                  <h2 class="section-title display-5 fw-bold">
-                    Get <span class="text-danger-one">25% Discount</span> on your first order of 
-                    <span class="text-danger-one">Homemade Masalas & Snacks</span>
+                  <h2 class="section-title display-5 fw-bold" style="color: #be123c;">
+                    Get <span class="fw-bold" style="background: linear-gradient(90deg,#f59e0b,#e11d48); -webkit-background-clip: text; color: transparent;">25% Discount</span><br>
+                    <span style="color: #d97706;">Homemade Masalas & Snacks</span>
                   </h2>
                 </div>
-                <p class="lead">
-                  Amma’s Kitchen brings you authentic, homemade masalas and Chettinad snacks, freshly prepared 
-                  and delivered to your doorstep. Taste tradition with every bite!
+                <p class="lead mb-3" style="font-size:1.25rem;">
+                  <strong>Amma’s Kitchen:</strong> authentic, homemade masalas and Chettinad snacks,<br>
+                  freshly prepared and delivered to your doorstep.<br>
+                  <span style="color:#f59e0b; font-weight:bold;">Taste tradition with every bite!</span>
                 </p>
+                <ul class="list-unstyled mb-0">
+                  <li class="mb-2"><span class="badge bg-warning text-dark fs-6 rounded-pill shadow-sm">No Colors</span></li>
+                  <li class="mb-2"><span class="badge bg-warning text-dark fs-6 rounded-pill shadow-sm">No Preservatives</span></li>
+                  <li><span class="badge bg-success text-light fs-6 rounded-pill shadow-sm">Free Home Delivery</span></li>
+                </ul>
               </div>
 
               <!-- Right Form -->
-              <div class="col-md-6 p-5 bg-white rounded-4 shadow">
+              <div class="col-lg-6 p-5 bg-white rounded-4 shadow-lg border-0">
                 <form>
                   <div class="mb-3">
-                    <label for="name" class="form-label fw-bold">Name</label>
-                    <input type="text" class="form-control form-control-lg" name="name" id="name" placeholder="Please enter your name">
+                    <label for="name" class="form-label fw-bold text-dark">Name</label>
+                    <input type="text" class="form-control form-control-lg rounded-4" name="name" id="name" placeholder="Please enter your name">
                   </div>
                   <div class="mb-3">
-                    <label for="email" class="form-label fw-bold">Email</label>
-                    <input type="email" class="form-control form-control-lg" name="email" id="email" placeholder="Please enter your email address">
+                    <label for="email" class="form-label fw-bold text-dark">Email</label>
+                    <input type="email" class="form-control form-control-lg rounded-4" name="email" id="email" placeholder="Please enter your email address">
                   </div>
                   <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" id="subscribe" value="subscribe">
-                    <label class="form-check-label" for="subscribe">
-                      Subscribe to our newsletter for offers & recipes
+                    <label class="form-check-label text-dark" for="subscribe">
+                      Subscribe for offers & recipes
                     </label>
                   </div>
                   <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-danger btn-lg text-uppercase fw-bold">
+                    <button type="submit" class="btn btn-danger btn-lg text-uppercase fw-bold shadow"
+                        style="background: linear-gradient(90deg,#f59e0b,#e11d48); border: none;">
                       Claim My Discount
                     </button>
                   </div>
@@ -1534,468 +399,422 @@
             </div>
           </div>
         </div>
-
-      </div>
-    </section>
-
-    <section id="customer-reviews" class="py-5">
-      <div class="container-fluid">
-
-        <!-- Header w/ average rating -->
-        <div class="row align-items-center">
-          <div class="section-header d-flex align-items-center justify-content-between my-4">
-            <div>
-              <h2 class="section-title mb-1">What Our Customers Say</h2>
-              <div class="d-flex align-items-center gap-2 small text-muted">
-                <div class="d-flex">
-                  <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                  <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                  <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                  <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                  <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                </div>
-                <span class="ms-1">4.9/5 · 1,200+ reviews</span>
-              </div>
-            </div>
-            <div class="btn-wrap align-right">
-              <a href="#" class="btn btn-outline-primary btn-sm">Write a Review</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Carousel -->
-        <div class="row">
-          <div class="col-12">
-            <div class="swiper reviews-swiper">
-              <div class="swiper-wrapper">
-
-                <!-- Slide 1 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <!-- <div class="position-absolute top-0 end-0 opacity-10 pe-3 pt-2" aria-hidden="true" style="font-size:56px;">❝</div> -->
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-warning-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">AK</div>
-                        <div>
-                          <h5 class="mb-0">Anitha K.</h5>
-                          <small class="text-muted">Coimbatore · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">
-                        “The <strong>Sambar Powder</strong> tastes exactly like my mom’s! Fresh aroma, no artificial color,
-                        perfect heat. We finished one pack in a week.”
-                      </p>
-                      <div class="d-flex flex-wrap gap-2">
-                        <span class="badge bg-light text-dark">Sambar Powder</span>
-                        <span class="badge bg-light text-dark">250g</span>
-                        <span class="badge bg-success">Home Delivered</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 2 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <!-- <div class="position-absolute top-0 end-0 opacity-10 pe-3 pt-2" aria-hidden="true" style="font-size:56px;">❝</div> -->
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-primary-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">RP</div>
-                        <div>
-                          <h5 class="mb-0">Rahul P.</h5>
-                          <small class="text-muted">Madurai · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">
-                        “Crispy <strong>Chettinad Snacks</strong>—the <em>Murukku</em> and <em>Seedai</em> were super light and not oily.
-                        Great evening bites with filter coffee!”
-                      </p>
-                      <div class="d-flex flex-wrap gap-2">
-                        <span class="badge bg-light text-dark">Murukku</span>
-                        <span class="badge bg-light text-dark">Seedai</span>
-                        <span class="badge bg-warning text-dark">Fresh Batch</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 3 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <!-- <div class="position-absolute top-0 end-0 opacity-10 pe-3 pt-2" aria-hidden="true" style="font-size:56px;">❝</div> -->
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-danger-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">SV</div>
-                        <div>
-                          <h5 class="mb-0">Sowmya V.</h5>
-                          <small class="text-muted">Chennai · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">
-                        “Loved the <strong>Rasam Powder</strong> and <strong>Idli Podi</strong>.
-                        Clean ingredients and the flavours really pop—instant homely comfort.”
-                      </p>
-                      <div class="d-flex flex-wrap gap-2">
-                        <span class="badge bg-light text-dark">Rasam Powder</span>
-                        <span class="badge bg-light text-dark">Idli Podi</span>
-                        <span class="badge bg-info text-dark">Repeat Order</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 4 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-success-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">GS</div>
-                        <div>
-                          <h5 class="mb-0">Gautham S.</h5>
-                          <small class="text-muted">Trichy · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">“<strong>Biryani Masala</strong> nailed the restaurant aroma at home. Balanced spices—no bitterness, no extra color.”</p>
-                      <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <img src="static/images/prod-biryani.svg" alt="Biryani Masala" width="32" height="32">
-                        <span class="badge bg-light text-dark">Biryani Masala</span>
-                        <span class="badge bg-light text-dark">250g</span>
-                        <span class="badge bg-info text-dark">Family Pack</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 5 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-warning-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">NM</div>
-                        <div>
-                          <h5 class="mb-0">Nivetha M.</h5>
-                          <small class="text-muted">Chennai · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary opacity-50"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">“<strong>Chicken Biryani Masala</strong> made Sunday lunch effortless. Just marinate & cook—spot-on spice level.”</p>
-                      <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <img src="static/images/prod-chicken-biryani.svg" alt="Chicken Biryani Masala" width="32" height="32">
-                        <span class="badge bg-light text-dark">Chicken Biryani Masala</span>
-                        <span class="badge bg-light text-dark">500g</span>
-                        <span class="badge bg-success">Home Delivered</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 6 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-info-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">PR</div>
-                        <div>
-                          <h5 class="mb-0">Praveen R.</h5>
-                          <small class="text-muted">Salem · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">“<strong>Murungai Keerai Powder</strong> is our new daily sprinkle. Earthy, fresh, and super handy for dosa & poriyal.”</p>
-                      <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <img src="static/images/prod-murungai.svg" alt="Murungai Keerai Powder" width="32" height="32">
-                        <span class="badge bg-light text-dark">Murungai Keerai Powder</span>
-                        <span class="badge bg-light text-dark">100g</span>
-                        <span class="badge bg-warning text-dark">Fresh Batch</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 7 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-primary-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">YS</div>
-                        <div>
-                          <h5 class="mb-0">Yamini S.</h5>
-                          <small class="text-muted">Erode · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary opacity-50"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">“<strong>Homemade Ghee</strong> smells divine. Granular texture, rich color—kids love it on hot rice & chapati.”</p>
-                      <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <img src="static/images/prod-ghee.svg" alt="Homemade Ghee" width="32" height="32">
-                        <span class="badge bg-light text-dark">Homemade Ghee</span>
-                        <span class="badge bg-light text-dark">500g</span>
-                        <span class="badge bg-success">Repeat Order</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 8 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-danger-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">KV</div>
-                        <div>
-                          <h5 class="mb-0">Karthik V.</h5>
-                          <small class="text-muted">Tirunelveli · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">“<strong>Idli Podi</strong> is so fragrant! Mixed with ghee, it turns breakfast into a feast. Perfect coarse texture.”</p>
-                      <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <img src="static/images/prod-idli-podi.svg" alt="Idli Podi" width="32" height="32">
-                        <span class="badge bg-light text-dark">Idli Podi</span>
-                        <span class="badge bg-light text-dark">250g</span>
-                        <span class="badge bg-info text-dark">Breakfast Fav</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 9 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-warning-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">DS</div>
-                        <div>
-                          <h5 class="mb-0">Divya S.</h5>
-                          <small class="text-muted">Karur · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary opacity-50"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">“<strong>Curry Leaves Powder</strong> is a smart hack for kids—adds nutrition & aroma to rice bowls in seconds.”</p>
-                      <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <img src="static/images/prod-curry-leaves.svg" alt="Curry Leaves Powder" width="32" height="32">
-                        <span class="badge bg-light text-dark">Curry Leaves Powder</span>
-                        <span class="badge bg-light text-dark">100g</span>
-                        <span class="badge bg-warning text-dark">Kid Friendly</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 10 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-success-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">RJ</div>
-                        <div>
-                          <h5 class="mb-0">Raghav J.</h5>
-                          <small class="text-muted">Thanjavur · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">“Evening snack solved! <strong>Murukku</strong> + tea — perfect crunch, not oily, tastes absolutely homemade.”</p>
-                      <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <img src="static/images/prod-murukku.svg" alt="Murukku" width="32" height="32">
-                        <span class="badge bg-light text-dark">Murukku</span>
-                        <span class="badge bg-light text-dark">200g</span>
-                        <span class="badge bg-success">Home Delivered</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-                <!-- Slide 11 -->
-                <div class="swiper-slide">
-                  <article class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
-                    <div class="card-body p-4">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-primary-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3" style="width:56px;height:56px;">SM</div>
-                        <div>
-                          <h5 class="mb-0">Sahana M.</h5>
-                          <small class="text-muted">Bengaluru · <span class="text-success">Verified Purchase</span></small>
-                        </div>
-                        <div class="ms-auto d-flex">
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary"><use xlink:href="#star-solid"></use></svg>
-                          <svg width="18" height="18" class="text-primary opacity-50"><use xlink:href="#star-solid"></use></svg>
-                        </div>
-                      </div>
-                      <p class="mb-3">“The <strong>Mixture</strong> has that perfect South Indian spice kick. Addictive but clean, we keep reordering!”</p>
-                      <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <img src="static/images/prod-mixture.svg" alt="Mixture" width="32" height="32">
-                        <span class="badge bg-light text-dark">Mixture</span>
-                        <span class="badge bg-light text-dark">200g</span>
-                        <span class="badge bg-info text-dark">Fresh Batch</span>
-                      </div>
-                    </div>
-                  </article>
-                </div>
-
-              </div>
-
-              <!-- Swiper controls -->
-              <div class="swiper-pagination reviews-pagination"></div>
-
-            </div>
-          </div>
-        </div>
-
-        <!-- Trust bar -->
-        <div class="row mt-4">
-          <div class="col">
-            <div class="d-flex align-items-center gap-3 small text-muted flex-wrap">
-              <svg width="18" height="18"><use xlink:href="#shield-check"></use></svg>
-              100% Homemade
-              <span class="vr"></span>
-              No Colors
-              <span class="vr"></span>
-              No Preservatives
-              <span class="vr"></span>
-              Home Delivery Available
-            </div>
-          </div>
-        </div>
-
       </div>
     </section>
 
 
     <section class="py-5">
       <div class="container-fluid">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-5 g-4">
 
-          <!-- Card -->
-          <div class="col">
-            <div class="perk-card h-100">
-              <div class="d-flex align-items-center mb-2">
-                <div class="perk-icon me-2">
-                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 7h10v8H3zm11 2h3l3 3v3h-6zm-8 8a2 2 0 1 0 4 0zm8 0a2 2 0 1 0 4 0z"/></svg>
+        <div class="row align-items-center">
+          <div class="section-header d-flex align-items-center justify-content-between my-4">
+            <div>
+              <h2 class="section-title mb-1 fw-bold" style="color:#be123c;">What Our Customers Say</h2>
+              <div class="d-flex align-items-center gap-2 small text-muted">
+                <div class="d-flex">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <i class="bi bi-star-fill text-warning"></i>
                 </div>
-                <h5 class="perk-title mb-0">Free Home Delivery</h5>
+                <span class="ms-1 fw-bold" style="color:#d97706;">4.9/5 · 1,200+ reviews</span>
               </div>
-              <p class="perk-text">Fast delivery on local orders—fresh masalas & snacks to your doorstep.</p>
+            </div>
+            <div class="btn-wrap align-right">
+              <a href="#" class="btn btn-outline-danger btn-sm rounded-4 fw-bold shadow">Write a Review</a>
             </div>
           </div>
+        </div>
 
-          <!-- Hand-Roasted -->
-          <div class="col">
-            <div class="perk-card h-100">
-              <div class="d-flex align-items-center mb-2">
-                <div class="perk-icon me-2">
-                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 12a7 7 0 0 0 7 7h4a7 7 0 0 0 7-7zm4.5-6.5L15 13l1.5-1.5L9 4z"/></svg>
+        <div class="row">
+          <div class="col-12">
+            <div class="swiper reviews-swiper">
+              <!-- Example Swiper Wrapper with 11 review slides -->
+              <div class="swiper-wrapper">
+                <!-- 1 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-danger-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">AK</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#b91c1c;">Anitha K.</h5>
+                          <small class="text-muted">Coimbatore · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“The <strong>Sambar Powder</strong> tastes exactly like my mom’s! Fresh aroma, no artificial color, perfect heat. We finished one pack in a week.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Sambar Powder</span>
+                        <span class="badge bg-warning text-dark fs-6 rounded-pill shadow">250g</span>
+                        <span class="badge bg-success text-light fs-6 rounded-pill shadow">Home Delivered</span>
+                      </div>
+                    </div>
+                  </article>
                 </div>
-                <h5 class="perk-title mb-0">Hand-Roasted • Small Batch</h5>
+                <!-- 2 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">RP</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#094bae;">Rahul P.</h5>
+                          <small class="text-muted">Madurai · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“Crispy <strong>Chettinad Snacks</strong>—the <em>Murukku</em> and <em>Seedai</em> were super light and not oily. Great evening bites with filter coffee!”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Murukku</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Seedai</span>
+                        <span class="badge bg-warning text-dark fs-6 rounded-pill shadow">Fresh Batch</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 3 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-danger-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">SV</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#e72c4b;">Sowmya V.</h5>
+                          <small class="text-muted">Chennai · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“Loved the <strong>Rasam Powder</strong> and <strong>Idli Podi</strong>. Clean ingredients and the flavours really pop—instant homely comfort.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Rasam Powder</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Idli Podi</span>
+                        <span class="badge bg-info text-dark fs-6 rounded-pill shadow">Repeat Order</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 4 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-success-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">GS</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#059669;">Gautham S.</h5>
+                          <small class="text-muted">Trichy · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“<strong>Biryani Masala</strong> nailed the restaurant aroma at home. Balanced spices—no bitterness, no extra color.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Biryani Masala</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">250g</span>
+                        <span class="badge bg-info text-dark fs-6 rounded-pill shadow">Family Pack</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 5 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-warning-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">NM</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#f59e0b;">Nivetha M.</h5>
+                          <small class="text-muted">Chennai · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning opacity-50"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“<strong>Chicken Biryani Masala</strong> made Sunday lunch effortless. Just marinate & cook—spot-on spice level.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Chicken Biryani Masala</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">500g</span>
+                        <span class="badge bg-success text-light fs-6 rounded-pill shadow">Home Delivered</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 6 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-info-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">PR</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#0891b2;">Praveen R.</h5>
+                          <small class="text-muted">Salem · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“<strong>Murungai Keerai Powder</strong> is our new daily sprinkle. Earthy, fresh, and super handy for dosa & poriyal.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Murungai Keerai Powder</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">100g</span>
+                        <span class="badge bg-warning text-dark fs-6 rounded-pill shadow">Fresh Batch</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 7 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">YS</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#0061b6;">Yamini S.</h5>
+                          <small class="text-muted">Erode · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning opacity-50"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“<strong>Homemade Ghee</strong> smells divine. Granular texture, rich color—kids love it on hot rice & chapati.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Homemade Ghee</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">500g</span>
+                        <span class="badge bg-success text-light fs-6 rounded-pill shadow">Repeat Order</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 8 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-danger-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">KV</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#be123c;">Karthik V.</h5>
+                          <small class="text-muted">Tirunelveli · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“<strong>Idli Podi</strong> is so fragrant! Mixed with ghee, it turns breakfast into a feast. Perfect coarse texture.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Idli Podi</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">250g</span>
+                        <span class="badge bg-info text-dark fs-6 rounded-pill shadow">Breakfast Fav</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 9 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-warning-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">DS</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#949247;">Divya S.</h5>
+                          <small class="text-muted">Karur · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning opacity-50"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“<strong>Curry Leaves Powder</strong> is a smart hack for kids—adds nutrition & aroma to rice bowls in seconds.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Curry Leaves Powder</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">100g</span>
+                        <span class="badge bg-warning text-dark fs-6 rounded-pill shadow">Kid Friendly</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 10 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-success-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">RJ</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#06d6a0;">Raghav J.</h5>
+                          <small class="text-muted">Thanjavur · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“Evening snack solved! <strong>Murukku</strong> + tea — perfect crunch, not oily, tastes absolutely homemade.”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Murukku</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">200g</span>
+                        <span class="badge bg-success text-light fs-6 rounded-pill shadow">Home Delivered</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                <!-- 11 -->
+                <div class="swiper-slide">
+                  <article class="card border-0 shadow-lg h-100 rounded-5 overflow-hidden" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38; min-height: 340px;">
+                    <div class="card-body p-4">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary-subtle text-dark fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width:56px;height:56px;">SM</div>
+                        <div>
+                          <h5 class="mb-0 fw-bold" style="color:#2563eb;">Sahana M.</h5>
+                          <small class="text-muted">Bengaluru · <span class="text-success">Verified Purchase</span></small>
+                        </div>
+                        <div class="ms-auto d-flex">
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning"></i>
+                          <i class="bi bi-star-fill text-warning opacity-50"></i>
+                        </div>
+                      </div>
+                      <p class="mb-3 fs-5 lh-base">“The <strong>Mixture</strong> has that perfect South Indian spice kick. Addictive but clean, we keep reordering!”</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">Mixture</span>
+                        <span class="badge bg-light text-dark fs-6 rounded-pill shadow">200g</span>
+                        <span class="badge bg-info text-dark fs-6 rounded-pill shadow">Fresh Batch</span>
+                      </div>
+                    </div>
+                  </article>
+                </div>
               </div>
-              <p class="perk-text">Stone-ground for aroma & authenticity. No colors. No fillers. Just flavor.</p>
+
+              <div class="swiper-pagination reviews-pagination"></div>
             </div>
           </div>
-
-          <!-- Secure Payment -->
-          <div class="col">
-            <div class="perk-card h-100">
-              <div class="d-flex align-items-center mb-2">
-                <div class="perk-icon me-2">
-                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l8 4v6a10 10 0 0 1-8 9a10 10 0 0 1-8-9V6zM10.5 14.5l-2.5-2.5l-1.5 1.5l4 4l7-7l-1.5-1.5z"/></svg>
-                </div>
-                <h5 class="perk-title mb-0">100% Secure Payment</h5>
-              </div>
-              <p class="perk-text">UPI / Cards / Net-banking with encrypted checkout & OTP protection.</p>
-            </div>
-          </div>
-
-          <!-- Freshness Guarantee -->
-          <div class="col">
-            <div class="perk-card h-100">
-              <div class="d-flex align-items-center mb-2">
-                <div class="perk-icon me-2">
-                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3C7 3 3 7 3 12s4 9 9 9c6 0 9-5 9-9c0-6-5-9-9-9m5 8c-3 1-6 3-8 6c1-3 3-6 6-8c-3 1-6 3-8 6c1-4 4-7 8-8c2 1 3 2 2 4Z"/></svg>
-                </div>
-                <h5 class="perk-title mb-0">Freshness Guarantee</h5>
-              </div>
-              <p class="perk-text">Ground-to-pack within hours. Not fresh? We’ll replace it—no questions.</p>
-            </div>
-          </div>
-
-          <!-- Daily Offers -->
-          <div class="col">
-            <div class="perk-card h-100">
-              <div class="d-flex align-items-center mb-2">
-                <div class="perk-icon me-2">
-                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 3L3 10l8 8l7-7V3zm7 5a2 2 0 1 1-4 0a2 2 0 0 1 4 0z"/></svg>
-                </div>
-                <h5 class="perk-title mb-0">Daily Offers</h5>
-              </div>
-              <p class="perk-text">Save on combos & fresh batches — <strong>up to 30% off</strong> today.</p>
-            </div>
-          </div>
-
         </div>
       </div>
     </section>
+
+    <section class="py-5 perks-blur-bg">
+      <div class="container">
+
+        <div class="row g-4 justify-content-center">
+          <!-- Perk Card 1 -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="perk-card glass-card h-100 p-4 text-center position-relative shadow-lg border-0"
+                style="background: rgba(255,247,230,0.85); border-radius: 2rem;">
+              <div class="perk-icon display-5 mb-3 rounded-circle d-inline-flex align-items-center justify-content-center" style="background: #fef3c7; width:68px; height:68px; color: #d97706;">
+                <svg width="40" height="40" fill="currentColor"><path d="M3 7h10v8H3zm11 2h3l3 3v3h-6zm-8 8a2 2 0 1 0 4 0zm8 0a2 2 0 1 0 4 0z"/></svg>
+              </div>
+              <h5 class="fw-bold mb-2" style="color:#be123c;">Free Home Delivery</h5>
+              <p class="small text-muted mb-0">Fast delivery on local orders—fresh masalas & snacks to your doorstep.</p>
+            </div>
+          </div>
+          <!-- Perk Card 2 -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="perk-card glass-card h-100 p-4 text-center position-relative shadow-lg border-0"
+                style="background: rgba(245,158,11,0.13); border-radius: 2rem;">
+              <div class="perk-icon display-5 mb-3 rounded-circle d-inline-flex align-items-center justify-content-center" style="background: #fff7ed; width:68px; height:68px; color:#f59e0b;">
+                <svg width="40" height="40" fill="currentColor"><path d="M3 12a7 7 0 0 0 7 7h4a7 7 0 0 0 7-7zm4.5-6.5L15 13l1.5-1.5L9 4z"/></svg>
+              </div>
+              <h5 class="fw-bold mb-2" style="color: #be123c;">Hand-Roasted, Small Batch</h5>
+              <p class="small text-muted mb-0">Stone-ground for aroma & authenticity. No colors. No fillers. Just flavor.</p>
+            </div>
+          </div>
+          <!-- Perk Card 3 -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="perk-card glass-card h-100 p-4 text-center position-relative shadow-lg border-0"
+                style="background: rgba(252,165,165,0.22); border-radius: 2rem;">
+              <div class="perk-icon display-5 mb-3 rounded-circle d-inline-flex align-items-center justify-content-center" style="background: #fca5a5; width:68px; height:68px; color:#b91c1c;">
+                <svg width="40" height="40" fill="currentColor"><path d="M12 2l8 4v6a10 10 0 0 1-8 9a10 10 0 0 1-8-9V6zM10.5 14.5l-2.5-2.5l-1.5 1.5l4 4l7-7l-1.5-1.5z"/></svg>
+              </div>
+              <h5 class="fw-bold mb-2" style="color: #be123c;">100% Secure Payment</h5>
+              <p class="small text-muted mb-0">UPI / Cards / Net-banking with encrypted checkout & OTP protection.</p>
+            </div>
+          </div>
+          <!-- Perk Card 4 -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="perk-card glass-card h-100 p-4 text-center position-relative shadow-lg border-0"
+                style="background: rgba(236,255,200,0.20); border-radius: 2rem;">
+              <div class="perk-icon display-5 mb-3 rounded-circle d-inline-flex align-items-center justify-content-center" style="background: #dcfce7; width:68px; height:68px; color:#16a34a;">
+                <svg width="40" height="40" fill="currentColor"><path d="M12 3C7 3 3 7 3 12s4 9 9 9c6 0 9-5 9-9c0-6-5-9-9-9m5 8c-3 1-6 3-8 6c1-3 3-6 6-8c-3 1-6 3-8 6c1-4 4-7 8-8c2 1 3 2 2 4Z"/></svg>
+              </div>
+              <h5 class="fw-bold mb-2" style="color: #be123c;">Freshness Guarantee</h5>
+              <p class="small text-muted mb-0">Ground-to-pack within hours. Not fresh? We’ll replace it, no questions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <br>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const grid = document.getElementById('product-list');
+  const loadBtn = document.getElementById('load-more-btn');
+  if (loadBtn) {
+    loadBtn.addEventListener('click', function() {
+      const page = this.getAttribute('data-next-page');
+      fetch(`/load-products?page=${page}`)
+        .then(res => res.text())
+        .then(html => {
+          // Insert the products
+          const temp = document.createElement('div');
+          temp.innerHTML = html;
+          const newCards = temp.querySelectorAll('.product-card');
+          newCards.forEach(card => grid.appendChild(card));
+          // Check for next "Load More" button
+          if (temp.querySelector('#load-more-btn')) {
+            loadBtn.setAttribute('data-next-page', temp.querySelector('#load-more-btn').getAttribute('data-next-page'));
+          } else {
+            loadBtn.remove();
+          }
+        });
+    });
+  }
+});
+</script>
 {% endblock %}

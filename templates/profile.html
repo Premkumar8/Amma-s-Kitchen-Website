@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="bg-light py-5" style="min-height:80vh;">
+  <div class="container mt-4">
+    <h2 class="fw-bold mb-3">Profile</h2>
+    <div class="card p-4 shadow rounded-4 mb-5">
+      <div class="row g-4">
+        <div class="col-md-7">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="mb-0">Contact Info</h4>
+            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+              <i class="bi bi-pencil-square me-1"></i>Edit
+            </button>
+          </div>
+          <p><strong>Name:</strong> {{ user.name }}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Phone:</strong> {{ user.phone }}</p>
+          <p><strong>Address:</strong><br>
+            {{ user.address1 }}<br>
+            {{ user.address2 }}
+          </p>
+          {% if user.note %}<p><strong>Note:</strong> {{ user.note }}</p>{% endif %}
+          <p class="text-muted small">Joined: {{ user.created.strftime('%d %b %Y') }}</p>
+        </div>
+        <div class="col-md-5">
+          <div class="card border shadow-sm p-3 rounded-4 bg-white">
+            <h5 class="mb-2"><i class="bi bi-wallet2 text-primary"></i> Payment History</h5>
+            {% for item in orders if item.payment %}
+              <div class="border-bottom py-2">
+                <span class="fw-bold badge"
+                      style="background:linear-gradient(90deg,#43cea2,#185a9d);color:#fff;font-size:1em;">
+                  {{ item.payment.status }}
+                </span>
+                <span class="text-muted ms-2">Order #{{ item.order.id }}</span><br>
+                <span class="small">{{ item.payment.updated.strftime('%d %b %Y %H:%M') }}</span>
+              </div>
+            {% else %}
+              <div class="text-muted">No payments found.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="fw-bold mb-3">Order History</h4>
+    <div>
+      {% if orders %}
+      <table class="table rounded-4 shadow-sm overflow-hidden" style="background:#fff;">
+        <thead>
+          <tr style="background:linear-gradient(90deg,#FFE082,#FF7043);color:#222;">
+            <th>Order #</th>
+            <th>Date</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for oi in orders %}
+          <tr class="align-middle">
+            <td>#{{ oi.order.id }}</td>
+            <td>{{ oi.order.created.strftime('%d %b %Y %H:%M') }}</td>
+            <td>
+              {% if oi.product %}
+              <div class="d-flex align-items-center gap-2">
+                <img src="{{ url_for('static', filename=oi.product.images[0].image_url) }}"
+                      style="height:36px;width:36px;object-fit:cover;border-radius:7px" alt="{{ oi.product.name }}">
+                <span class="fw-semibold">{{ oi.product.name }}</span>
+              </div>
+              {% else %}
+              <span class="text-muted">Product deleted</span>
+              {% endif %}
+            </td>
+            <td class="fw-bold">{{ oi.order.quantity }}</td>
+            <td class="fw-bold text-primary">₹{{ '%.2f'|format(oi.order.total) }}</td>
+            <td>
+              {% set status=oi.order.status %}
+              <span class="badge"
+                style="font-size:1.05em;padding:.5em 1em;{% if status == 'Completed' %}background:linear-gradient(90deg,#43e97b,#38f9d7);color:#095e37;{% elif status == 'Cancelled' %}background:linear-gradient(90deg,#f85032,#e73827);color:#fff;{% elif status == 'Pending' %}background:linear-gradient(90deg,#ffe259,#ffa751);color:#9a640a;{% else %}background:#e0e0e0;color:#333;{% endif %}">
+                {{ status }}
+              </span>
+            </td>
+            <td>
+              {% if oi.payment %}
+                {% set pay=oi.payment.status %}
+                <span class="badge"
+                  style="font-size:1.05em;padding:.5em 1em;{% if pay == 'Paid' %}background:linear-gradient(90deg,#43cea2,#185a9d);color:#fff;{% elif pay == 'Unpaid' %}background:linear-gradient(90deg,#ffd700,#fc575e);color:#933009;{% else %}background:#ececec;color:#333;{% endif %}">
+                  {{ pay }}
+                </span>
+              {% else %}
+                <span class="badge bg-secondary">No Payment</span>
+              {% endif %}
+            </td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderModal{{ oi.order.id }}">
+                    View
+                </button>
+                {% if oi.order.status == "Pending" %}
+                    <form method="POST" action="{{ url_for('cancel_order', order_id=oi.order.id) }}"
+                        style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
+                        Cancel
+                    </button>
+                    </form>
+                {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="alert alert-info">No orders found.</div>
+      {% endif %}
+    </div>
+
+    {% for oi in orders %}
+    <div class="modal fade" id="orderModal{{ oi.order.id }}" tabindex="-1" aria-labelledby="orderModalLabel{{ oi.order.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 shadow">
+          <div class="modal-header">
+            <h5 class="modal-title" id="orderModalLabel{{ oi.order.id }}">Order #{{ oi.order.id }} Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group mb-3">
+              <li class="list-group-item"><b>Product:</b> {{ oi.product.name if oi.product else "Deleted" }}</li>
+              <li class="list-group-item"><b>Quantity:</b> {{ oi.order.quantity }}</li>
+              <li class="list-group-item"><b>Total:</b> ₹{{ '%.2f'|format(oi.order.total) }}</li>
+              <li class="list-group-item"><b>Status:</b> {{ oi.order.status }}</li>
+              <li class="list-group-item"><b>Payment:</b> {{ oi.payment.status if oi.payment else "No Payment" }}</li>
+              <li class="list-group-item"><b>Address:</b> {{ oi.order.address }}</li>
+              <li class="list-group-item"><b>Order Note:</b> {{ oi.order.note }}</li>
+              <li class="list-group-item"><b>Date:</b> {{ oi.order.created.strftime('%d %b %Y %H:%M') }}</li>
+            </ul>
+            {% if oi.product and oi.product.images %}
+            <img src="{{ url_for('static', filename=oi.product.images[0].image_url) }}"
+                  class="img-fluid rounded shadow" style="max-width:120px;">
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Edit Contact Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="modal-content needs-validation" method="POST" action="{{ url_for('edit_profile') }}" novalidate>
+          <div class="modal-header">
+            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-2"><label>Name</label>
+              <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+            </div>
+            <div class="mb-2"><label>Email</label>
+              <input type="email" name="email" class="form-control" value="{{ user.email }}" pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" required>
+              <div class="invalid-feedback">Enter a valid email address.</div>
+            </div>
+            <div class="mb-2"><label>Phone</label>
+              <input type="tel" name="phone" class="form-control" value="{{ user.phone }}"
+                pattern="^[6-9]\d{9}$" maxlength="10" minlength="10" required>
+              <div class="invalid-feedback">Enter a valid 10-digit mobile number.</div>
+            </div>
+            <div class="mb-2"><label>Address 1</label>
+            <!-- Google Place Picker Web Component -->
+                <gmpx-api-loader key="AIzaSyBclIggp41hdTN_W52TIvPwbNwxG1OMeWI" solution-channel="GMP_GE_placepicker_v2"></gmpx-api-loader>
+                <div id="place-picker-box">
+                    <div id="place-picker-container" style="width:100%;">
+                    <gmpx-place-picker id="my-place-picker" placeholder="Enter an address"></gmpx-place-picker>
+                    </div>
+                </div>
+                <input type="hidden" name="address1" id="hidden-address1" value="{{ user.address1 }}">
+                <div class="invalid-feedback">Please enter a valid address.</div>
+            </div>
+            <div class="mb-2"><label>Address 2</label>
+              <input type="text" name="address2" class="form-control" value="{{ user.address2 }}">
+            </div>
+            <div class="mb-2"><label>Note</label>
+              <textarea name="note" class="form-control" rows="2">{{ user.note }}</textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">Save Changes</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section><br>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/@googlemaps/extended-component-library/0.6.11/index.min.js"></script>
+
+<script>
+  // Listen for selection in place picker and set hidden input for form submit
+    document.addEventListener('DOMContentLoaded', function() {
+        var placePicker = document.getElementById('my-place-picker');
+        var hiddenAddress = document.getElementById('hidden-address1');
+        var form = document.querySelector('#editProfileModal form');
+
+        // On every picker change
+        if (placePicker && hiddenAddress) {
+            placePicker.addEventListener('gmpx-placechange', function(e){
+            if(e.detail && e.detail.place && e.detail.place.formattedAddress) {
+                hiddenAddress.value = e.detail.place.formattedAddress;
+            }
+            });
+
+            // Also force update from the input value before submit
+            if (form) {
+                form.addEventListener('submit', function() {
+                    // get latest text from picker if formattedAddress not set
+                    const pickerInput = placePicker.shadowRoot.querySelector('input');
+                    if (pickerInput && (!hiddenAddress.value || pickerInput.value !== hiddenAddress.value)) {
+                    hiddenAddress.value = pickerInput.value;
+                    }
+                });
+            }
+        }
+
+    // Bootstrap validation (no change)
+        Array.prototype.slice.call(document.querySelectorAll('.needs-validation')).forEach(function(form){
+            form.addEventListener('submit', function(event){
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+            }, false);
+        });
+    });
+</script>
+{% endblock %}

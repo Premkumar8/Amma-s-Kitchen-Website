@@ -11,7 +11,7 @@
     <meta name="keywords" content="">
     <meta name="description" content="">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
@@ -20,6 +20,44 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper@10/swiper-bundle.min.css">
+    <style>
+      .search-suggestions {
+          position: absolute; 
+          z-index: 9999;
+          background: #fff; 
+          border: 1px solid #eee;
+          border-radius: 8px; 
+          top: 105%;
+          left: 0;
+          width: 100%;
+          box-shadow: 0 3px 12px rgba(0,0,0,0.09);
+      }
+      .search-suggestion-item {
+          padding: 8px 16px; 
+          cursor: pointer;
+      }
+      .search-suggestion-item:hover {
+          background: #fae9ee;
+      }
+
+      /* Fix Google Place Picker/Autocomplete not visible in Bootstrap or other modals */
+      .modal {
+        overflow-y: visible !important;
+      }
+
+      /* Raise the z-index of Place Picker dropdown above Bootstrap modals */
+      .gmpx-place-picker-overlay,
+      gmpx-place-picker-overlay,
+      .pac-container {
+        z-index: 2300 !important;
+      }
+
+      /* Let overlays/pickers always be above modal stacking */
+      body.modal-open {
+        overflow: visible !important;
+      }
+    </style>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
   </head>
   <body>
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -77,49 +115,30 @@
       </div>
     </div>
 
-    <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart" aria-labelledby="My Cart">
-      <div class="offcanvas-header justify-content-center">
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart" aria-labelledby="offcanvasCartLabel">
+      <div class="offcanvas-header">
+        <h5 id="offcanvasCartLabel" class="fw-bold">Your Cart</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <div class="order-md-last">
-          <h4 class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-primary">Your cart</span>
-            <span class="badge bg-primary rounded-pill">3</span>
-          </h4>
-          <ul class="list-group mb-3">
-            <li class="list-group-item d-flex justify-content-between lh-sm">
-              <div>
-                <h6 class="my-0">Growers cider</h6>
-                <small class="text-body-secondary">Brief description</small>
-              </div>
-              <span class="text-body-secondary">₹12</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-sm">
-              <div>
-                <h6 class="my-0">Fresh grapes</h6>
-                <small class="text-body-secondary">Brief description</small>
-              </div>
-              <span class="text-body-secondary">₹8</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-sm">
-              <div>
-                <h6 class="my-0">Heinz tomato ketchup</h6>
-                <small class="text-body-secondary">Brief description</small>
-              </div>
-              <span class="text-body-secondary">₹5</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <span>Total (USD)</span>
-              <strong>₹20</strong>
-            </li>
-          </ul>
-  
-          <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+        <ul id="cart-items-list" class="list-unstyled mb-3"></ul>
+        <div class="fw-bold mt-2">Total: ₹<span id="cart-total">0.00</span></div>
+        <button class="btn btn-success w-100 mt-3" id="checkout-btn">Continue to Checkout</button>
+      </div>
+    </div>
+
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+      <div id="cart-success-toast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="polite" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body">
+            Added to cart successfully!
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
       </div>
     </div>
-    
+
     <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasSearch" aria-labelledby="Search">
       <div class="offcanvas-header justify-content-center">
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -137,112 +156,88 @@
       </div>
     </div>
 
-    <header>
+    <header class="bg-white border-bottom shadow-sm">
       <div class="container-fluid">
-        <div class="row py-3 border-bottom">
-          
-          <div class="col-sm-4 col-lg-3 text-center text-sm-start">
-            <div class="main-logo" style="width: 250px;">
-              <a href="index.html">
-                <img src="static/images/logo1.png" alt="logo" class="img-fluid">
+        <div class="row py-3 align-items-center">
+          <!-- Logo -->
+          <div class="col-6 col-md-3 text-center text-md-start">
+            <a href="{{ url_for('index') }}">
+              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="logo" style="max-width:170px;">
+            </a>
+          </div>
+
+          <!-- Search Bar only (centered) -->
+          <div class="col-12 col-md-6 my-2 my-md-0" style="position:relative;">
+            <form id="search-form" class="d-flex bg-light rounded-4 p-2 shadow-sm" action="{{ url_for('search') }}" method="get">
+              <input type="text" name="q" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" />
+              <button type="submit" class="btn btn-link p-0 ms-2" style="color:#BE123C;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><use xlink:href="#search"></use></svg>
+              </button>
+            </form>
+          </div>
+
+          <!-- Profile, Favorites, and Cart -->
+          <div class="col-6 col-md-3 d-flex justify-content-end align-items-center gap-3">
+            <!-- Favorites dropdown (heart) -->
+            <div class="dropdown">
+              <a href="#" class="rounded-circle bg-light p-2" data-bs-toggle="dropdown" aria-expanded="false">
+                <svg width="24" height="24"><use xlink:href="#heart"></use></svg>
               </a>
-            </div>
-          </div>
-          
-          <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
-            <div class="search-bar row bg-light p-2 my-2 rounded-4">
-              <div class="col-md-4 d-none d-md-block">
-                <select class="form-select border-0 bg-transparent">
-                    <option>Shop</option>
-                    <option>Dairy Products</option>
-                    <option>Masalas</option>
-                    <option>Millet Noodles</option>
-                    <option>Chettinad Snacks</option>
-                    <option>Dosa & Idli</option>
-                </select>
-              </div>
-              <div class="col-11 col-md-7">
-                <form id="search-form" class="text-center" action="index.html" method="post">
-                  <input type="text" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" />
-                </form>
-              </div>
-              <div class="col-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"/></svg>
-              </div>
-            </div>
-          </div>
-          
-          <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
-            <div class="support-box text-end d-none d-xl-block">
-              <span class="fs-6 text-muted">Contact</span>
-              <h5 class="mb-0">+91 82204 88716</h5>
+              <ul class="dropdown-menu dropdown-menu-end p-2 shadow" style="min-width:180px;">
+                <li class="fw-bold text-dark small mb-1">Favorites</li>
+                {% if favorites and favorites|length > 0 %}
+                  {% for fav in favorites %}
+                    <li class="d-flex align-items-center mb-1">
+                      <svg width="16" height="16" class="text-danger me-2"><use xlink:href="#heart"></use></svg>
+                      <span>{{ fav.name }}</span>
+                    </li>
+                  {% endfor %}
+                {% else %}
+                    <li class="text-muted small">No favorites added.</li>
+                {% endif %}
+              </ul>
             </div>
 
-            <ul class="d-flex justify-content-end list-unstyled m-0">
-              <li>
-                <a href="#" class="rounded-circle bg-light p-2 mx-1">
-                  <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#user"></use></svg>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="rounded-circle bg-light p-2 mx-1">
-                  <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
-                </a>
-              </li>
-              <li class="d-lg-none">
-                <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
-                  <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#cart"></use></svg>
-                </a>
-              </li>
-              <li class="d-lg-none">
-                <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSearch" aria-controls="offcanvasSearch">
-                  <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#search"></use></svg>
-                </a>
-              </li>
-            </ul>
+            <!-- Profile/User -->
+            {% if session.user_name %}
+            <span class="d-none d-md-inline-block fw-bold text-dark">
+              Hi, {{ session.user_name }}
+            </span>
+            <a href="{{ url_for('profile') }}" class="rounded-circle bg-light p-2 mx-1">
+              <svg width="24" height="24"><use xlink:href="#user"></use></svg>
+            </a>
+            {% else %}
+              <a href="{{ url_for('login') }}" class="rounded-circle bg-light p-2 mx-1 me-2">
+                <svg width="24" height="24"><use xlink:href="#user"></use></svg>
+              </a>
+            {% endif %}
 
-            <div class="cart text-end d-none d-lg-block dropdown">
-              <button class="border-0 bg-transparent d-flex flex-column gap-2 lh-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
-                <span class="fs-6 text-muted dropdown-toggle">Your Cart</span>
-                <span class="cart-total fs-5 fw-bold">₹1290.00</span>
+            <!-- Awesome Cart Button (offcanvas) -->
+            <div>
+              <button class="border-0 bg-white shadow rounded-pill px-3 py-2 d-flex align-items-center gap-2"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasCart"
+                      aria-controls="offcanvasCart"
+                      style="box-shadow: 0 2px 8px rgba(190, 18, 60, 0.13); border: 1px solid #be123c;">
+                <svg width="24" height="24" class="text-danger"><use xlink:href="#cart"></use></svg>
+                <span class="cart-total fs-6 fw-bold text-dark" id="cart-total-display">₹0.00</span>
               </button>
             </div>
-          </div>
-
-        </div>
-      </div>
-      <div class="container-fluid">
-        <div class="row py-3">
-          <div class="d-flex  justify-content-center justify-content-sm-between align-items-center">
-            <nav class="main-menu d-flex navbar navbar-expand-lg">
-
-              <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-                aria-controls="offcanvasNavbar">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-
-              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-
-                <div class="offcanvas-header justify-content-center">
-                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-
-              </div>
           </div>
         </div>
       </div>
     </header>
-    
+
     {% block content %}{% endblock %}
 
-
-    <footer class="py-5">
+    <footer class="py-5" style="background:rgba(255,255,255,0.96);box-shadow:0 4px 24px #fecaca38;">
       <div class="container-fluid">
         <div class="row">
 
           <div class="col-lg-4 col-md-6 col-sm-6">
             <div class="footer-menu">
-              <img src="static/images/logo1.png" alt="logo" style="width: 240px;">
+              <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="logo" style="width: 240px;">
               <div class="social-links mt-5">
                 <ul class="d-flex list-unstyled gap-2">
                   <li>
@@ -328,10 +323,11 @@
     </div>
     <script src="{{ url_for('static', filename='js/jquery-1.11.0.min.js') }}"></script>
     <script src="https://unpkg.com/swiper@10/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
     <script>
       window.addEventListener('load', function () {
         if (!window.Swiper) {
@@ -360,7 +356,32 @@
         });
       });
     </script>
-
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const grid = document.getElementById('product-list');
+        let loadBtn = document.getElementById('load-more-btn');
+        if (loadBtn) {
+          loadBtn.addEventListener('click', function() {
+            const page = this.getAttribute('data-next-page');
+            fetch(`/load-products?page=${page}`)
+              .then(res => res.text())
+              .then(html => {
+                const temp = document.createElement('div');
+                temp.innerHTML = html;
+                // Append new product cards
+                temp.querySelectorAll('.product-card').forEach(card => grid.appendChild(card));
+                // Update or remove Load More button
+                const newBtn = temp.querySelector('#load-more-btn');
+                if (newBtn) {
+                  loadBtn.setAttribute('data-next-page', newBtn.getAttribute('data-next-page'));
+                } else {
+                  loadBtn.remove();
+                }
+              });
+          });
+        }
+      });
+    </script>
     <!-- Swiper init -->
     <script>
       window.addEventListener('load', function () {
@@ -379,6 +400,207 @@
         });
       });
     </script>
+    <!-- <script>
+    let cart = {};
 
+    function updateCartDisplay() {
+      let total = 0;
+      for (const key in cart) total += cart[key].price * cart[key].quantity;
+      document.getElementById('cart-total-display').textContent = `₹${total.toFixed(2)}`;
+      document.getElementById('cart-total').textContent = total.toFixed(2);
+
+      // Render cart items
+      const cartList = document.getElementById('cart-items-list');
+      cartList.innerHTML = '';
+      for (const key in cart) {
+        const item = cart[key];
+        let li = document.createElement('li');
+        li.innerHTML = `${item.name} x${item.quantity} — ₹${(item.price * item.quantity).toFixed(2)} <button data-id="${item.id}" class="btn btn-sm btn-danger btn-remove-item ms-2">Remove</button>`;
+        cartList.appendChild(li);
+      }
+      document.querySelectorAll('.btn-remove-item').forEach(btn => {
+        btn.onclick = function() {
+          delete cart[btn.dataset.id];
+          updateCartDisplay();
+        };
+      });
+    }
+
+    document.querySelectorAll('.add-to-cart-form').forEach(form => {
+      const qtyInput = form.querySelector('.qty-input');
+      form.querySelectorAll('.btn-qty').forEach(btn => {
+        btn.onclick = function() {
+          qtyInput.value = btn.dataset.action === 'increase'
+            ? parseInt(qtyInput.value) + 1
+            : Math.max(1, parseInt(qtyInput.value) - 1);
+        };
+      });
+      form.onsubmit = function(e) {
+        e.preventDefault();
+        const id = form.dataset.productId, name = form.dataset.productName;
+        const price = parseFloat(form.dataset.productPrice);
+        const quantity = parseInt(qtyInput.value);
+        if (!cart[id]) cart[id] = {id, name, price, quantity};
+        else cart[id].quantity += quantity;
+        updateCartDisplay();
+        var toastEl = document.getElementById('cart-success-toast');
+        if (toastEl) {
+          var toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3000 });
+          toast.show();
+        }
+      };
+    });
+
+    updateCartDisplay();
+    </script> -->
+    
+    <!-- Add to cart functionality -->
+    <script>
+      // Load cart from localStorage (if any)
+      let cart = {};
+      if (localStorage.getItem('cart')) {
+          try { cart = JSON.parse(localStorage.getItem('cart')); } catch(e) { cart = {}; }
+      }
+
+      function saveCart() {
+          localStorage.setItem('cart', JSON.stringify(cart));
+      }
+
+      function updateCartDisplay() {
+      let total = 0;
+      for (const key in cart) total += cart[key].price * cart[key].quantity;
+      if (document.getElementById('cart-total-display')) {
+          document.getElementById('cart-total-display').textContent = `₹${total.toFixed(2)}`;
+      }
+      if (document.getElementById('cart-total')) {
+          document.getElementById('cart-total').textContent = total.toFixed(2);
+      }
+      if (document.getElementById('cart-items-list')) {
+          const cartList = document.getElementById('cart-items-list');
+          cartList.innerHTML = '';
+          for (const key in cart) {
+          const item = cart[key];
+          let li = document.createElement('li');
+          li.innerHTML = `
+            <div class="d-flex align-items-center justify-content-between border-bottom py-2 mb-1" style="gap:12px;">
+              <div class="flex-grow-1" style="min-width:0;">
+                <span class="fw-bold d-block" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</span>
+                <span class="text-muted small">x${item.quantity}</span>
+              </div>
+              <div style="width:80px; text-align:right;">
+                <span class="fw-bold" style="color:#D32F2F;">₹${(item.price * item.quantity).toFixed(2)}</span>
+              </div>
+              <button data-id="${item.id}" class="btn btn-sm py-1 px-3 btn-remove-item" style="color:#fff; background:#d32f2f; border-radius:6px; font-weight:bold; margin-left:8px;">Remove</button>
+            </div>
+          `;
+          cartList.appendChild(li);
+          }
+          document.querySelectorAll('.btn-remove-item').forEach(btn => {
+          btn.onclick = function() {
+              delete cart[btn.dataset.id];
+              saveCart();
+              updateCartDisplay();
+          };
+          });
+      }
+      saveCart();
+      }
+
+      document.querySelectorAll('.btn-qty').forEach(function(btn){
+      btn.addEventListener('click', function(){
+          const input = btn.parentElement.querySelector('.qty-input');
+          let val = parseInt(input.value) || 1;
+          if (btn.dataset.action === 'increase') input.value = val + 1;
+          else input.value = Math.max(1, val - 1);
+      });
+      });
+
+      document.querySelectorAll('.add-to-cart-form').forEach(form => {
+      const qtyInput = form.querySelector('.qty-input');
+      form.onsubmit = function(e) {
+        e.preventDefault();
+        const id = form.dataset.productId,
+            name = form.dataset.productName,
+            price = parseFloat(form.dataset.productPrice),
+            quantity = parseInt(qtyInput.value);
+        if (!cart[id]) cart[id] = { id, name, price, quantity };
+        else cart[id].quantity += quantity;
+        updateCartDisplay();
+        // Optional toast here...
+        var toastEl = document.getElementById('cart-success-toast');
+        if (toastEl) {
+          var toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3000 });
+          toast.show();
+        }
+      };
+      });
+
+      updateCartDisplay();
+      window.cart = cart;
+    </script>
+    <script>
+      form.onsubmit = function(e) {
+        e.preventDefault();
+        const id = form.dataset.productId, name = form.dataset.productName;
+        const price = parseFloat(form.dataset.productPrice);
+        const quantity = parseInt(qtyInput.value);
+        if (!cart[id]) cart[id] = {id, name, price, quantity};
+        else cart[id].quantity += quantity;
+        updateCartDisplay();
+        qtyInput.value = 1;
+
+        // Show the toast for 3 seconds
+        var toastEl = document.getElementById('cart-success-toast');
+        var toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3000 });
+        toast.show();
+      };
+    </script>
+    <!-- Search Suggestion -->
+    <script>
+      const searchInput = document.querySelector('input[name="q"]');
+      let suggestionBox = null, activeIdx = -1, suggestions = [];
+      searchInput.addEventListener('input', function() {
+        const val = this.value.trim();
+        closeSuggestions();
+        if (val.length < 2) return;
+        fetch(`/search-suggest?q=${encodeURIComponent(val)}`)
+          .then(res => res.json())
+          .then(items => {
+            if (!items.length) return;
+            suggestions = items;
+            suggestionBox = document.createElement('div');
+            suggestionBox.className = 'search-suggestions';
+            items.forEach((item, idx) => {
+              let el = document.createElement('div');
+              el.className = 'search-suggestion-item';
+              el.textContent = item.name;
+              el.onclick = () => window.location = `/product/${item.id}`;
+              suggestionBox.appendChild(el);
+            });
+            // append to outer parent with relative!
+            this.parentElement.appendChild(suggestionBox);
+            activeIdx = -1;
+          });
+      });
+      searchInput.addEventListener('keydown', function(e) {
+        if (!suggestionBox || !suggestions.length) return;
+        const items = suggestionBox.querySelectorAll('.search-suggestion-item');
+        if (e.key === 'ArrowDown') {
+          activeIdx = (activeIdx + 1) % items.length; highlightItem(items); e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+          activeIdx = (activeIdx - 1 + items.length) % items.length; highlightItem(items); e.preventDefault();
+        } else if (e.key === 'Enter' && activeIdx >= 0) {
+          items[activeIdx].click(); closeSuggestions(); e.preventDefault();
+        }
+      });
+      searchInput.addEventListener('blur', () => setTimeout(closeSuggestions, 150));
+      function highlightItem(items) {
+        items.forEach((el, idx) => el.classList.toggle('active', idx === activeIdx));
+      }
+      function closeSuggestions() {
+        if (suggestionBox) suggestionBox.remove();
+        suggestionBox = null; activeIdx = -1; suggestions = [];
+      }
+    </script>
   </body>
 </html>

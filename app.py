@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash
+from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+from flask_migrate import Migrate
 
 # -------------------------------
 # App Initialization
@@ -19,6 +21,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+migrate = Migrate(app, db)
 # -------------------------------
 # Models
 # -------------------------------
@@ -42,7 +45,8 @@ class Product(db.Model):
     mrp = db.Column(db.Float, nullable=False)
     price = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, default=0)
-    
+    ingredients = db.Column(db.String(500), nullable=True)
+    best_with = db.Column(db.String(500), nullable=True)
     # --- Fields added to match index.html ---
     category = db.Column(db.String(50), nullable=False) # e.g., 'masalas', 'snacks', 'dairy'
     qty = db.Column(db.String(100)) # e.g., '50g / 100g / 250g'
@@ -129,13 +133,68 @@ def build_cart_context(user_id):
 # -------------------------------
 # Main Routes
 # -------------------------------
+# @app.route('/')
+# def index():
+#     # db_products = Product.query.order_by(Product.created.desc()).all()
+#     page = int(request.args.get('page', 1))
+#     per_page = 10
+#     db_products = Product.query.order_by(Product.created.desc()).paginate(page=page, per_page=per_page, error_out=False)
+#     # Pre-process products to pass clean data to the template
+#     products_for_template = []
+#     for p in db_products:
+#         products_for_template.append({
+#             'id': p.id,
+#             'name': p.name,
+#             'qty': p.qty,
+#             'rating': p.rating,
+#             'price': p.price,
+#             'category': p.category,
+#             'image_url': p.images[0].image_url if p.images else 'images/placeholder.svg'
+#         })
+
+#     cart_items, cart_total, cart_count = ([], 0.0, 0)
+#     if 'user_id' in session:
+#         cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
+        
+#     return render_template(
+#         'index.html', 
+#         # products=products_for_template,
+#         products=db_products.items,
+#         has_next=db_products.has_next,
+#         next_page=page+1 if db_products.has_next else None,
+#         cart_items=cart_items, 
+#         cart_total=cart_total, 
+#         cart_count=cart_count
+#     )
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if 'user_id' in session:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = User.query.filter_by(email=email).first()
+        if user and user.password == password:  # Plaintext check, NO hash
+            session['user_id'] = user.id
+            session['user_name'] = user.name
+            flash(f"Welcome back, {user.name}!", "success")
+            return redirect(url_for('index'))
+        else:
+            flash("Invalid email or password.", "danger")
+    return render_template('login.html')
+
 @app.route('/')
 def index():
-    db_products = Product.query.order_by(Product.created.desc()).all()
-
-    # Pre-process products to pass clean data to the template
+    page = int(request.args.get('page', 1))
+    per_page = 10
+    db_products = Product.query.order_by(Product.created.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    
+    # Process products with their images
     products_for_template = []
-    for p in db_products:
+    for p in db_products.items:
+        image_url = p.images[0].image_url if p.images else 'images/placeholder.svg'
         products_for_template.append({
             'id': p.id,
             'name': p.name,
@@ -143,20 +202,126 @@ def index():
             'rating': p.rating,
             'price': p.price,
             'category': p.category,
-            'image_url': p.images[0].image_url if p.images else 'images/placeholder.svg'
+            'image_url': image_url
         })
-
+    
     cart_items, cart_total, cart_count = ([], 0.0, 0)
     if 'user_id' in session:
         cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
-        
+    
     return render_template(
-        'index.html', 
-        products=products_for_template, 
-        cart_items=cart_items, 
-        cart_total=cart_total, 
+        'index.html',
+        products=products_for_template,
+        has_next=db_products.has_next,
+        next_page=page + 1 if db_products.has_next else None,
+        cart_items=cart_items,
+        cart_total=cart_total,
         cart_count=cart_count
     )
+
+@app.route('/search')
+def search():
+    query = request.args.get('q', '')
+    # Example: search by product name (case-insensitive)
+    results = []
+    if query:
+        results = Product.query.filter(Product.name.ilike(f"%{query}%")).limit(50).all()
+    return render_template('search_results.html', results=results, query=query)
+
+@app.route('/search-suggest')
+def search_suggest():
+    term = request.args.get('q', '').strip()
+    if not term:
+        return jsonify([])
+    results = Product.query.with_entities(Product.id, Product.name).filter(
+        Product.name.ilike(f'%{term}%')
+    ).limit(10).all()
+    return jsonify([{'id': p.id, 'name': p.name} for p in results])
+
+# @app.route('/profile')
+# def profile():
+#     # Assumes user info in session; pass to template if needed
+#     return render_template('profile.html')
+
+@app.route('/profile')
+def profile():
+    user_id = session.get('user_id')
+
+    user = User.query.get(user_id)
+    orders = Order.query.filter_by(user_id=user_id).order_by(Order.created.desc()).all()
+    enriched_orders = []
+    for order in orders:
+        product = Product.query.get(order.product_id)
+        payment = Payment.query.filter_by(order_id=order.id).first()
+        enriched_orders.append({
+            "order": order,
+            "product": product,
+            "payment": payment
+        })
+
+    return render_template(
+        'profile.html',
+        user=user,
+        orders=enriched_orders
+    )
+
+@app.route('/edit_profile', methods=['POST'])
+def edit_profile():
+    user_id = session.get('user_id')
+    user = User.query.get(user_id)
+    user.name = request.form['name']
+    user.email = request.form['email']
+    user.phone = request.form['phone']
+    user.address1 = request.form['address1']
+    user.address2 = request.form['address2']
+    user.note = request.form['note']
+    db.session.commit()
+    print("Address1", user.address1)
+    flash('Profile updated successfully!', 'success')
+    return redirect(url_for('profile'))
+
+@app.route('/load-products')
+def load_products():
+    page = int(request.args.get('page', 2))
+    per_page = 10
+    db_products = Product.query.order_by(Product.created.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    
+    # Process products with their images for the partial template
+    products_for_template = []
+    for p in db_products.items:
+        image_url = p.images[0].image_url if p.images else 'images/placeholder.svg'
+        products_for_template.append({
+            'id': p.id,
+            'name': p.name,
+            'qty': p.qty,
+            'rating': p.rating,
+            'price': p.price,
+            'category': p.category,
+            'image_url': image_url
+        })
+    
+    return render_template(
+        '_product_cards.html',
+        products=products_for_template,
+        has_next=db_products.has_next,
+        next_page=page + 1 if db_products.has_next else None
+    )
+
+@app.route('/google-login')
+def google_login():
+    # placeholder for Google OAuth; you can redirect to a real OAuth handler here
+    return "Google login coming soon!"
+
+@app.route('/cancel_order/<int:order_id>', methods=['POST'])
+def cancel_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.status == "Pending":
+        order.status = "Cancelled"
+        db.session.commit()
+        flash("Order cancelled.", "success")
+    else:
+        flash("Order cannot be cancelled.", "danger")
+    return redirect(url_for('profile'))
 
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
@@ -199,24 +364,29 @@ def add_to_cart(product_id):
     flash(f'"{product.name}" has been added to your cart!', 'success')
     return redirect(url_for('index'))
 
+@app.route('/category/<category_name>')
+def category_products(category_name):
+    # Query/filter your product data based on category_name
+    products = Product.query.filter_by(category=category_name).all()
+    return render_template('category_products.html', products=products, category=category_name)
 # -------------------------------
 # Auth Routes
 # -------------------------------
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if 'user_id' in session:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        user = User.query.filter_by(email=email).first()
-        if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id
-            session['user_name'] = user.name
-            flash(f"Welcome back, {user.name}!", "success")
-            return redirect(url_for('index'))
-        flash("Invalid email or password.", "danger")
-    return render_template('login.html')
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if 'user_id' in session:
+#         return redirect(url_for('index'))
+#     if request.method == 'POST':
+#         email = request.form['email']
+#         password = request.form['password']
+#         user = User.query.filter_by(email=email).first()
+#         if user and check_password_hash(user.password, password):
+#             session['user_id'] = user.id
+#             session['user_name'] = user.name
+#             flash(f"Welcome back, {user.name}!", "success")
+#             return redirect(url_for('index'))
+#         flash("Invalid email or password.", "danger")
+#     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -301,11 +471,47 @@ def product_delete(id):
 # -------------------------------
 # Product Detail Page
 # -------------------------------
+# @app.route('/product/<int:product_id>')
+# def product_detail(product_id):
+#     product = Product.query.get_or_404(product_id)
+    
+#     # Pre-process the product for the template
+#     product_data = {
+#         'id': product.id,
+#         'name': product.name,
+#         'qty': product.qty,
+#         'rating': product.rating,
+#         'price': product.price,
+#         'mrp': product.mrp,
+#         'stock': product.stock,
+#         'category': product.category,
+#         'image_url': product.images[0].image_url if product.images else 'images/placeholder.svg'
+#     }
+
+#     # Fetch cart details to display in the header
+#     cart_items, cart_total, cart_count = ([], 0.0, 0)
+#     if 'user_id' in session:
+#         cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
+
+#     return render_template(
+#         'product_detail.html', 
+#         product=product_data,
+#         cart_items=cart_items, 
+#         cart_total=cart_total, 
+#         cart_count=cart_count
+#     )
+
 @app.route('/product/<int:product_id>')
 def product_detail(product_id):
     product = Product.query.get_or_404(product_id)
-    
-    # Pre-process the product for the template
+
+    # Collect product images for gallery
+    images = [
+        {'url': img.image_url}
+        for img in product.images
+    ] if product.images else [{'url': 'images/placeholder.svg'}]
+
+    # Add a description if your Product model supports it; else use a default
     product_data = {
         'id': product.id,
         'name': product.name,
@@ -315,8 +521,23 @@ def product_detail(product_id):
         'mrp': product.mrp,
         'stock': product.stock,
         'category': product.category,
-        'image_url': product.images[0].image_url if product.images else 'images/placeholder.svg'
+        'ingredients': [ing.strip() for ing in product.ingredients.split(',')] if product.ingredients else [],
+        'suggested_uses': [use.strip() for use in product.best_with.split(',')] if hasattr(product, 'best_with') and product.best_with else [],
+        'description': getattr(product, 'description', ''),  # add this if your model supports!
+        'images': images
     }
+
+    # Example recommendations (pick random or similar products)
+    recommendations = Product.query.filter(Product.id != product.id).limit(4).all()
+    recommendation_data = [
+        {
+            'id': rec.id,
+            'name': rec.name,
+            'image_url': rec.images[0].image_url if rec.images else 'images/placeholder.svg',
+            'price': rec.price
+        }
+        for rec in recommendations
+    ]
 
     # Fetch cart details to display in the header
     cart_items, cart_total, cart_count = ([], 0.0, 0)
@@ -324,10 +545,11 @@ def product_detail(product_id):
         cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
 
     return render_template(
-        'product_detail.html', 
+        'product_detail.html',
         product=product_data,
-        cart_items=cart_items, 
-        cart_total=cart_total, 
+        recommendations=recommendation_data,
+        cart_items=cart_items,
+        cart_total=cart_total,
         cart_count=cart_count
     )
 

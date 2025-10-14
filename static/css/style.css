@@ -486,7 +486,7 @@ h1,h2,h3,h4,h5,h6 {
   box-shadow: 0px 5px 22px rgba(0, 0, 0, 0.04);
   border-radius: 16px;
   text-align: center;
-  padding: 60px 20px;
+  /* padding: 60px 20px; */
   margin: 20px 0;
   transition: box-shadow 0.3s ease-out, transform 0.3s ease-out;
 }
@@ -904,4 +904,41 @@ h1,h2,h3,h4,h5,h6 {
 }
 .banner-ad.bg-danger a {
   color: #ffe4e6 !important;
+}
+
+.carousel-amma {
+  background: linear-gradient(104deg, #fff9f4 0%, #fff7e6 100%);
+}
+.promo-card {
+  box-shadow: 0 8px 24px rgba(174,113,68,0.10);
+  border: none;
+  min-height: 380px; /* Ensure good vertical space */
+  display: flex;
+  align-items: center;
+}
+.btn-amma {
+  background: linear-gradient(90deg,#e08b49,#bc4a17 80%);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  letter-spacing: .04em;
+  transition: background .15s, transform .12s;
+}
+.btn-amma:hover {
+  background: linear-gradient(90deg,#bc4a17,#e08b49 80%);
+  color:#fff;
+  transform: translateY(-2px) scale(1.03);
+}
+
+
+/* Category Image */
+.category-item img {
+  max-width: 120px;        /* set your desired max width */
+  max-height: 140px;       /* set your desired max height */
+  width: auto;
+  height: auto;
+  object-fit: contain;     /* maintain aspect ratio and prevent cropping */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
