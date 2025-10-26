@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+{% block title %}Checkout - Amma's Kitchen{% endblock %}
+
+{% block content %}
+<!-- Google Fonts & FontAwesome for icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+:root {
+  --saffron: #ffab00;
+  --spice: #7952b3;
+  --spice-dark: #45287c;
+  --honey: #ffebc1;
+  --light-bg: #faf7ff;
+  --shadow: 0 4px 18px rgba(30,16,64,0.07), 0 1.5px 4px rgba(0,0,0,0.04);
+}
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  body { background: #17151f !important; color: #f5eaea; }
+  .container, .bg-white { background: #272033 !important; color: #faf0dc; }
+  .summary-card, .order-list-group { background: #242038 !important; }
+}
+body, input, button { font-family: 'Inter', sans-serif; }
+.text-gradient {
+  background: linear-gradient(90deg,#7952b3,#ff8d49 90%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-size:2.7rem;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+.summary-card {
+  background: var(--light-bg);
+  border-radius:1.5rem;
+  box-shadow:var(--shadow);
+  padding:1.5rem 1rem;
+  margin-bottom:2rem;
+  display: flex;
+  flex-wrap:wrap;
+  gap:2rem;
+  justify-content:space-around;
+}
+.summary-box { min-width:100px; }
+.summary-box span { font-size:2rem; font-weight:700; color:var(--spice);}
+.summary-box .amount { color: #D32F2F; }
+.payment-tabs {
+  border-radius:23px;
+  border:1px solid #ececec;
+  background:#fff;
+  overflow:hidden;
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:2rem;
+}
+.btn-tab {
+  flex:1;
+  border:none;
+  background:none;
+  color:var(--spice);
+  padding:1rem 0;
+  font-weight:600;
+  font-size:1.1rem;
+  transition:.2s;
+  cursor:pointer;
+  border-right:1px solid #f3e2ff;
+}
+.btn-tab:last-child{border-right:none}
+.btn-tab.active, .btn-tab:hover {
+  background:linear-gradient(90deg,#ffd600,#ff9800 70%);
+  color:#222;
+}
+.btn-tab i, .btn-tab img {
+  margin-right:7px;
+}
+.panel-method { display:none; }
+.panel-method.active { display:block; animation:fadeIn .4s; }
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.input-icon { position:relative; }
+.input-icon input { padding-left:2.4rem; }
+.input-icon .fa, .input-icon img { position:absolute; left:9px;top:50%;transform:translateY(-50%);color:var(--saffron);}
+.btn-coupon {
+  background:#fddd8e;
+  color:var(--spice-dark);
+  font-weight:600;
+  border:none;
+  border-radius:7px;
+  padding:.5rem 1rem;
+}
+.order-list-group {
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:1.2rem;
+  background:#fff;
+  margin-bottom:2rem;
+}
+.order-item {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:9px;
+}
+.order-item:last-child { margin-bottom:0; }
+.order-item img {
+  width:48px;
+  height:48px;
+  border-radius:8px;
+  object-fit:cover;
+  border:1px solid #eee;
+  margin-right:14px;
+}
+.order-item-details { flex:1; }
+.order-item-delete {
+  color:#e4492c;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:18px;
+  margin-left:9px;
+  transition:.2s;
+}
+.order-item-delete:hover { color:#9d1900; transform:scale(1.14);}
+.pay-btn {
+  width:100%;
+  font-size:1.3rem;
+  font-weight:800;
+  border-radius:14px;
+  padding:1.1rem;
+  background:linear-gradient(90deg,var(--saffron),#ff8a06 80%);
+  color:#242038;
+  border:none;
+  box-shadow:0 4px 24px #ffd54f28;
+  transition:.2s;
+  margin-bottom:.8rem;
+}
+.pay-btn:active{box-shadow:none;}
+.coupon-box, .order-estimate-box, .secure-pay {
+  background:#f7efd7;
+  border-radius:8px;
+  padding:.7rem 1rem;
+  margin-bottom:1.2rem;
+  display:flex;
+  align-items:center;
+}
+.coupon-box i, .order-estimate-box i, .secure-pay i{margin-right:12px;color:var(--saffron);}
+.secure-pay { background: #fffbe7; border:1px solid #ffe38d;}
+.toggle-darkmode {
+  float:right;
+  background:none;
+  border:none;
+  color:var(--spice);
+  font-size:1.6rem;
+  margin-top:5px;
+  cursor:pointer;
+}
+@media(max-width:700px){
+  .container{max-width:99vw!important;padding:0;}
+  .summary-card,.order-list-group{flex-direction:column;padding:1rem 0.7rem;}
+  .summary-box span{font-size:1.3rem;}
+}
+</style>
+
+<section class="py-5">
+  <div class="container" style="max-width:720px; margin:auto;">
+    <button class="toggle-darkmode" id="toggleDark" title="Toggle dark mode"><i class="fa fa-moon"></i></button>
+    <h2 class="mb-2 text-center text-gradient">Payment & Checkout</h2>
+    <p class="text-center text-muted mb-4">You're one step away from deliciousness!</p>
+
+    <div class="order-estimate-box mb-2"><i class="fa fa-clock"></i> <b>Estimated Delivery:</b> 32-45 min</div>
+    <div class="secure-pay mb-3"><i class="fa fa-lock"></i><b>Secure Payment</b> via encrypted SSL. Your data is safe.</div>
+
+    <!-- Order Summary -->
+    <div class="summary-card mb-4">
+      <div class="summary-box"><span id="summary-products">0</span><div>Total Products</div></div>
+      <div class="summary-box"><span id="summary-orders">0</span><div>Order Lines</div></div>
+      <div class="summary-box"><span id="summary-qty">0</span><div>Total Qty</div></div>
+      <div class="summary-box"><span class="amount" id="summary-total">₹0.00</span><div>Total Price</div></div>
+    </div>
+
+    <!-- Coupon Input -->
+    <div class="coupon-box">
+      <i class="fa fa-tag"></i>
+      <input type="text" id="couponInput" class="form-control" style="max-width:160px;display:inline-block;margin-right:10px;" placeholder="Have a coupon?" autocomplete="off">
+      <button type="button" class="btn-coupon" id="applyCouponBtn">Apply</button>
+      <span id="couponStatus" class="ms-2 text-success fw-bold"></span>
+    </div>
+
+    <!-- Payment Tabs -->
+    <div class="payment-tabs mb-4">
+      <button type="button" class="btn-tab active" data-method="card"><i class="fa fa-credit-card"></i>Card</button>
+      <button type="button" class="btn-tab" data-method="gpay"><img src="{{ url_for('static', filename='images/payments/gpay.png') }}" style="height:20px;vertical-align:middle;">GPay</button>
+      <button type="button" class="btn-tab" data-method="upi"><i class="fa fa-paper-plane"></i>UPI</button>
+      <button type="button" class="btn-tab" data-method="netbanking"><i class="fa fa-university"></i>Netbanking</button>
+    </div>
+
+    <!-- Payment Form -->
+    <form action="" method="POST" id="checkoutForm" class="mb-4 border rounded-4 p-4 shadow-sm bg-white">
+      <!-- Card -->
+      <div class="panel-method active" id="card-form">
+        <div class="mb-3 input-icon">
+          <input type="text" maxlength="19" name="card_number" class="form-control" placeholder="Card Number" autocomplete="cc-number" required>
+          <i class="fa fa-credit-card"></i>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3 input-icon">
+            <input type="text" maxlength="5" name="expiry" class="form-control" placeholder="MM/YY" autocomplete="cc-exp" required>
+            <i class="fa fa-calendar"></i>
+          </div>
+          <div class="col-md-6 mb-3 input-icon">
+            <input type="password" maxlength="3" name="cvv" class="form-control" placeholder="CVV" autocomplete="cc-csc" required>
+            <i class="fa fa-lock"></i>
+          </div>
+        </div>
+      </div>
+      <!-- GPay -->
+      <div class="panel-method" id="gpay-form">
+        <div class="mb-3 input-icon">
+          <input type="text" name="gpay_upi" class="form-control" placeholder="GPay UPI ID" autocomplete="off">
+          <img src="{{ url_for('static', filename='images/payments/gpay.png') }}" style="height:20px;">
+        </div>
+      </div>
+      <!-- UPI -->
+      <div class="panel-method" id="upi-form">
+        <div class="mb-3 input-icon">
+          <input type="text" name="upi_id" class="form-control" placeholder="yourname@upi" autocomplete="off">
+          <i class="fa fa-paper-plane"></i>
+        </div>
+      </div>
+      <!-- Net Banking -->
+      <div class="panel-method" id="netbanking-form">
+        <div class="mb-3 input-icon">
+          <input type="text" name="bank_name" class="form-control" placeholder="Bank Name">
+          <i class="fa fa-university"></i>
+        </div>
+        <div class="mb-3 input-icon">
+          <input type="text" name="bank_acc" class="form-control" placeholder="Account Number" autocomplete="off">
+          <i class="fa fa-hashtag"></i>
+        </div>
+      </div>
+      <input type="hidden" name="cart_data" id="cart_data">
+      <button type="submit" class="pay-btn" id="payButton"><i class="fa fa-bolt me-2"></i>Pay ₹<span id="pay-amount">0.00</span></button>
+    </form>
+
+    <div class="order-list-group" id="order-details-list">
+      <!-- Items dynamically inserted here -->
+    </div>
+  </div>
+</section>
+
+<!-- Add confetti.js for celebration animation -->
+<script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+<script>
+let cart = JSON.parse(localStorage.getItem('cart') || '{}');
+const productImages = { "Biryani Masala":"https://i.ibb.co/KmKrtkp/biryani.png" }; // Add more SKUs here
+const validCoupons = {"YUMMY30": 0.3, "WELCOME10": 0.1};
+
+function updateCheckoutDisplay() {
+  let total = 0, totalQty = 0, orderLines = 0, uniqueProducts = new Set();
+  let orderListHTML = '';
+  for(const key in cart) {
+    const item = cart[key];
+    total += item.price * item.quantity;
+    totalQty += item.quantity;
+    orderLines++;
+    uniqueProducts.add(item.id);
+    orderListHTML +=
+      `<div class="order-item">
+        <img src="${productImages[item.name] || 'https://i.ibb.co/d2v9ZBf/placeholder.png'}">
+        <div class="order-item-details"><b>${item.name}</b> × <span class="badge bg-primary">${item.quantity}</span></div>
+        <span><b>₹${(item.price * item.quantity).toFixed(2)}</b></span>
+        <button class="order-item-delete" onclick="removeCartItem('${key}')"><i class="fa fa-trash"></i></button>
+      </div>`;
+  }
+  document.getElementById('order-details-list').innerHTML =
+    orderListHTML ? (orderListHTML +
+      `<div class="order-item fw-bold" style="border-top:1px solid #ebebeb;margin-top:1rem;padding-top:.7rem;">
+        <span>Total</span><span class="text-danger">₹${total.toFixed(2)}</span>
+      </div>`) :
+      '<div class="text-center text-muted py-4"><i class="fa fa-utensils fa-2x"></i><br>Your cart is empty!</div>';
+  document.getElementById('summary-products').textContent = uniqueProducts.size;
+  document.getElementById('summary-orders').textContent = orderLines;
+  document.getElementById('summary-qty').textContent = totalQty;
+  document.getElementById('summary-total').textContent = `₹${total.toFixed(2)}`;
+  document.getElementById('pay-amount').textContent = total.toFixed(2);
+  document.getElementById('cart_data').value = JSON.stringify(cart);
+  document.getElementById('payButton').disabled = !orderLines;
+}
+window.removeCartItem = function(key) {
+  delete cart[key]; localStorage.setItem('cart', JSON.stringify(cart)); updateCheckoutDisplay();
+};
+updateCheckoutDisplay();
+
+// Payment Tabs
+document.querySelectorAll('.btn-tab').forEach(tab=>{
+  tab.onclick=function(){
+    document.querySelectorAll('.btn-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.panel-method').forEach(p=>p.classList.remove('active'));
+    document.getElementById(tab.dataset.method+'-form').classList.add('active');
+  };
+});
+
+// Coupon Application
+document.getElementById('applyCouponBtn').onclick=function(){
+  let code = document.getElementById('couponInput').value.trim().toUpperCase();
+  let statusEl = document.getElementById('couponStatus');
+  if(validCoupons[code]) {
+    let discount = validCoupons[code];
+    for(const key in cart) cart[key].price = +(cart[key].priceOrg || cart[key].price);
+    for(const key in cart) {
+      cart[key].priceOrg = cart[key].price;
+      cart[key].price = +(cart[key].price * (1 - discount)).toFixed(2);
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCheckoutDisplay();
+    statusEl.textContent=`Applied (${Math.round(discount*100)}% off!)`;
+    statusEl.classList.remove('text-danger');
+    statusEl.classList.add('text-success');
+  } else {
+    statusEl.textContent='Invalid coupon!';
+    statusEl.classList.add('text-danger');
+    statusEl.classList.remove('text-success');
+  }
+  setTimeout(()=>{ statusEl.textContent = ''; }, 3800);
+};
+
+// Success animation on Payment
+document.getElementById('checkoutForm').onsubmit=function(e){
+  e.preventDefault();
+  if(Object.keys(cart).length===0) { alert('Cart is empty!'); return false; }
+  document.getElementById('payButton').disabled = true;
+  document.getElementById('payButton').innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+  setTimeout(()=>{
+    let confettiSettings = {target: 'order-details-list', width: 'full'};
+    let confetti = new ConfettiGenerator(confettiSettings);
+    confetti.render();
+    document.getElementById('payButton').innerHTML = '<i class="fa fa-check-circle text-success"></i> Order Placed!';
+    setTimeout(()=>{localStorage.removeItem('cart');location.reload();}, 2600);
+  }, 1800);
+};
+
+// Dark mode toggle
+document.getElementById('toggleDark').onclick = function() {
+  document.body.classList.toggle('dark-mode');
+};
+</script>
+{% endblock %}

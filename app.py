@@ -369,7 +369,91 @@ def category_products(category_name):
     # Query/filter your product data based on category_name
     products = Product.query.filter_by(category=category_name).all()
     return render_template('category_products.html', products=products, category=category_name)
+
+
+@app.route('/category/<category_name>')
+def show_category(category_name):
+    # Retrieve products matching the category
+    db_products = Product.query.filter_by(category=category_name).order_by(Product.created.desc()).all()
+    
+    # Process products with their primary images for the template
+    products_for_template = []
+    for p in db_products:
+        # Use the first image or a default placeholder
+        image_url = p.images[0].image_url if p.images else 'images/placeholder.svg'
+        products_for_template.append({
+            'id': p.id,
+            'name': p.name,
+            'qty': p.qty,
+            'rating': p.rating,
+            'price': p.price,
+            'stock': p.stock,  # Add this if you display it
+            'category': p.category,
+            'image_url': image_url
+        })
+    
+    return render_template(
+        'category_products.html',
+        products=products_for_template,
+        category=category_name
+    )
+    
 # -------------------------------
+# Checkout
+# -------------------------------
+import json
+
+import razorpay
+
+client = razorpay.Client(auth=("YOUR_KEY_ID", "YOUR_KEY_SECRET"))
+
+@app.route("/create_order", methods=["POST"])
+def create_order():
+    cart_total = int(float(request.form["amount"]) * 100)  # Razorpay expects paise
+    payment_method = request.form["payment_method"]
+    order = client.order.create({
+        "amount": cart_total,
+        "currency": "INR",
+        "receipt": "order_rcptid_11",
+        "payment_capture": 1
+    })
+    return jsonify(order)
+
+# In checkout.html, call Razorpay JS when user clicks Pay button.
+
+
+@app.route('/checkout', methods=['GET', 'POST'])
+def checkout():
+    if request.method == 'POST':
+        # Get cart data from hidden field (sent from localStorage via JS)
+        cart_data = request.form.get('cart_data')
+        payment_method = request.form.get('payment_method')
+        
+        if cart_data:
+            try:
+                cart_items = json.loads(cart_data)
+                # Process payment with cart_items
+                # TODO: Integrate payment gateway
+                
+                # Save order to database
+                # for item_id, item in cart_items.items():
+                #     # Create order record
+                #     pass
+                
+                flash('Payment successful!', 'success')
+                return redirect(url_for('profile'))
+            except:
+                flash('Invalid cart data', 'error')
+                return redirect(url_for('checkout'))
+        else:
+            flash('Cart is empty', 'warning')
+            return redirect(url_for('index'))
+    
+    # GET request - just render the page (cart loaded via JS)
+    return render_template('checkout.html')
+
+
+
 # Auth Routes
 # -------------------------------
 # @app.route('/login', methods=['GET', 'POST'])
