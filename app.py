@@ -17,7 +17,8 @@ app.secret_key = 'your_super_secret_key_change_me'
 # -------------------------------
 # Make sure you have a database named 'amma' created in MySQL.
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ammaskitchen_user:7gL0eP48duTTG8ccRfyUWrYsJMo4PuP8@dpg-d3uvp4v5r7bs73frfnmg-a:5432/ammaskitchen'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WelComeSai08@948@db:5432/ammas_kitchen'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ammaskitchen_user:7gL0eP48duTTG8ccRfyUWrYsJMo4PuP8@dpg-d3uvp4v5r7bs73frfnmg-a:5432/ammaskitchen'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -130,43 +131,6 @@ def build_cart_context(user_id):
         })
         
     return cart_items, cart_total, cart_count
-
-# -------------------------------
-# Main Routes
-# -------------------------------
-# @app.route('/')
-# def index():
-#     # db_products = Product.query.order_by(Product.created.desc()).all()
-#     page = int(request.args.get('page', 1))
-#     per_page = 10
-#     db_products = Product.query.order_by(Product.created.desc()).paginate(page=page, per_page=per_page, error_out=False)
-#     # Pre-process products to pass clean data to the template
-#     products_for_template = []
-#     for p in db_products:
-#         products_for_template.append({
-#             'id': p.id,
-#             'name': p.name,
-#             'qty': p.qty,
-#             'rating': p.rating,
-#             'price': p.price,
-#             'category': p.category,
-#             'image_url': p.images[0].image_url if p.images else 'images/placeholder.svg'
-#         })
-
-#     cart_items, cart_total, cart_count = ([], 0.0, 0)
-#     if 'user_id' in session:
-#         cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
-        
-#     return render_template(
-#         'index.html', 
-#         # products=products_for_template,
-#         products=db_products.items,
-#         has_next=db_products.has_next,
-#         next_page=page+1 if db_products.has_next else None,
-#         cart_items=cart_items, 
-#         cart_total=cart_total, 
-#         cart_count=cart_count
-#     )
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -454,25 +418,6 @@ def checkout():
     return render_template('checkout.html')
 
 
-
-# Auth Routes
-# -------------------------------
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if 'user_id' in session:
-#         return redirect(url_for('index'))
-#     if request.method == 'POST':
-#         email = request.form['email']
-#         password = request.form['password']
-#         user = User.query.filter_by(email=email).first()
-#         if user and check_password_hash(user.password, password):
-#             session['user_id'] = user.id
-#             session['user_name'] = user.name
-#             flash(f"Welcome back, {user.name}!", "success")
-#             return redirect(url_for('index'))
-#         flash("Invalid email or password.", "danger")
-#     return render_template('login.html')
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if 'user_id' in session:
@@ -552,39 +497,6 @@ def product_delete(id):
     db.session.commit()
     flash("Product deleted successfully", "success")
     return redirect(url_for('products_list'))
-
-# -------------------------------
-# Product Detail Page
-# -------------------------------
-# @app.route('/product/<int:product_id>')
-# def product_detail(product_id):
-#     product = Product.query.get_or_404(product_id)
-    
-#     # Pre-process the product for the template
-#     product_data = {
-#         'id': product.id,
-#         'name': product.name,
-#         'qty': product.qty,
-#         'rating': product.rating,
-#         'price': product.price,
-#         'mrp': product.mrp,
-#         'stock': product.stock,
-#         'category': product.category,
-#         'image_url': product.images[0].image_url if product.images else 'images/placeholder.svg'
-#     }
-
-#     # Fetch cart details to display in the header
-#     cart_items, cart_total, cart_count = ([], 0.0, 0)
-#     if 'user_id' in session:
-#         cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
-
-#     return render_template(
-#         'product_detail.html', 
-#         product=product_data,
-#         cart_items=cart_items, 
-#         cart_total=cart_total, 
-#         cart_count=cart_count
-#     )
 
 @app.route('/product/<int:product_id>')
 def product_detail(product_id):
