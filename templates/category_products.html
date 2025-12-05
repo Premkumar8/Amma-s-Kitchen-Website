@@ -1,85 +1,251 @@
 {% extends "base.html" %}
-{% block title %}{{ category|capitalize }} Products - Amma's Kitchen{% endblock %}
+{% block title %}{{ category|capitalize }} - Amma's Kitchen{% endblock %}
 
 {% block content %}
-<section class="pt-5 pb-5" style="background: #fff;">
-  <div class="container" style="margin-top:32px; margin-bottom:64px;">
-    <div class="row">
-      <!-- Left filter sidebar -->
-      <div class="col-lg-3 mb-4">
-        <div class="border rounded-4 p-3 bg-white shadow mb-4">
-          <h6 class="fw-bold mb-3 text-primary">Filter</h6>
-          <form id="filterForm">
-            <div class="mb-3">
-              <label class="form-label mb-1">Price</label>
-              <input type="range" class="form-range" min="0" max="1000" step="10" id="priceRange" name="price">
-              <span id="priceVal" class="fw-semibold"></span>
+<section class="py-5" style="background: #f8f9fa; min-height: 80vh;">
+  <div class="container-fluid px-4">
+    
+    <div class="row mb-4">
+       <div class="col-12">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+              <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none text-muted small">Home</a></li>
+              <li class="breadcrumb-item active small" aria-current="page">{{ category|capitalize }}</li>
+            </ol>
+          </nav>
+          <h2 class="fw-bold" style="color:#be123c; letter-spacing: -0.5px;">{{ category|capitalize }} Collection</h2>
+       </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-3 col-xl-2">
+        <div class="card filter-card border-0 rounded-4 sticky-top" style="top: 100px; z-index: 900; background: #fff;">
+          
+          <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold text-dark mb-0" style="letter-spacing: 0.5px;">
+                    <i class="bi bi-sliders2 me-2 text-danger"></i>FILTERS
+                </h6>
+                <button class="btn btn-link btn-sm text-muted p-0 text-decoration-none small" id="resetFilters" style="font-size: 0.85rem;">
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset
+                </button>
             </div>
-            <div class="mb-3">
-              <label class="form-label mb-1">Stock</label>
-              <input type="range" class="form-range" min="0" max="100" step="1" id="stockRange" name="stock">
-              <span id="stockVal" class="fw-semibold"></span>
+          </div>
+
+          <div class="card-body p-4">
+            
+            <div class="mb-4">
+              <label class="form-label fw-bold text-dark mb-3" style="font-size: 0.9rem;">Max Price</label>
+              
+              <input type="range" class="form-range custom-range" 
+                     min="0" 
+                     max="{{ max_price_limit|default(1000) }}" 
+                     value="{{ max_price_limit|default(1000) }}" 
+                     step="10" 
+                     id="priceRange">
+              
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                  <small class="text-muted">₹0</small>
+                  <div class="badge bg-dark rounded-pill px-3 py-2" id="priceVal">
+                      ₹{{ max_price_limit|default(1000) }}
+                  </div>
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm w-100">Apply</button>
-          </form>
+            
+            <hr class="border-secondary opacity-10 my-4">
+
+            <div class="mb-2">
+               <label class="form-label fw-bold text-dark mb-3" style="font-size: 0.9rem;">Availability</label>
+               
+               <div class="position-relative">
+                  <input class="btn-check-custom" type="checkbox" id="inStockOnly">
+                  
+                  <label class="stock-toggle-label user-select-none" for="inStockOnly">
+                      <div class="d-flex align-items-center gap-2">
+                          <i class="bi bi-box-seam"></i>
+                          <span class="fw-bold" style="font-size: 0.9rem;">In Stock Only</span>
+                      </div>
+                      <div class="stock-icon-circle">
+                          <i class="bi bi-check-lg"></i>
+                      </div>
+                  </label>
+               </div>
+            </div>
+
+          </div>
         </div>
       </div>
 
-      <!-- Main content: products -->
-      <div class="col-lg-9">
-        <!-- Top controls: view toggle, sorting -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3 class="fw-bold fs-4">{{ category|capitalize }} Products</h3>
-          <div>
-            <button id="gridView" class="btn btn-outline-secondary btn-sm active"><i class="fa fa-th-large"></i></button>
-            <button id="listView" class="btn btn-outline-secondary btn-sm"><i class="fa fa-list"></i></button>
-          </div>
-        </div>
-
-        <!-- Products grid/list -->
-        <div id="product-list" class="row g-4">
-          {% for product in products %}
-          <div class="col-md-4 product-card">
-            <div class="card shadow h-100 rounded-4">
-              <a href="{{ url_for('product_detail', product_id=product.id) }}">
-                <img src="{{ url_for('static', filename=product.image_url) }}" class="card-img-top" alt="{{ product.name }}" style="height:220px; object-fit:cover;">
-              </a>
-              <!-- rest of your product card -->
-
-              <div class="card-body py-3 px-2">
-                <h6 class="card-title fw-bold mb-1" style="font-size:1rem;">{{ product.name }}</h6>
-                <div class="fw-bold mb-1" style="color:#D32F2F;">₹{{ product.price }}</div>
-                <div class="text-muted small">{{ product.stock }} in stock</div>
-              </div>
+      <div class="col-lg-9 col-xl-10">
+        
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 p-3 bg-white rounded-3 shadow-sm border">
+          <span class="text-muted small fw-bold"><span id="itemCount">{{ products|length }}</span> products found</span>
+          
+          <div class="d-flex align-items-center gap-2">
+            <span class="small text-muted me-2">View:</span>
+            <div class="btn-group" role="group">
+                <button id="gridView" class="btn btn-outline-light text-secondary btn-sm active border"><i class="bi bi-grid-fill"></i></button>
+                <button id="listView" class="btn btn-outline-light text-secondary btn-sm border"><i class="bi bi-list-ul"></i></button>
             </div>
           </div>
-          {% endfor %}
         </div>
+
+        <div id="product-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+          
+          {% for p in products %}
+          <div class="col product-item-col" data-price="{{ p.price }}" data-stock="{{ p.stock }}">
+            
+            <div class="elegant-card">
+                <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
+                    <div class="img-wrapper position-relative">
+                        <img src="{{ url_for('static', filename=p.image_url) }}" alt="{{ p.name }}">
+                        {% if p.stock <= 0 %}
+                            <div class="position-absolute top-50 start-50 translate-middle badge bg-secondary opacity-75">Out of Stock</div>
+                        {% endif %}
+                    </div>
+                </a>
+
+                <div class="card-content">
+                    <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
+                        <h5 class="product-title text-truncate" title="{{ p.name }}">{{ p.name }}</h5>
+                    </a>
+                    
+                    <p class="text-muted small mb-2">{{ p.qty }}</p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-warning text-dark rounded-pill me-1" style="font-size: 0.7rem;">{{ p.rating }} <i class="bi bi-star-fill"></i></span>
+                        </div>
+                        <div class="price-tag">₹{{ p.price }}</div>
+                    </div>
+
+                    <form class="mt-auto d-flex align-items-center gap-2"
+                          action="{{ url_for('add_to_cart', product_id=p.id) }}" 
+                          method="POST">
+                        
+                        <div class="d-flex align-items-center bg-white rounded-pill border px-1">
+                            <button type="button" class="btn-qty-custom" onclick="this.nextElementSibling.stepDown()">-</button>
+                            <input type="number" name="quantity" class="form-control border-0 bg-transparent text-center p-0" 
+                                   value="1" min="1" style="width: 30px; font-weight:600; font-size: 0.9rem;">
+                            <button type="button" class="btn-qty-custom" onclick="this.previousElementSibling.stepUp()">+</button>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark btn-sm flex-grow-1 rounded-pill" 
+                                {% if p.stock <= 0 %}disabled{% endif %}>
+                            {% if p.stock > 0 %}Add <i class="bi bi-bag-plus"></i>{% else %}Sold Out{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            </div>
+          {% endfor %}
+
+        </div>
+        
+        <div id="no-results" class="text-center py-5 d-none">
+            <div class="p-5 bg-white rounded-4 shadow-sm d-inline-block">
+                <i class="bi bi-emoji-frown display-4 text-muted mb-3"></i>
+                <h5 class="text-muted">No products found within this range.</h5>
+                <button class="btn btn-outline-danger mt-2 btn-sm" onclick="resetFilters()">Clear Filters</button>
+            </div>
+        </div>
+
       </div>
     </div>
   </div>
 </section>
 
 <script>
-// Price/stock value display
-const price = document.getElementById('priceRange');
-const stock = document.getElementById('stockRange');
-const priceVal = document.getElementById('priceVal');
-const stockVal = document.getElementById('stockVal');
-if (price) price.addEventListener('input', () => priceVal.textContent = `₹${price.value}`);
-if (stock) stock.addEventListener('input', () => stockVal.textContent = `${stock.value}`);
-if (price) price.dispatchEvent(new Event('input'));
-if (stock) stock.dispatchEvent(new Event('input'));
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 1. Select DOM Elements
+    const priceInput = document.getElementById('priceRange');
+    const priceDisplay = document.getElementById('priceVal');
+    const stockInput = document.getElementById('inStockOnly');
+    const productItems = document.querySelectorAll('.product-item-col');
+    const itemCountDisplay = document.getElementById('itemCount');
+    const noResultsDiv = document.getElementById('no-results');
+    const resetBtn = document.getElementById('resetFilters');
 
-// List/grid toggle
-document.getElementById('gridView').addEventListener('click', () => {
-  document.getElementById('product-list').className = 'row g-4';
-});
-document.getElementById('listView').addEventListener('click', () => {
-  document.getElementById('product-list').className = 'row flex-column';
-  document.querySelectorAll('.product-card').forEach(card => card.className = 'col-12 product-card mb-4');
-});
+    // 2. Main Filter Function
+    function filterProducts() {
+        const maxPrice = parseFloat(priceInput.value);
+        const onlyStock = stockInput.checked;
+        let visibleCount = 0;
 
-// Your filter JS/logic to submit and filter products here
+        productItems.forEach(item => {
+            // Read data attributes
+            const itemPrice = parseFloat(item.getAttribute('data-price'));
+            const itemStock = parseInt(item.getAttribute('data-stock'));
+
+            // Logic: 
+            // 1. Price must be less than or equal to slider
+            // 2. If 'onlyStock' is checked, stock must be > 0
+            const matchesPrice = itemPrice <= maxPrice;
+            const matchesStock = !onlyStock || (onlyStock && itemStock > 0);
+
+            if (matchesPrice && matchesStock) {
+                item.classList.remove('d-none'); // Show
+                visibleCount++;
+            } else {
+                item.classList.add('d-none'); // Hide
+            }
+        });
+
+        // Update UI Counters
+        priceDisplay.textContent = `₹${maxPrice}`;
+        itemCountDisplay.textContent = visibleCount;
+
+        // Show/Hide "No Results" message
+        if (visibleCount === 0) {
+            noResultsDiv.classList.remove('d-none');
+        } else {
+            noResultsDiv.classList.add('d-none');
+        }
+    }
+
+    // 3. Reset Function
+    window.resetFilters = function() {
+        // Reset inputs to default
+        priceInput.value = priceInput.max;
+        stockInput.checked = false;
+        // Run filter to restore view
+        filterProducts();
+    };
+
+    // 4. Event Listeners
+    if(priceInput) {
+        // 'input' event fires immediately while sliding
+        priceInput.addEventListener('input', filterProducts); 
+    }
+    if(stockInput) {
+        stockInput.addEventListener('change', filterProducts);
+    }
+    if(resetBtn) {
+        resetBtn.addEventListener('click', resetFilters);
+    }
+
+    // --- List/Grid Toggle Logic (Preserved from your code) ---
+    const gridBtn = document.getElementById('gridView');
+    const listBtn = document.getElementById('listView');
+    const productList = document.getElementById('product-container');
+
+    if(gridBtn && listBtn) {
+        gridBtn.addEventListener('click', () => {
+            productList.className = 'row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4';
+            productItems.forEach(col => col.className = 'col product-item-col');
+            gridBtn.classList.add('active');
+            listBtn.classList.remove('active');
+        });
+
+        listBtn.addEventListener('click', () => {
+            productList.className = 'row g-4';
+            // Force 1 column per row for list view
+            productItems.forEach(col => col.className = 'col-12 product-item-col');
+            listBtn.classList.add('active');
+            gridBtn.classList.remove('active');
+        });
+    }
+});
 </script>
 {% endblock %}

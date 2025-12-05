@@ -1,0 +1,149 @@
+{% extends "admin/base_admin.html" %}
+
+{% block admin_content %}
+<h2 class="fw-bold mb-4">Manage Orders</h2>
+
+<div class="row mb-3">
+    <div class="col-md-6 ms-auto">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+            <input type="text" id="orderSearchInput" class="form-control border-start-0" placeholder="Search by Order ID, Customer, or Product...">
+        </div>
+    </div>
+</div>
+
+<div class="admin-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="orderTable">
+            <thead class="bg-light border-bottom">
+                <tr>
+                    <th class="ps-4">Order ID</th>
+                    <th>Date/Time</th>
+                    <th>Customer (Contact)</th>
+                    <th>Delivery Address</th>
+                    <th>Items (Qty)</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Update Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr data-search-terms="{{ order.id }} {{ order.user.name|lower }} {{ order.product.name|lower }} {{ order.status|lower }}">
+                    <td class="ps-4 fw-bold">#{{ order.id }}</td>
+                    <td class="small">{{ order.created.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <div class="fw-bold">{{ order.user.name }}</div>
+                        <div class="small text-muted">{{ order.user.phone }}</div>
+                    </td>
+                    <td>
+                        <small>
+                            {{ order.user.address1 or '—' }}
+                            {% if order.user.address2 %} / {{ order.user.address2 }}{% endif %}
+                        </small>
+                    </td>
+                    <td>
+                        <span class="text-dark">{{ order.product.name }} (x{{ order.quantity }})</span>
+                        {% if order.user.note %}
+                            <i class="bi bi-info-circle-fill text-info small" title="Customer Note: {{ order.user.note }}"></i>
+                        {% endif %}
+                    </td>
+                    <td class="fw-bold text-danger">₹{{ order.total }}</td>
+                    <td>
+                        <span class="badge rounded-pill 
+                            {% if order.status == 'Delivered' %}bg-success
+                            {% elif order.status == 'Shipped' %}bg-primary
+                            {% elif order.status == 'Pending' %}bg-warning text-dark
+                            {% elif order.status == 'Cancelled' %}bg-danger
+                            {% else %}bg-secondary{% endif %}">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge rounded-pill {% if order.payment and order.payment.status == 'Paid' %}bg-success{% else %}bg-secondary{% endif %}">
+                            {% if order.payment and order.payment.status == 'Paid' %}Paid{% else %}Unpaid{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('admin_update_order_status', id=order.id) }}" method="POST" class="d-flex gap-2">
+                            <select name="status" class="form-select form-select-sm" style="width: 130px;">
+                                <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                                <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-dark">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if pagination.pages > 1 %}
+<div class="d-flex justify-content-between align-items-center mt-4 p-3 bg-white admin-card">
+    <small class="text-muted">
+        Showing 
+        <strong>{{ pagination.per_page * (pagination.page - 1) + 1 }}</strong> 
+        - 
+        <strong>{{ pagination.per_page * (pagination.page - 1) + orders|length }}</strong> 
+        of <strong>{{ pagination.total }}</strong> orders
+    </small>
+    
+    <nav aria-label="Order Pagination">
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('admin_orders', page=pagination.prev_num) }}">
+                   <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+
+            {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if page_num %}
+                    <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('admin_orders', page=page_num) }}">
+                           {{ page_num }}
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('admin_orders', page=pagination.next_num) }}">
+                   <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('orderSearchInput');
+    const tableBody = document.getElementById('orderTable').querySelector('tbody');
+    const rows = tableBody.querySelectorAll('tr');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        
+        rows.forEach(row => {
+            const searchTerms = row.getAttribute('data-search-terms');
+            
+            if (query === '' || searchTerms.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

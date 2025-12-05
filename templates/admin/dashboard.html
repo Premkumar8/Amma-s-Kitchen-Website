@@ -1,0 +1,135 @@
+{% extends "admin/base_admin.html" %}
+
+{% block admin_content %}
+<h2 class="fw-bold mb-4">Overview</h2>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="admin-card p-4 d-flex align-items-center">
+            <div class="stat-icon bg-success-subtle text-success me-3"><i class="bi bi-currency-rupee"></i></div>
+            <div><p class="text-muted mb-0 small text-uppercase fw-bold">Total Revenue</p><h4 class="fw-bold mb-0">₹{{ "%.2f"|format(total_sales) }}</h4></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-card p-4 d-flex align-items-center">
+            <div class="stat-icon bg-primary-subtle text-primary me-3"><i class="bi bi-cart-check"></i></div>
+            <div><p class="text-muted mb-0 small text-uppercase fw-bold">Total Orders</p><h4 class="fw-bold mb-0">{{ total_orders }}</h4></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-card p-4 d-flex align-items-center">
+            <div class="stat-icon bg-warning-subtle text-warning me-3"><i class="bi bi-box-seam"></i></div>
+            <div><p class="text-muted mb-0 small text-uppercase fw-bold">Products</p><h4 class="fw-bold mb-0">{{ total_products }}</h4></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="admin-card p-4 d-flex align-items-center">
+            <div class="stat-icon bg-info-subtle text-info me-3"><i class="bi bi-people"></i></div>
+            <div><p class="text-muted mb-0 small text-uppercase fw-bold">Customers</p><h4 class="fw-bold mb-0">{{ total_customers }}</h4></div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Recent Orders</h5>
+        <div class="input-group" style="max-width: 250px;">
+            <span class="input-group-text bg-white border-end-0 border-0"><i class="bi bi-search"></i></span>
+            <input type="text" id="dashboardSearchInput" class="form-control border-start-0 border-0" placeholder="Filter current page...">
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle" id="recentOrderTable">
+            <thead class="bg-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders.items %}
+                <tr data-search-terms="{{ order.id }} {{ order.user.name|lower }} {{ order.status|lower }}">
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.user.name }}</td>
+                    <td>{{ order.created.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <span class="badge rounded-pill 
+                            {% if order.status == 'Delivered' %}bg-success
+                            {% elif order.status == 'Pending' %}bg-warning text-dark
+                            {% elif order.status == 'Cancelled' %}bg-danger
+                            {% elif order.status == 'Shipped' %}bg-primary
+                            {% else %}bg-secondary{% endif %}">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td>₹{{ "%.2f"|format(order.total) }}</td>
+                    <td>
+                        <a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-outline-dark">View Details</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-3 text-muted">No orders found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if recent_orders.pages > 1 %}
+    <nav aria-label="Order pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if not recent_orders.has_prev %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('admin_dashboard', page=recent_orders.prev_num) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            {% for page_num in recent_orders.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                {% if page_num %}
+                    <li class="page-item {% if page_num == recent_orders.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('admin_dashboard', page=page_num) }}">{{ page_num }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endfor %}
+
+            <li class="page-item {% if not recent_orders.has_next %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('admin_dashboard', page=recent_orders.next_num) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="text-center text-muted small">
+        Showing {{ recent_orders.items|length }} of {{ total_orders }} orders
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('dashboardSearchInput');
+    const tableBody = document.getElementById('recentOrderTable').querySelector('tbody');
+    const rows = tableBody.querySelectorAll('tr[data-search-terms]');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        rows.forEach(row => {
+            const searchTerms = row.getAttribute('data-search-terms');
+            if (query === '' || searchTerms.includes(query)) {
+                row.style.display = ''; 
+            } else {
+                row.style.display = 'none'; 
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

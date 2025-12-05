@@ -1,0 +1,79 @@
+{% extends "admin/base_admin.html" %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Customer Details: {{ customer.name }}</h2>
+    <a href="{{ url_for('admin_customers') }}" class="btn btn-outline-secondary">Back to Customer List</a>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="admin-card p-4 h-100">
+            <h5 class="fw-bold text-danger mb-3">Customer Profile</h5>
+            <p class="mb-1"><strong>Email:</strong> {{ customer.email }}</p>
+            <p class="mb-1"><strong>Phone:</strong> {{ customer.phone }}</p>
+            <p class="mb-1"><strong>Joined:</strong> {{ customer.created.strftime('%d %b, %Y') }}</p>
+            <p class="mb-0"><strong>Address:</strong> {{ customer.address1 or 'N/A' }}{% if customer.address2 %}, {{ customer.address2 }}{% endif %}</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="admin-card p-4 h-100">
+            <h5 class="fw-bold text-success mb-3">Order Metrics</h5>
+            <p class="mb-1 small text-uppercase fw-bold text-muted">Lifetime Value</p>
+            <h3 class="fw-bold mb-0 text-success">₹{{ "%.2f"|format(lifetime_value) }}</h3>
+            
+            <p class="mb-1 mt-3 small text-uppercase fw-bold text-muted">Total Orders Placed</p>
+            <h4 class="fw-bold mb-0">{{ orders|length }}</h4>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card p-0 overflow-hidden">
+    <h5 class="fw-bold p-4 border-bottom mb-0">Order History ({{ orders|length }} Total)</h5>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Date</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td class="ps-4 small">{{ order.created.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td class="fw-bold">{{ order.product.name }}</td>
+                    <td>x{{ order.quantity }}</td>
+                    <td>
+                        <span class="badge rounded-pill 
+                            {% if order.status == 'Delivered' %}bg-success
+                            {% elif order.status == 'Pending' %}bg-warning text-dark
+                            {% elif order.status == 'Cancelled' %}bg-danger
+                            {% else %}bg-primary{% endif %}">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if order.payment %}
+                            <span class="badge bg-success">Paid</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Unpaid</span>
+                        {% endif %}
+                    </td>
+                    <td class="fw-bold">₹{{ order.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if not orders %}
+        <div class="text-center py-4 text-muted">No orders placed by this customer yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

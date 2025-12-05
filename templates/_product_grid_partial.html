@@ -1,0 +1,69 @@
+<div class="row g-4">
+    {% for p in products %}
+    <div class="col-6 col-md-4 col-lg-4 col-xl-3 product-item-col fade-in-item">
+        <div class="elegant-card h-100 d-flex flex-column">
+            <!-- Image Link -->
+            <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
+                <div class="img-wrapper position-relative">
+                    <img src="{{ url_for('static', filename=p.image_url) }}" alt="{{ p.name }}">
+                    {% if p.stock <= 0 %}
+                        <div class="position-absolute top-50 start-50 translate-middle badge bg-secondary opacity-75 shadow">Out of Stock</div>
+                    {% endif %}
+                </div>
+            </a>
+
+            <!-- Card Content -->
+            <div class="card-content d-flex flex-column flex-grow-1">
+                <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
+                    <h5 class="product-title text-truncate" title="{{ p.name }}">{{ p.name }}</h5>
+                </a>
+                <p class="text-muted small mb-2">{{ p.category|capitalize }}</p>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-warning text-dark rounded-pill me-1" style="font-size:0.7rem;">{{ p.rating }} <i class="bi bi-star-fill"></i></span>
+                    </div>
+                    <div class="price-tag">₹{{ p.price }}</div>
+                </div>
+
+                <!-- Add to Cart Form -->
+                <!-- Note: We use a special class 'dynamic-cart-form' for delegation -->
+                <form class="dynamic-cart-form mt-auto d-flex align-items-center gap-2"
+                    data-url="{{ url_for('add_to_cart', product_id=p.id) }}"
+                    data-product-id="{{ p.id }}"
+                    data-product-name="{{ p.name }}"
+                    data-product-price="{{ p.price }}">
+                    
+                    <div class="d-flex align-items-center bg-white rounded-pill border px-1">
+                        <button type="button" class="btn-qty-custom quantity-left-minus">-</button>
+                        <input type="number" name="quantity" class="form-control border-0 bg-transparent text-center p-0 qty-input" 
+                            value="1" min="1" style="width: 30px; font-weight:600; font-size: 0.9rem;">
+                        <button type="button" class="btn-qty-custom quantity-right-plus">+</button>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark btn-sm flex-grow-1 rounded-pill" {% if p.stock <= 0 %}disabled{% endif %}>
+                        {% if p.stock > 0 %}Add <i class="bi bi-bag-plus"></i>{% else %}Sold Out{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="col-12 text-center py-5" id="no-products-msg">
+        <div class="p-5 bg-white rounded-4 shadow-sm d-inline-block">
+            <i class="bi bi-search display-4 text-muted mb-3"></i>
+            <h5 class="text-dark">No products found</h5>
+            <p class="text-muted">Try adjusting your filters.</p>
+            <button onclick="resetFilters()" class="btn btn-outline-danger rounded-pill mt-2">Clear All Filters</button>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Hidden Metadata for JS -->
+    <div id="paging-metadata" 
+        data-has-next="{{ pagination.has_next }}" 
+        data-next-page="{{ pagination.next_num }}"
+        style="display:none;">
+    </div>
+</div>

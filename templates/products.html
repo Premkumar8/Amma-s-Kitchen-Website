@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}Shop All - Amma's Kitchen{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background: #f8f9fa; min-height: 100vh;">
+  <div class="container-fluid px-4">
+    
+    <!-- Header & Mobile Filter Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color:#be123c;">All Products</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 small">
+                  <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
+                  <li class="breadcrumb-item active">Shop</li>
+                </ol>
+            </nav>
+        </div>
+        <button class="btn btn-white border shadow-sm d-lg-none rounded-pill px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+            <i class="bi bi-funnel-fill text-danger me-2"></i>Filters
+        </button>
+    </div>
+
+    <div class="row g-4">
+      
+      <!-- SIDEBAR (Desktop) -->
+      <div class="col-lg-3 col-xl-2 d-none d-lg-block">
+         {% include '_filter_sidebar_content.html' %}
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="col-lg-9 col-xl-10">
+        <!-- Sort Bar -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted small" id="result-count">Showing results</span>
+            <select class="form-select form-select-sm border-0 shadow-sm w-auto bg-white rounded-pill" id="sortSelect" onchange="applyFilters()">
+                <option value="newest">Newest First</option>
+                <option value="price_low">Price: Low to High</option>
+                <option value="price_high">Price: High to Low</option>
+            </select>
+        </div>
+
+        <!-- Products Grid Container -->
+        <div id="products-grid-container" class="row g-4" style="min-height: 400px; position: relative;">
+            <!-- Initial Load -->
+            {% include '_product_grid_partial.html' %}
+        </div>
+        
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="text-center py-5 d-none">
+            <div class="spinner-border text-danger" role="status"></div>
+        </div>
+
+        <!-- Load More Button Container -->
+        <div class="text-center mt-5 w-100" id="load-more-container" {% if not pagination.has_next %}style="display:none;"{% endif %}>
+            <button id="load-more-btn" class="btn btn-outline-danger px-5 py-2 rounded-pill fw-bold" onclick="loadMore()">
+                Load More Products <i class="bi bi-arrow-down ms-2"></i>
+            </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFFCANVAS FILTER (Mobile) -->
+<div class="offcanvas offcanvas-start rounded-end-4" tabindex="-1" id="filterOffcanvas">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title fw-bold text-danger">Filters</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+     {% include '_filter_sidebar_content.html' %}
+     <button class="btn btn-danger w-100 rounded-pill mt-4" data-bs-dismiss="offcanvas">View Results</button>
+  </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+    let currentPage = 1;
+    let isLoading = false;
+
+    function resetFilters() {
+        document.querySelectorAll('.cat-check').forEach(c => c.checked = false);
+        document.getElementById('priceRange').value = {{ global_max_price }};
+        document.getElementById('priceVal').textContent = '₹{{ global_max_price }}';
+        document.getElementById('inStockOnly').checked = false;
+        document.getElementById('sortSelect').value = 'newest';
+        applyFilters(); 
+    }
+
+    function getFilterParams(page) {
+        const categories = Array.from(document.querySelectorAll('.cat-check:checked')).map(c => c.value);
+        const maxPrice = document.getElementById('priceRange').value;
+        const stock = document.getElementById('inStockOnly').checked;
+        const sort = document.getElementById('sortSelect').value;
+
+        const params = new URLSearchParams();
+        params.append('page', page);
+        params.append('max_price', maxPrice);
+        params.append('stock', stock);
+        params.append('sort', sort);
+        categories.forEach(c => params.append('category', c));
+        
+        return params;
+    }
+
+    function applyFilters() {
+        currentPage = 1;
+        const grid = document.getElementById('products-grid-container');
+        grid.style.opacity = '0.5';
+        
+        fetch(`/products?${getFilterParams(1).toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            grid.innerHTML = html;
+            grid.style.opacity = '1';
+            updateLoadMoreButton(html);
+        });
+    }
+
+    function loadMore() {
+        if (isLoading) return;
+        isLoading = true;
+        
+        const btn = document.getElementById('load-more-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
+        
+        fetch(`/products?${getFilterParams(currentPage + 1).toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newItems = doc.querySelectorAll('.product-item-col');
+            const grid = document.getElementById('products-grid-container');
+            
+            newItems.forEach(item => {
+                item.classList.add('fade-in-item'); 
+                grid.appendChild(item);
+            });
+
+            currentPage++; 
+            updateLoadMoreButton(html);
+            
+            btn.innerHTML = originalText;
+            isLoading = false;
+        });
+    }
+
+    function updateLoadMoreButton(htmlString) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, 'text/html');
+        const meta = doc.getElementById('paging-metadata');
+        const container = document.getElementById('load-more-container');
+        
+        if (meta && meta.getAttribute('data-has-next') === 'True') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+
+    // --- EVENT DELEGATION FOR CART (FIXED: No Redirect) ---
+    document.getElementById('products-grid-container').addEventListener('click', function(e) {
+        
+        // 1. Handle Quantity Buttons
+        if (e.target.classList.contains('quantity-right-plus') || e.target.classList.contains('quantity-left-minus')) {
+            const btn = e.target;
+            const input = btn.parentElement.querySelector('.qty-input');
+            let val = parseInt(input.value) || 1;
+            
+            if (btn.classList.contains('quantity-right-plus')) {
+                input.value = val + 1;
+            } else {
+                input.value = Math.max(1, val - 1);
+            }
+        }
+
+        // 2. Handle Add to Cart Submission
+        const submitBtn = e.target.closest('button[type="submit"]');
+        if (submitBtn) {
+            const form = submitBtn.closest('.dynamic-cart-form');
+            if (form) {
+                e.preventDefault(); // Stop page reload/submit
+
+                // A. CLIENT-SIDE UPDATE (UI Updates Immediately)
+                const id = form.dataset.productId;
+                const name = form.dataset.productName;
+                const price = parseFloat(form.dataset.productPrice);
+                const qtyInput = form.querySelector('.qty-input');
+                const quantity = parseInt(qtyInput.value);
+
+                // Update global cart object (localStorage logic from base.html)
+                if (window.cart) {
+                    if (!window.cart[id]) {
+                        window.cart[id] = { id, name, price, quantity };
+                    } else {
+                        window.cart[id].quantity += quantity;
+                    }
+                    // Save & Update Header
+                    saveCart(); 
+                    updateCartDisplay();
+                }
+
+                // B. TRIGGER VISUAL CUES
+                const cartBtn = document.getElementById('navbar-cart-btn');
+                if(cartBtn) {
+                    cartBtn.classList.remove('cart-bump-anim');
+                    void cartBtn.offsetWidth; // Trigger reflow
+                    cartBtn.classList.add('cart-bump-anim');
+                }
+                
+                const reminder = document.getElementById('cart-reminder');
+                if(reminder) {
+                    reminder.classList.add('show');
+                    setTimeout(() => {
+                        reminder.classList.remove('show');
+                        if(cartBtn) cartBtn.classList.remove('cart-bump-anim');
+                    }, 3000);
+                }
+
+                // C. SERVER-SIDE SYNC (Silent)
+                // We send the data to the server. If it redirects to login, we just IGNORE it.
+                // The user sees the cart update via Step A (LocalStorage).
+                const formData = new FormData();
+                formData.append('quantity', quantity);
+                
+                fetch(form.dataset.url, {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    // We intentionally do NOTHING here. 
+                    // If response.redirected is true (user not logged in), we ignore it.
+                    // If response is ok (user logged in), DB is updated.
+                    // In both cases, the user stays on the page and sees the cart update.
+                }).catch(err => console.log("Background cart sync failed (likely guest user)", err));
+            }
+        }
+    });
+
+    // Attach Filter Listeners
+    document.getElementById('priceRange').addEventListener('input', function() {
+        document.getElementById('priceVal').textContent = '₹' + this.value;
+        applyFilters();
+    });
+    document.getElementById('inStockOnly').addEventListener('change', applyFilters);
+    document.querySelectorAll('.cat-check').forEach(c => c.addEventListener('change', applyFilters));
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-item {
+        animation: fadeIn 0.5s ease forwards;
+    }
+</style>
+{% endblock %}

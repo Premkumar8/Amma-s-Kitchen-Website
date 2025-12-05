@@ -1,0 +1,50 @@
+<div class="card filter-card border-0 rounded-4" style="background: #fff;">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="fw-bold text-dark mb-0"><i class="bi bi-sliders2 me-2 text-danger"></i>Filters</h6>
+            <button class="btn btn-link btn-sm text-muted p-0 text-decoration-none small" onclick="resetFilters()">
+                <i class="bi bi-arrow-counterclockwise"></i> Reset
+            </button>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-bold text-muted small text-uppercase mb-2">Category</label>
+            <div class="d-flex flex-column gap-2">
+                {% for cat in all_categories %}
+                <div class="form-check">
+                    <input class="form-check-input cat-check" type="checkbox" value="{{ cat }}" id="cat_{{ loop.index }}">
+                    <label class="form-check-label text-dark" for="cat_{{ loop.index }}" style="cursor:pointer; font-size:0.95rem;">
+                        {{ cat|capitalize }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <hr class="opacity-10 my-4">
+
+        <div class="mb-4">
+            <label class="form-label fw-bold text-muted small text-uppercase mb-3">Max Price</label>
+            <input type="range" class="form-range custom-range" 
+                   min="0" max="{{ global_max_price }}" value="{{ global_max_price }}" step="10" 
+                   id="priceRange">
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <small class="text-muted">₹0</small>
+                <div class="badge bg-dark rounded-pill px-3 py-2" id="priceVal">₹{{ global_max_price }}</div>
+            </div>
+        </div>
+
+        <div class="position-relative">
+            <input class="btn-check-custom" type="checkbox" id="inStockOnly">
+            <label class="stock-toggle-label user-select-none w-100" for="inStockOnly">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-box-seam"></i>
+                    <span class="fw-bold" style="font-size: 0.9rem;">In Stock Only</span>
+                </div>
+                <div class="stock-icon-circle">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+            </label>
+        </div>
+    </div>
+</div>

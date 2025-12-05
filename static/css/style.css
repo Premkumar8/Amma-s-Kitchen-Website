@@ -942,3 +942,461 @@ h1,h2,h3,h4,h5,h6 {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* --- FIXED ELEGANT CARD CSS --- */
+
+/* 1. The Card Container: Forces White Background & Rounded Corners */
+.elegant-card {
+    background-color: #ffffff !important; /* Forces white background */
+    border: 1px solid #e0e0e0; /* Light border */
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Subtle shadow */
+    overflow: hidden; /* Cuts off any overflowing images */
+    height: 100%; /* Ensures all cards in a row are same height */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover Effect */
+.elegant-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+    border-color: #be123c; /* Highlight border on hover */
+}
+
+/* 2. The Image Wrapper: CONSTANT HEIGHT */
+/* This is the most important part to fix the "collapsed" look */
+.img-wrapper {
+    height: 220px; /* Fixed height */
+    width: 100%;
+    background-color: #f8f9fa; /* Light gray background behind the product */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* 3. The Image Itself: Contain Mode */
+.img-wrapper img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain; /* Ensures the Curd cup doesn't stretch or zoom */
+    display: block;
+}
+
+/* 4. Card Content */
+.card-content {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+    text-decoration: none;
+    display: block;
+}
+
+.price-tag {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #be123c;
+}
+
+/* Quantity Controls */
+.btn-qty-custom {
+    border: 1px solid #ddd;
+    background: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.btn-qty-custom:hover {
+    background: #be123c;
+    color: white;
+    border-color: #be123c;
+}
+
+/* Testimonial Card Styling */
+.testimonial-card {
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-top: 4px solid #be123c; /* Amma's Kitchen Brand Red */
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    height: 100%; /* Ensures equal height in Swiper */
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(190, 18, 60, 0.15); /* Reddish shadow on hover */
+}
+
+/* Decorative Quote Icon */
+.testimonial-quote-icon {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 4rem;
+    line-height: 1;
+    color: #fecaca; /* Very light red */
+    opacity: 0.3;
+    font-family: serif;
+    pointer-events: none;
+}
+
+/* User Avatar Area */
+.testimonial-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-right: 15px;
+}
+
+/* Review Text */
+.testimonial-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    flex-grow: 1; /* Pushes the tags to the bottom */
+}
+
+/* Product Tags */
+.product-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35em 0.8em;
+    border-radius: 50px;
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+/* Star Rating */
+.star-rating i {
+    font-size: 0.9rem;
+    margin-right: 2px;
+}
+
+/* --- Custom Filter Styling --- */
+
+/* 1. The Container Card */
+.filter-card {
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+}
+
+/* 2. Custom Range Slider */
+.custom-range::-webkit-slider-runnable-track {
+    background: #ffe4e6; /* Light pink track */
+    height: 6px;
+    border-radius: 10px;
+}
+
+.custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #be123c; /* Brand Red */
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    margin-top: -6px; /* Centers thumb on track */
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+}
+
+.custom-range:active::-webkit-slider-thumb {
+    transform: scale(1.2);
+}
+
+/* 3. The "Stock" Toggle Card */
+/* We hide the actual checkbox input */
+.btn-check-custom {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+/* We style the label to look like a button/card */
+.stock-toggle-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #555;
+}
+
+.stock-toggle-label:hover {
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+}
+
+/* When Checked: Turn Green/Active */
+.btn-check-custom:checked + .stock-toggle-label {
+    border-color: #be123c; /* Brand Color */
+    background-color: #fff1f2; /* Very light red bg */
+    color: #be123c;
+    box-shadow: 0 4px 10px rgba(190, 18, 60, 0.15);
+}
+
+.stock-icon-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #aaa;
+    transition: all 0.3s;
+}
+
+.btn-check-custom:checked + .stock-toggle-label .stock-icon-circle {
+    background: #be123c;
+    color: #fff;
+}
+
+/* 1. The Cart Button "Pop" Animation */
+@keyframes cart-bounce {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.2); box-shadow: 0 0 15px rgba(190, 18, 60, 0.5); }
+    100% { transform: scale(1); }
+}
+
+.cart-bump-anim {
+    animation: cart-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-color: #be123c !important;
+    background-color: #fff1f2 !important; /* Light red flash */
+}
+
+/* 2. The "Check Here" Floating Tooltip */
+.cart-reminder-tooltip {
+    position: fixed;
+    top: 85px; /* Adjust based on your navbar height */
+    right: 20px; /* Aligns with the cart button */
+    background-color: #1f2937; /* Dark gray */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(20px); /* Start slightly lower */
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none; /* Let clicks pass through */
+}
+
+.cart-reminder-tooltip.show {
+    opacity: 1;
+    transform: translateY(0); /* Bounce up */
+}
+
+/* The Little Triangle Arrow on top of the tooltip */
+.cart-reminder-tooltip .arrow-up {
+    width: 0; 
+    height: 0; 
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #1f2937;
+    position: absolute;
+    top: -8px;
+    right: 25px; /* Position triangle under the cart button */
+}
+
+/* 1. Typography & Branding */
+.text-brand {
+    color: #be123c;
+}
+.bg-brand {
+    background-color: #be123c;
+}
+.font-serif {
+    font-family: 'Georgia', 'Times New Roman', serif; /* Fallback to serif for premium feel */
+}
+
+/* 2. Minimalist Hero */
+.hero-badge {
+    background: #fff0f3;
+    color: #be123c;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    display: inline-block;
+}
+
+/* 3. Feature Images (The "Values" Strip) */
+.feature-image-box {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+.feature-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+.feature-item:hover .feature-image-box {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(190, 18, 60, 0.25);
+    border-color: #be123c;
+}
+.feature-item:hover .feature-image-box img {
+    transform: scale(1.1);
+}
+
+/* 4. Timeline / Story Section */
+.story-image-container {
+    position: relative;
+    padding: 20px;
+}
+.story-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none; /* Removed red border */
+    border-radius: 8px;
+    z-index: 0;
+    transform: translate(-10px, -10px);
+}
+.story-img {
+    position: relative;
+    z-index: 1;
+    border-radius: 4px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* 5. Professional Contact Form */
+.contact-wrapper {
+    background: #fff;
+    box-shadow: 0 0 50px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.contact-info-sidebar {
+    background: #1f2937; /* Dark Charcoal */
+    color: #fff;
+}
+.form-control-pro {
+    border: none;
+    border-bottom: 2px solid #eee;
+    border-radius: 0;
+    padding: 15px 0;
+    background: transparent;
+}
+.form-control-pro:focus {
+    box-shadow: none;
+    border-bottom-color: #be123c;
+    background: transparent;
+}
+.btn-brand {
+    background-color: #be123c;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+.btn-brand:hover {
+    background-color: #9f1239;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Icon Box for Info Cards */
+.icon-box-primary {
+    width: 60px;
+    height: 60px;
+    background-color: #fff0f3; /* Light Pink */
+    color: #be123c; /* Brand Red */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect for Info Cards */
+.contact-card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.contact-card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+}
+.contact-card-hover:hover .icon-box-primary {
+    background-color: #be123c;
+    color: #fff;
+}
+
+/* Form Floating Labels Overrides */
+.form-floating > .form-control {
+    border-radius: 8px;
+}
+.form-floating > .form-control:focus {
+    background-color: #fff !important;
+    box-shadow: 0 0 0 4px rgba(190, 18, 60, 0.1);
+    border: 1px solid #be123c !important;
+}
+.form-floating > label {
+    color: #6c757d;
+}
+.form-floating > .form-control:focus ~ label {
+    color: #be123c;
+}
+
+/* Map Filter adjustment */
+iframe {
+    transition: filter 0.3s ease;
+}
+iframe:hover {
+    filter: grayscale(0) contrast(1) !important;
+}

@@ -1,0 +1,68 @@
+{% extends "admin/base_admin.html" %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Products</h2>
+    <a href="{{ url_for('admin_add_product') }}" class="btn btn-danger">
+        <i class="bi bi-plus-lg me-2"></i>Add Product
+    </a>
+</div>
+
+<div class="admin-card p-4">
+    <div class="table-responsive">
+        <table class="table align-middle table-hover">
+            <thead class="bg-light">
+                <tr>
+                    <th style="width: 80px;">Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <div class="bg-light rounded border d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; overflow: hidden;">
+                            <img src="{{ url_for('static', filename=product.images[0].image_url if product.images else 'images/placeholder.svg') }}" 
+                                 alt="img" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </td>
+                    <td class="fw-bold">{{ product.name }}</td>
+                    <td><span class="badge bg-light text-dark border text-uppercase small">{{ product.category }}</span></td>
+                    <td>₹{{ product.price }}</td>
+                    <td>
+                        {% if product.stock > 0 %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                {{ product.stock }} in stock
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                Out of stock
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ url_for('admin_edit_product', id=product.id) }}" class="btn btn-sm btn-outline-primary me-1" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{{ url_for('admin_delete_product', id=product.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete {{ product.name }}?')" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="bi bi-box-seam display-4 d-block mb-3 opacity-50"></i>
+                        No products found. Click "Add Product" to start.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

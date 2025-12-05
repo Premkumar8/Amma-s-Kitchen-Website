@@ -1,0 +1,38 @@
+{% extends "admin/base_admin.html" %}
+
+{% block admin_content %}
+<h2 class="fw-bold mb-4">Registered Customers</h2>
+
+<div class="admin-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light border-bottom">
+                <tr>
+                    <th class="ps-4">Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Joined</th>
+                    <th>Orders</th>
+                    <th class="text-end">Actions</th> </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td class="ps-4 fw-bold">{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.created.strftime('%d %b, %Y') }}</td>
+                    <td><span class="badge bg-secondary rounded-pill">{{ user.orders|length }} Orders</span></td>
+                    
+                    <td class="text-end">
+                        <a href="{{ url_for('admin_customer_details', user_id=user.id) }}" class="btn btn-sm btn-info text-white">
+                            View <i class="bi bi-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
