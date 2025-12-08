@@ -41,7 +41,6 @@ MarkupSafe==3.0.2
 openai==2.9.0
 proto-plus==1.26.1
 protobuf==5.29.5
-psycopg2
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.23
