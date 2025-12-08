@@ -738,5 +738,55 @@
         }
       });
     </script>
+    <!-- ===== START CHATBOT WIDGET ===== -->
+    <div id="chatbot-widget" class="chatbot-widget hidden">
+        <div class="chatbot-header">
+            <div class="header-content">
+                <img src="{{ url_for('static', filename='images/Logo.jpg') }}"
+                    alt="Amma" class="amma-avatar">
+                
+                <div class="header-info">
+                    <h3>Chat Assistant</h3>
+                    <span>• Online</span>
+                </div>
+            </div>
+
+            <button id="minimize-btn" class="minimize-btn" aria-label="Close Chat">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="chatbot-messages" id="chat-messages">
+            </div>
+        
+        <div class="chatbot-input-area">
+            <input 
+                type="text" 
+                id="chat-input" 
+                placeholder="Type your question here..." 
+                autocomplete="off"
+            >
+            <button id="send-btn" class="send-btn" aria-label="Send">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <button id="chatbot-toggle" class="chatbot-toggle" aria-label="Open Chat">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="pulse"></span>
+    </button>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <!-- ===== END CHATBOT WIDGET ===== -->
   </body>
 </html>

@@ -1,0 +1,314 @@
+/* =========================================
+   1. VARIABLES & THEME
+   ========================================= */
+:root {
+    /* Warm, appetizing colors for Amma's Kitchen */
+    --chat-primary: #ff6b35;       /* Vibrant Orange */
+    --chat-gradient: linear-gradient(135deg, #ff6b35 0%, #ff9f43 100%);
+    --chat-bg: #ffffff;
+    --chat-bg-secondary: #f4f4f9;  /* Light grey for background */
+    --msg-bot-bg: #f0f2f5;         /* Light grey for bot */
+    --msg-user-bg: #ff6b35;        /* Orange for user */
+    --text-dark: #2d3436;
+    --text-white: #ffffff;
+    --text-time: #b2bec3;
+    --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.1);
+    --shadow-strong: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+/* =========================================
+   2. TOGGLE BUTTON (Floating Action Button)
+   ========================================= */
+.chatbot-toggle {
+    /* ... keep your existing position/size styles ... */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 65px;
+    height: 65px;
+    background: var(--chat-gradient);
+    border-radius: 50%;
+    color: white;
+    border: none;
+    /* ... */
+    
+    /* ADD THIS to center the SVG */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001; /* Ensure it sits on top of everything */
+}
+
+.chatbot-toggle:hover {
+    transform: scale(1.1) rotate(-10deg);
+}
+
+/* Pulse Animation */
+.chatbot-toggle .pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 107, 53, 0.6);
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* =========================================
+   3. MAIN WIDGET CONTAINER
+   ========================================= */
+.chatbot-widget {
+    position: fixed;
+    bottom: 110px;
+    right: 30px;
+    width: 380px;
+    height: 550px;
+    background: var(--chat-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow-strong);
+    display: flex;
+    flex-direction: column;
+    z-index: 10000;
+    overflow: hidden;
+    transform-origin: bottom right;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.chatbot-widget.hidden {
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* =========================================
+   4. HEADER
+   ========================================= */
+.chatbot-header {
+    background: var(--chat-gradient);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.amma-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    object-fit: cover;
+    background: white;
+}
+
+.header-info h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.header-info span {
+    font-size: 12px;
+    opacity: 0.9;
+    display: block;
+}
+
+.minimize-btn {
+    background: transparent;
+    border: none;
+    color: white; /* Makes the SVG white */
+    cursor: pointer;
+    opacity: 0.8;
+    transition: all 0.2s;
+    padding: 8px;
+    display: flex;       /* Centers the icon */
+    align-items: center; 
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.minimize-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.2); /* Subtle hover circle */
+    transform: rotate(90deg); /* Nice spin effect on hover */
+}
+
+/* =========================================
+   5. MESSAGES AREA
+   ========================================= */
+.chatbot-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: var(--chat-bg-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar styling */
+.chatbot-messages::-webkit-scrollbar {
+    width: 6px;
+}
+.chatbot-messages::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 3px;
+}
+
+/* Message Bubbles */
+.message {
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+    animation: fade-in-up 0.3s ease;
+}
+
+.message-content {
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.message-time {
+    font-size: 10px;
+    color: var(--text-time);
+    margin-top: 5px;
+    align-self: flex-end;
+}
+
+/* Bot Styles */
+.message.amma {
+    align-self: flex-start;
+}
+.message.amma .message-content {
+    background: var(--msg-bot-bg);
+    color: var(--text-dark);
+    border-bottom-left-radius: 4px; /* Tail effect */
+}
+
+/* User Styles */
+.message.user {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+.message.user .message-content {
+    background: var(--msg-user-bg);
+    color: var(--text-white);
+    border-bottom-right-radius: 4px; /* Tail effect */
+}
+.message.user .message-time {
+    align-self: flex-start;
+}
+
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   6. INPUT AREA
+   ========================================= */
+.chatbot-input-area {
+    padding: 15px;
+    background: white;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#chat-input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 14px;
+    background: #f9f9f9;
+    transition: all 0.3s;
+    outline: none;
+}
+
+#chat-input:focus {
+    background: white;
+    border-color: var(--chat-primary);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.send-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--chat-primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;       /* Centers the SVG */
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    padding-left: 4px; /* Optical adjustment to center the send arrow */
+}
+
+.send-btn:hover {
+    transform: scale(1.1);
+    background: #e05e2e;
+}
+
+/* =========================================
+   7. TYPING INDICATOR
+   ========================================= */
+.typing {
+    display: flex;
+    gap: 4px;
+    padding: 5px 0;
+}
+.typing span {
+    width: 6px;
+    height: 6px;
+    background: #b2bec3;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+.typing span:nth-child(1) { animation-delay: -0.32s; }
+.typing span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+/* =========================================
+   8. MOBILE RESPONSIVENESS
+   ========================================= */
+@media (max-width: 480px) {
+    .chatbot-widget {
+        width: 100%;
+        height: 100%; /* Full screen on mobile */
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+    }
+    .chatbot-header {
+        padding: 15px;
+    }
+    .chatbot-toggle {
+        bottom: 20px;
+        right: 20px;
+    }
+}

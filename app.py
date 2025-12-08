@@ -10,18 +10,37 @@ import json
 import razorpay
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
+# ===== CHATBOT IMPORTS =====
+import os
+import google.generativeai as genai  # <--- NEW LIBRARY
+import uuid
+from functools import lru_cache
+import os
+# 👇 ADD THESE TWO LINES HERE
+from dotenv import load_dotenv
+load_dotenv()  # This loads the variables from .env
+
+# Initialize OpenAI client
+# 👇 Ensure this line is strictly after load_dotenv()
+# Configure Google Gemini
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+# Initialize OpenAI client
+model = genai.GenerativeModel('gemini-2.5-flash')
+
+conversations = {}
+# ===== END CHATBOT IMPORTS =====
+
 # -------------------------------
 # App Initialization
 # -------------------------------
 app = Flask(__name__)
 app.secret_key = 'your_super_secret_key_change_me'
-
 # -------------------------------
 # Database Config
 # -------------------------------
 # Make sure you have a database named 'amma' created in MySQL.
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db:5432/ammas_kitchen'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db:5432/ammas_kitchen'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ammaskitchen_user:7gL0eP48duTTG8ccRfyUWrYsJMo4PuP8@dpg-d3uvp4v5r7bs73frfnmg-a:5432/ammaskitchen'
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WelComeSai08@948@db:5432/ammas_kitchen'
@@ -498,20 +517,23 @@ def show_category(category_name):
 # -------------------------------
 
 
-client = razorpay.Client(auth=("YOUR_KEY_ID", "YOUR_KEY_SECRET"))
+#api_key = razorpay.Client(auth=("YOUR_KEY_ID", "YOUR_KEY_SECRET"))
+
+razorpay_client = razorpay.Client(auth=("YOUR_KEY_ID", "YOUR_KEY_SECRET"))
 
 @app.route("/create_order", methods=["POST"])
 def create_order():
-    cart_total = int(float(request.form["amount"]) * 100)  # Razorpay expects paise
+    cart_total = int(float(request.form["amount"]) * 100)
     payment_method = request.form["payment_method"]
-    order = client.order.create({
+    
+    # CHANGE: Use 'razorpay_client' here
+    order = razorpay_client.order.create({
         "amount": cart_total,
         "currency": "INR",
         "receipt": "order_rcptid_11",
         "payment_capture": 1
     })
     return jsonify(order)
-
 # In checkout.html, call Razorpay JS when user clicks Pay button.
 
 
@@ -1095,6 +1117,113 @@ def admin_customer_details(user_id):
                            customer=customer, 
                            orders=customer_orders, 
                            lifetime_value=lifetime_value)
+
+# ===== CHATBOT ROUTES =====
+# ---------------------------------------------------------
+# Chatbot Helper Function (Place this above the /api/chat route)
+# ---------------------------------------------------------
+def get_chatbot_system_prompt():
+    """Generates a system prompt with bulk discount logic."""
+    
+    # 1. Fetch products
+    products = Product.query.all()
+    
+    # 2. Create menu list
+    inventory_text = "CURRENT MENU & BASE PRICING:\n"
+    for p in products:
+        stock_status = "In Stock" if p.stock > 0 else "Out of Stock"
+        # Explicitly state this is the base price
+        inventory_text += f"- {p.name}\n  Available Sizes: {p.qty}\n  Base Price: ₹{p.price} (Price for the smallest size listed)\n  Category: {p.category}\n  Status: {stock_status}\n\n"
+
+    # 3. Define the Logic with the Discount Rule
+    system_prompt = f"""
+    You are 'Amma's Helper', the sales assistant for Amma's Kitchen.
+    
+    PRICING & DISCOUNT RULES:
+    1. The "Base Price" listed applies to the SMALLEST size in "Available Sizes".
+    
+    2. FOR LARGER SIZES, APPLY A BULK DISCOUNT:
+       Step A: Calculate the proportional price (e.g., if 250g is 2.5x the size of 100g, multiply base price by 2.5).
+       Step B: **SUBTRACT 10%** from that total as a "Bulk Savings" discount.
+       Step C: Round the final number to the nearest whole Rupee.
+
+    EXAMPLE CALCULATION:
+    - Product: Sambar Powder. Base: 100g @ ₹60.
+    - Customer wants: 1kg (which is 10x the base).
+    - Math: 
+      1. Normal Price: 60 * 10 = ₹600.
+      2. Discount: 10% of 600 is ₹60.
+      3. Final Price: 600 - 60 = ₹540.
+    
+    YOUR BEHAVIOR:
+    - If a user asks for a large quantity, explicitly mention the savings. 
+      (e.g., "For 1kg, the price is ₹540 (including a 10% discount!)")
+    - Be warm and polite.
+    - Only sell items listed below.
+
+    {inventory_text}
+    """
+    return system_prompt
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    """Main chatbot endpoint using Google Gemini (Free)"""
+    try:
+        data = request.json
+        user_message = data.get('message', '').strip()
+        session_id = data.get('session_id', str(uuid.uuid4()))
+        
+        if not user_message:
+            return jsonify({'error': 'No message provided'}), 400
+        
+        # Initialize conversation history if new
+        if session_id not in conversations:
+            conversations[session_id] = []
+        
+        # Limit history to last 20 messages to keep it fast
+        if len(conversations[session_id]) > 20:
+            conversations[session_id] = conversations[session_id][-20:]
+
+        # Get the system instructions (Menu, Rules, etc.)
+        system_instruction = get_chatbot_system_prompt()
+
+        # Build the history for Gemini
+        # Gemini expects a list of dictionaries with 'role' ('user' or 'model') and 'parts'
+        gemini_history = []
+        
+        # 1. Add System Prompt as the first "user" message (common trick for simple implementation)
+        # OR: We can just prepend it to the context.
+        # Let's combine System Prompt + History for the best result.
+        
+        full_prompt = system_instruction + "\n\nChat History:\n"
+        for msg in conversations[session_id]:
+            role = "User" if msg['role'] == 'user' else "Model"
+            full_prompt += f"{role}: {msg['content']}\n"
+        
+        full_prompt += f"User: {user_message}\nModel:"
+
+        # Call Gemini API
+        response = model.generate_content(full_prompt)
+        assistant_message = response.text
+        
+        # Save to memory
+        conversations[session_id].append({'role': 'user', 'content': user_message})
+        conversations[session_id].append({'role': 'assistant', 'content': assistant_message})
+        
+        return jsonify({
+            'message': assistant_message,
+            'session_id': session_id,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        print(f"Gemini Error: {str(e)}")
+        return jsonify({
+            'message': "I'm having trouble thinking right now. Please try again later.",
+            'session_id': session_id
+        })
+        
+# ===== END CHATBOT ROUTES =====
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
