@@ -39,8 +39,8 @@ app.secret_key = 'your_super_secret_key_change_me'
 # Database Config
 # -------------------------------
 # Make sure you have a database named 'amma' created in MySQL.
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db:5432/ammas_kitchen'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db:5432/ammas_kitchen'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ammaskitchen_user:7gL0eP48duTTG8ccRfyUWrYsJMo4PuP8@dpg-d3uvp4v5r7bs73frfnmg-a:5432/ammaskitchen'
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WelComeSai08@948@db:5432/ammas_kitchen'
@@ -1165,9 +1165,28 @@ def get_chatbot_system_prompt():
     """
     return system_prompt
 
+def get_fallback_response(user_message):
+    """Backup logic when AI is down or quota exceeded"""
+    msg = user_message.lower()
+    
+    # 1. Simple Keyword Matching
+    if 'Sambar cost' in msg or 'sambar cost' in msg  or 'sambar price' in msg:
+        return "Our prices start at ₹60 for Sambar Powder. Larger sizes have a discount! Check the menu above."
+    elif 'delivery' in msg or 'ship' in msg:
+        return "Yes! We deliver fresh to your doorstep. Most orders arrive within 45 minutes."
+    elif 'hello' in msg or 'hi' in msg or 'namaste' in msg:
+        return "Namaste! 🙏 I am Amma's backup assistant. The main AI is taking a nap, but I can still help!"
+    elif 'stock' in msg or 'available' in msg:
+        return "Yes, we update our stock daily. Everything listed in the menu is available."
+    elif 'contact' in msg or 'phone' in msg:
+        return "You can reach us at contact@ammaskitchen.in or call +91-9999999999."
+    else:
+        # 2. Generic Safe Response
+        return "I'm having trouble connecting to my main brain right now. Please check the menu section above for all product details!"
+   
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    """Main chatbot endpoint using Google Gemini (Free)"""
+    """Smart Chatbot with Auto-Fallback"""
     try:
         data = request.json
         user_message = data.get('message', '').strip()
@@ -1180,36 +1199,41 @@ def chat():
         if session_id not in conversations:
             conversations[session_id] = []
         
-        # Limit history to last 20 messages to keep it fast
-        if len(conversations[session_id]) > 20:
-            conversations[session_id] = conversations[session_id][-20:]
+        # ---------------------------------------------------------
+        # PLAN A: TRY GOOGLE GEMINI (The Smart Brain)
+        # ---------------------------------------------------------
+        try:
+            # 1. Prepare Prompt
+            system_instruction = get_chatbot_system_prompt()
+            full_prompt = system_instruction + "\n\nChat History:\n"
+            for msg in conversations[session_id][-10:]: # Keep last 10 msgs
+                role = "User" if msg['role'] == 'user' else "Model"
+                full_prompt += f"{role}: {msg['content']}\n"
+            full_prompt += f"User: {user_message}\nModel:"
 
-        # Get the system instructions (Menu, Rules, etc.)
-        system_instruction = get_chatbot_system_prompt()
+            # 2. Call API
+            response = model.generate_content(full_prompt)
+            assistant_message = response.text
+            
+            # If successful, save to history
+            conversations[session_id].append({'role': 'user', 'content': user_message})
+            conversations[session_id].append({'role': 'assistant', 'content': assistant_message})
 
-        # Build the history for Gemini
-        # Gemini expects a list of dictionaries with 'role' ('user' or 'model') and 'parts'
-        gemini_history = []
-        
-        # 1. Add System Prompt as the first "user" message (common trick for simple implementation)
-        # OR: We can just prepend it to the context.
-        # Let's combine System Prompt + History for the best result.
-        
-        full_prompt = system_instruction + "\n\nChat History:\n"
-        for msg in conversations[session_id]:
-            role = "User" if msg['role'] == 'user' else "Model"
-            full_prompt += f"{role}: {msg['content']}\n"
-        
-        full_prompt += f"User: {user_message}\nModel:"
-
-        # Call Gemini API
-        response = model.generate_content(full_prompt)
-        assistant_message = response.text
-        
-        # Save to memory
-        conversations[session_id].append({'role': 'user', 'content': user_message})
-        conversations[session_id].append({'role': 'assistant', 'content': assistant_message})
-        
+        # ---------------------------------------------------------
+        # PLAN B: FALLBACK TO BACKUP BRAIN (The "Mock" Brain)
+        # ---------------------------------------------------------
+        except Exception as e:
+            print(f"⚠️ Google API Failed: {e}")
+            print("🔄 Switching to Fallback Mode...")
+            
+            # Call our backup function
+            assistant_message = get_fallback_response(user_message)
+            
+            # We don't save fallback messages to history to avoid confusing the AI later
+    
+        # ---------------------------------------------------------
+        # RETURN RESPONSE (Either A or B)
+        # ---------------------------------------------------------
         return jsonify({
             'message': assistant_message,
             'session_id': session_id,
@@ -1217,12 +1241,12 @@ def chat():
         })
         
     except Exception as e:
-        print(f"Gemini Error: {str(e)}")
+        # If even the fallback fails (very rare), return a generic error
+        print(f"Critical Error: {str(e)}")
         return jsonify({
-            'message': "I'm having trouble thinking right now. Please try again later.",
+            'message': "I am currently offline. Please refresh the page.",
             'session_id': session_id
-        })
-        
+        })     
 # ===== END CHATBOT ROUTES =====
 
 if __name__ == '__main__':
