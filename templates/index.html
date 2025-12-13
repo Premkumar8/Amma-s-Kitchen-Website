@@ -140,18 +140,21 @@
                   </div>
                   <div class="fw-bold fs-5 mt-2" style="color:#b91c1c;">₹{{ p.price }}</div>
                 </div>
-                <form class="add-to-cart-form d-flex flex-wrap align-items-center gap-2 mt-3"
+                <form class="add-to-cart-form d-flex flex-nowrap align-items-center gap-2 mt-3"
                       data-product-id="{{ p.id }}"
                       data-product-name="{{ p.name }}"
                       data-product-price="{{ p.price }}">
-                  <div class="input-group input-group-sm w-100">
+                  
+                  <div class="input-group input-group-sm" style="width: auto; min-width: 90px;">
                     <button type="button" class="btn btn-outline-secondary btn-qty" data-action="decrease">-</button>
-                    <input type="number" min="1" value="1" class="form-control text-center qty-input" style="min-width: 40px;">
+                    <input type="number" min="1" value="1" class="form-control text-center qty-input p-0" style="min-width: 30px;">
                     <button type="button" class="btn btn-outline-secondary btn-qty" data-action="increase">+</button>
-                    <button type="submit" class="btn btn-success btn-sm flex-fill">
-                      <i class="bi bi-cart"></i> <span class="d-none d-lg-inline">Add to Cart</span><span class="d-inline d-lg-none">Add</span>
-                    </button>
                   </div>
+
+                  <button type="submit" class="btn btn-success btn-sm flex-fill text-nowrap">
+                    <i class="bi bi-cart"></i> <span class="d-none d-lg-inline">Add to Cart</span><span class="d-inline d-lg-none">Add</span>
+                  </button>
+                  
                 </form>
               </div>
             </div>
