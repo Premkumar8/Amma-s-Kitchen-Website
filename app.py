@@ -42,7 +42,7 @@ app.secret_key = 'your_super_secret_key_change_me'
 # Database Config
 # -------------------------------
 # Make sure you have a database named 'amma' created in MySQL.
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db:5432/ammas_kitchen'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ammaskitchen_user:7gL0eP48duTTG8ccRfyUWrYsJMo4PuP8@dpg-d3uvp4v5r7bs73frfnmg-a:5432/ammaskitchen'
 
@@ -573,7 +573,10 @@ import razorpay
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import json
 
-razorpay_client = razorpay.Client(auth=("YOUR_KEY_ID", "YOUR_KEY_SECRET"))
+# Correct way to fetch both keys separately
+razorpay_client = razorpay.Client(
+    auth=(os.getenv("Razorpay_KEY_ID"), os.getenv("Razorpay_KEY_SECRET"))
+)
 
 @app.route('/checkout', methods=['GET'])
 def checkout():
@@ -584,7 +587,7 @@ def checkout():
         return redirect(url_for('login'))
     
     # 2. Pass the Key ID to the template for the frontend script
-    return render_template('checkout.html', key_id="YOUR_KEY_ID")
+    return render_template('checkout.html', key_id=os.getenv("Razorpay_KEY_ID"))
 
 @app.route("/create_order", methods=["POST"])
 def create_order():
