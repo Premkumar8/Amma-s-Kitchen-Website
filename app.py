@@ -1,14 +1,14 @@
 from functools import wraps
-from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash, make_response
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from flask_migrate import Migrate
 import json
 import razorpay
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
 # ===== CHATBOT IMPORTS =====
 import os
@@ -16,6 +16,9 @@ import google.generativeai as genai  # <--- NEW LIBRARY
 import uuid
 from functools import lru_cache
 import os
+import csv
+from io import StringIO
+
 # 👇 ADD THESE TWO LINES HERE
 from dotenv import load_dotenv
 load_dotenv()  # This loads the variables from .env
@@ -39,8 +42,8 @@ app.secret_key = 'your_super_secret_key_change_me'
 # Database Config
 # -------------------------------
 # Make sure you have a database named 'amma' created in MySQL.
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db:5432/ammas_kitchen'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db:5432/ammas_kitchen'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ammaskitchen_user:7gL0eP48duTTG8ccRfyUWrYsJMo4PuP8@dpg-d3uvp4v5r7bs73frfnmg-a:5432/ammaskitchen'
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WelComeSai08@948@db:5432/ammas_kitchen'
@@ -202,44 +205,86 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if 'user_id' in session:
+#         return redirect(url_for('index'))
+        
+#     if request.method == 'POST':
+#         email = request.form['email']
+#         password = request.form['password']
+        
+#         user = User.query.filter_by(email=email).first()
+        
+#         # 🔒 SECURE CHECK: verify the hash instead of plain text
+#         if user and check_password_hash(user.password, password):
+#             session['user_id'] = user.id
+#             session['user_name'] = user.name
+#             flash(f"Welcome back, {user.name}!", "success")
+#             return redirect(url_for('index'))
+#         else:
+#             flash("Invalid email or password.", "danger")
+            
+#     return render_template('login.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # If already logged in, don't show login page
     if 'user_id' in session:
         return redirect(url_for('index'))
-        
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
         
         user = User.query.filter_by(email=email).first()
         
-        # 🔒 SECURE CHECK: verify the hash instead of plain text
         if user and check_password_hash(user.password, password):
+            # Login Success: Set Session Variables
             session['user_id'] = user.id
             session['user_name'] = user.name
-            flash(f"Welcome back, {user.name}!", "success")
-            return redirect(url_for('index'))
+            session['is_admin'] = user.is_admin
+            
+            flash('Login successful!', 'success')
+            
+            # ---------------------------------------------------------
+            # SMART REDIRECT LOGIC
+            # ---------------------------------------------------------
+            # Check if there is a specific page they wanted to visit
+            next_page = session.pop('next_url', None) # Get and delete from session
+            
+            if next_page:
+                return redirect(next_page) # Go to Checkout (or other saved page)
+            else:
+                return redirect(url_for('index')) # Default to Home
+            # ---------------------------------------------------------
+            
         else:
-            flash("Invalid email or password.", "danger")
+            flash('Login Unsuccessful. Please check email and password', 'danger')
             
     return render_template('login.html')
 
+# --- ADD THIS AT THE VERY TOP OF APP.PY ---
+PER_PAGE = 12
+
 @app.route('/')
 def index():
-    # 1. Pagination Logic
-    page = int(request.args.get('page', 1))
-    per_page = 12
+    # Get current page, default to 1
+    page = request.args.get('page', 1, type=int)
     
-    # 2. Fetch from DB
+    # Fetch products for THIS page
     db_products = Product.query.order_by(
         Product.created.desc(), 
         Product.id.desc()
-    ).paginate(page=page, per_page=per_page, error_out=False)
+    ).paginate(page=page, per_page=PER_PAGE, error_out=False)
     
+    # Format products
     products_for_template = process_products(db_products.items)
-    # 3. Format Data
     
-    # 4. Cart Context
+    # Calculate next page number (e.g., if we are on 1, next is 2)
+    next_page_num = (page + 1) if db_products.has_next else None
+
+    # ... (Keep your existing Cart Logic here) ...
     cart_items, cart_total, cart_count = ([], 0.0, 0)
     if 'user_id' in session:
         cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
@@ -247,8 +292,8 @@ def index():
     return render_template(
         'index.html',
         products=products_for_template,
+        next_page=next_page_num,  # Pass '2' to the template
         has_next=db_products.has_next,
-        next_page=page + 1 if db_products.has_next else None,
         cart_items=cart_items,
         cart_total=cart_total,
         cart_count=cart_count
@@ -256,22 +301,27 @@ def index():
 
 @app.route('/load-products')
 def load_products():
-    page = int(request.args.get('page', 2))
-    per_page = 12
+    # 1. Get the page number requested by the button (e.g., 2, 3...)
+    # We do NOT default to 2 here anymore. We rely on the button.
+    page = request.args.get('page', type=int)
     
-    # FIX: Same stable sort here
+    # 2. Query the Database for THAT SPECIFIC page
     db_products = Product.query.order_by(
         Product.created.desc(), 
         Product.id.desc()
-    ).paginate(page=page, per_page=per_page, error_out=False)
+    ).paginate(page=page, per_page=PER_PAGE, error_out=False)
     
+    # 3. Format products
     products_for_template = process_products(db_products.items)
     
+    # 4. Calculate the NEXT page (e.g., if we loaded 2, next is 3)
+    next_page_num = (page + 1) if db_products.has_next else None
+    
+    # 5. Return only the cards
     return render_template(
-        '_product_cards.html', # This is the partial file
+        '_product_cards.html', 
         products=products_for_template,
-        has_next=db_products.has_next,
-        next_page=page + 1 if db_products.has_next else None
+        next_page=next_page_num
     )
     
 @app.route('/search')
@@ -519,55 +569,95 @@ def show_category(category_name):
 
 #api_key = razorpay.Client(auth=("YOUR_KEY_ID", "YOUR_KEY_SECRET"))
 
+import razorpay
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+import json
+
 razorpay_client = razorpay.Client(auth=("YOUR_KEY_ID", "YOUR_KEY_SECRET"))
+
+@app.route('/checkout', methods=['GET'])
+def checkout():
+    # 1. Login Check
+    if 'user_id' not in session:
+        session['next_url'] = url_for('checkout')
+        flash("Please login to proceed with checkout.", "warning")
+        return redirect(url_for('login'))
+    
+    # 2. Pass the Key ID to the template for the frontend script
+    return render_template('checkout.html', key_id="YOUR_KEY_ID")
 
 @app.route("/create_order", methods=["POST"])
 def create_order():
-    cart_total = int(float(request.form["amount"]) * 100)
-    payment_method = request.form["payment_method"]
-    
-    # CHANGE: Use 'razorpay_client' here
-    order = razorpay_client.order.create({
-        "amount": cart_total,
-        "currency": "INR",
-        "receipt": "order_rcptid_11",
-        "payment_capture": 1
-    })
-    return jsonify(order)
-# In checkout.html, call Razorpay JS when user clicks Pay button.
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
 
-
-@app.route('/checkout', methods=['GET', 'POST'])
-def checkout():
-    if request.method == 'POST':
-        # Get cart data from hidden field (sent from localStorage via JS)
-        cart_data = request.form.get('cart_data')
-        payment_method = request.form.get('payment_method')
+    try:
+        # Get amount from frontend
+        data = request.get_json()
+        amount = float(data['amount'])
         
-        if cart_data:
-            try:
-                cart_items = json.loads(cart_data)
-                # Process payment with cart_items
-                # TODO: Integrate payment gateway
-                
-                # Save order to database
-                # for item_id, item in cart_items.items():
-                #     # Create order record
-                #     pass
-                
-                flash('Payment successful!', 'success')
-                return redirect(url_for('profile'))
-            except:
-                flash('Invalid cart data', 'error')
-                return redirect(url_for('checkout'))
-        else:
-            flash('Cart is empty', 'warning')
-            return redirect(url_for('index'))
+        # Razorpay expects amount in paise (multiply by 100)
+        amount_paise = int(amount * 100)
+        
+        # Create Order
+        order_data = {
+            "amount": amount_paise,
+            "currency": "INR",
+            "receipt": f"order_rcptid_{session['user_id']}_{int(datetime.now().timestamp())}",
+            "payment_capture": 1 # Auto capture
+        }
+        
+        order = razorpay_client.order.create(data=order_data)
+        return jsonify(order)
+        
+    except Exception as e:
+        print(f"Error creating order: {e}")
+        return jsonify({'error': 'Something went wrong'}), 500
+
+@app.route("/verify_payment", methods=["POST"])
+def verify_payment():
+    if 'user_id' not in session:
+        return jsonify({'status': 'failed'}), 401
+
+    data = request.get_json()
     
-    # GET request - just render the page (cart loaded via JS)
-    return render_template('checkout.html')
+    try:
+        # 1. Verify Signature
+        razorpay_client.utility.verify_payment_signature({
+            'razorpay_order_id': data['razorpay_order_id'],
+            'razorpay_payment_id': data['razorpay_payment_id'],
+            'razorpay_signature': data['razorpay_signature']
+        })
+        
+        # 2. Payment Verified - Now Save to Database
+        cart_data = data.get('cart_data', {})
+        user_id = session['user_id']
+        
+        # Example saving logic (Adjust to your exact Order model fields)
+        # for item_key, item in cart_data.items():
+        #     new_order = Order(
+        #         user_id=user_id,
+        #         product_id=item['id'], # Ensure your cart has 'id'
+        #         quantity=item['quantity'],
+        #         total=item['price'] * item['quantity'],
+        #         status="Paid", # Or 'Pending' -> 'Paid'
+        #         address="User Address Here" # Pass address from frontend if needed
+        #     )
+        #     db.session.add(new_order)
+        #     # Create Payment Record
+        #     new_payment = Payment(order=new_order, status="Success")
+        #     db.session.add(new_payment)
+        
+        # db.session.commit()
 
-
+        return jsonify({'status': 'success'})
+        
+    except razorpay.errors.SignatureVerificationError:
+        return jsonify({'status': 'failed', 'message': 'Signature Verification Failed'})
+    except Exception as e:
+        print(f"Payment Error: {e}")
+        return jsonify({'status': 'failed', 'message': str(e)})
+    
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if 'user_id' in session:
@@ -638,15 +728,21 @@ def contact():
         
     return render_template('contact.html', cart_items=cart_items, cart_total=cart_total, cart_count=cart_count)
 
-    # 2. Standard Page Load (Cart Logic)
-    cart_items, cart_total, cart_count = ([], 0.0, 0)
-    if 'user_id' in session:
-        cart_items, cart_total, cart_count = build_cart_context(session['user_id'])
-        
-    return render_template('contact.html',
-                           cart_items=cart_items,
-                           cart_total=cart_total,
-                           cart_count=cart_count)
+@app.route('/terms', methods=['GET', 'POST'])
+def terms():
+    return render_template('terms.html')
+
+@app.route('/privacy', methods=['GET', 'POST'])
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/shipping', methods=['GET', 'POST'])
+def shipping():
+    return render_template('shipping.html')
+
+@app.route('/refund', methods=['GET', 'POST'])
+def refund():
+    return render_template('refund.html')
 
 @app.route('/products/add', methods=['GET', 'POST'])
 def product_add():
@@ -826,37 +922,265 @@ def admin_login():
             
     return render_template('admin/login.html')
 
+# @app.route('/admin')
+# @admin_required
+# def admin_dashboard():
+#     # Define Finalized Statuses for accurate business metrics
+#     finalized_statuses = ['Shipped', 'Delivered']
+#     all_statuses = ['Cancelled', 'Shipped', 'Delivered', 'Pending']
+
+#     total_sales = db.session.query(func.sum(Order.total)).filter(
+#         Order.status.in_(finalized_statuses)
+#     ).scalar() or 0
+#     total_orders = Order.query.filter(
+#         Order.status.in_(all_statuses)
+#     ).count()
+    
+#     total_products = Product.query.count()
+#     total_customers = User.query.filter_by(is_admin=False).count()
+    
+#     page = request.args.get('page', 1, type=int)
+#     per_page = 5
+
+#     recent_orders = Order.query.filter(
+#         Order.status.in_(all_statuses)
+#     ).order_by(Order.created.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    
+#     return render_template('admin/dashboard.html', 
+#                            total_sales=total_sales,
+#                            total_orders=total_orders,
+#                            total_products=total_products,
+#                            total_customers=total_customers,
+#                            recent_orders=recent_orders) # Passes the Pagination object, not a list
+
+@app.route('/admin/export_csv')
+@admin_required
+def export_csv():
+    import csv
+    from io import StringIO
+    from flask import make_response
+
+    # 1. Get arguments
+    start_str = request.args.get('start_date')
+    end_str = request.args.get('end_date')
+    
+    print(f"DEBUG CSV: Received Start: {start_str}, End: {end_str}") # Check your terminal
+
+    query = Order.query
+
+    # 2. Apply Date Filter
+    if start_str and end_str:
+        try:
+            start_date = datetime.strptime(start_str, '%Y-%m-%d')
+            # Add 1 day to end_date to include the whole day (e.g., up to 23:59:59)
+            end_date = datetime.strptime(end_str, '%Y-%m-%d') + timedelta(days=1)
+            
+            query = query.filter(Order.created >= start_date, Order.created < end_date)
+        except ValueError as e:
+            print(f"DEBUG CSV Error: Date format issue - {e}")
+
+    # 3. Fetch Data (Eager load user to prevent detachment errors)
+    orders = query.order_by(Order.created.desc()).all()
+    
+    print(f"DEBUG CSV: Found {len(orders)} orders to export.") # Check if this is 0
+
+    # 4. Generate CSV
+    si = StringIO()
+    cw = csv.writer(si)
+    
+    # Header
+    cw.writerow(['Order ID', 'Date', 'Customer Name', 'Email', 'Address', 'Status', 'Total Amount'])
+    
+    # Rows
+    for order in orders:
+        # Handle cases where user might be deleted (Optional safety)
+        u_name = order.user.name if order.user else "Unknown"
+        u_email = order.user.email if order.user else "Unknown"
+        
+        cw.writerow([
+            order.id, 
+            order.created.strftime('%Y-%m-%d %H:%M'), 
+            u_name,
+            u_email,
+            order.address, 
+            order.status, 
+            order.total
+        ])
+        
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=sales_report.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
 @app.route('/admin')
 @admin_required
 def admin_dashboard():
-    # Define Finalized Statuses for accurate business metrics
-    finalized_statuses = ['Shipped', 'Delivered']
-    all_statuses = ['Cancelled', 'Shipped', 'Delivered', 'Pending']
+    # ---------------------------------------------------------
+    # 1. SETUP & CONSTANTS
+    # ---------------------------------------------------------
+    finalized_statuses = ['Shipped', 'Delivered']  # For Revenue & Top Products
+    all_statuses = ['Cancelled', 'Shipped', 'Delivered', 'Pending'] # For Counts
+    
+    today = datetime.now().date()
 
+    # ---------------------------------------------------------
+    # 2. OVERVIEW CARDS
+    # ---------------------------------------------------------
     total_sales = db.session.query(func.sum(Order.total)).filter(
         Order.status.in_(finalized_statuses)
     ).scalar() or 0
-    total_orders = Order.query.filter(
-        Order.status.in_(all_statuses)
-    ).count()
     
+    total_orders = Order.query.filter(Order.status.in_(all_statuses)).count()
     total_products = Product.query.count()
     total_customers = User.query.filter_by(is_admin=False).count()
-    
-    page = request.args.get('page', 1, type=int)
-    per_page = 5
 
-    recent_orders = Order.query.filter(
-        Order.status.in_(all_statuses)
-    ).order_by(Order.created.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    # ---------------------------------------------------------
+    # 3. CHART 1: REVENUE (Line Chart)
+    # ---------------------------------------------------------
+    # A. Daily (Last 7 Days)
+    daily_labels = []
+    daily_values = []
+    for i in range(6, -1, -1):
+        target_date = today - timedelta(days=i)
+        day_total = db.session.query(func.sum(Order.total))\
+            .filter(func.date(Order.created) == target_date)\
+            .filter(Order.status.in_(finalized_statuses))\
+            .scalar() or 0
+        daily_labels.append(target_date.strftime('%a')) # Mon, Tue
+        daily_values.append(float(day_total))
+
+    # B. Monthly (Last 12 Months)
+    monthly_labels = []
+    monthly_values = []
+    for i in range(11, -1, -1):
+        date_cursor = today.replace(day=1) - timedelta(days=i*30)
+        month_total = db.session.query(func.sum(Order.total))\
+            .filter(func.extract('month', Order.created) == date_cursor.month)\
+            .filter(func.extract('year', Order.created) == date_cursor.year)\
+            .filter(Order.status.in_(finalized_statuses))\
+            .scalar() or 0
+        monthly_labels.append(date_cursor.strftime('%b')) # Jan, Feb
+        monthly_values.append(float(month_total))
+
+    # C. Yearly (Last 5 Years)
+    yearly_labels = []
+    yearly_values = []
+    for i in range(4, -1, -1):
+        target_year = today.year - i
+        year_total = db.session.query(func.sum(Order.total))\
+            .filter(func.extract('year', Order.created) == target_year)\
+            .filter(Order.status.in_(finalized_statuses))\
+            .scalar() or 0
+        yearly_labels.append(str(target_year))
+        yearly_values.append(float(year_total))
+
+    # ---------------------------------------------------------
+    # 4. CHART 2: ORDER STATUS (Doughnut Chart)
+    # ---------------------------------------------------------
+    def get_status_data(start_date):
+        results = db.session.query(Order.status, func.count(Order.id))\
+            .filter(Order.created >= start_date)\
+            .group_by(Order.status).all()
+        labels = [r[0] for r in results]
+        data = [r[1] for r in results]
+        return labels, data
+
+    daily_status_labels, daily_status_data = get_status_data(today)
+    monthly_status_labels, monthly_status_data = get_status_data(today - timedelta(days=30))
+    yearly_status_labels, yearly_status_data = get_status_data(today - timedelta(days=365))
+
+    # ---------------------------------------------------------
+    # 5. CHART 3: TOP PRODUCTS (Bar Chart)
+    # ---------------------------------------------------------
+    # Logic: Join Order directly to Product (No OrderItem table)
+    def get_top_products(start_date):
+        return db.session.query(Product.name, func.sum(Order.quantity))\
+            .join(Product, Product.id == Order.product_id)\
+            .filter(Order.created >= start_date)\
+            .filter(Order.status.in_(finalized_statuses))\
+            .group_by(Product.name)\
+            .order_by(desc(func.sum(Order.quantity)))\
+            .limit(5).all()
+
+    # Fetch Data
+    d_top = get_top_products(today)
+    daily_prod_names = [p[0] for p in d_top]
+    daily_prod_counts = [int(p[1]) for p in d_top]
+
+    m_top = get_top_products(today - timedelta(days=30))
+    monthly_prod_names = [p[0] for p in m_top]
+    monthly_prod_counts = [int(p[1]) for p in m_top]
+
+    y_top = get_top_products(today - timedelta(days=365))
+    yearly_prod_names = [p[0] for p in y_top]
+    yearly_prod_counts = [int(p[1]) for p in y_top]
+
+    # ---------------------------------------------------------
+    # 6. TABLE A: RECENT ORDERS (Standard Pagination)
+    # ---------------------------------------------------------
+    page = request.args.get('page', 1, type=int)
+    recent_orders = Order.query.filter(Order.status.in_(all_statuses))\
+        .order_by(Order.created.desc())\
+        .paginate(page=page, per_page=10, error_out=False)
+
+    # ---------------------------------------------------------
+    # 7. TABLE B: ORDER REPORT (Date Filter + Separate Pagination)
+    # ---------------------------------------------------------
+    report_start = request.args.get('report_start')
+    report_end = request.args.get('report_end')
     
+    report_query = Order.query.order_by(Order.created.desc())
+    
+    if report_start and report_end:
+        # Filter by specific range
+        try:
+            s_date = datetime.strptime(report_start, '%Y-%m-%d')
+            e_date = datetime.strptime(report_end, '%Y-%m-%d') + timedelta(days=1)
+            report_query = report_query.filter(Order.created >= s_date, Order.created < e_date)
+        except ValueError:
+            pass # Invalid date format, ignore
+    else:
+        # Default: Show Today's orders to keep page load fast
+        s_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        report_query = report_query.filter(Order.created >= s_date)
+
+    report_page = request.args.get('report_page', 1, type=int)
+    report_orders = report_query.paginate(page=report_page, per_page=20, error_out=False)
+
+    # ---------------------------------------------------------
+    # 8. RENDER TEMPLATE
+    # ---------------------------------------------------------
     return render_template('admin/dashboard.html', 
-                           total_sales=total_sales,
-                           total_orders=total_orders,
-                           total_products=total_products,
-                           total_customers=total_customers,
-                           recent_orders=recent_orders) # Passes the Pagination object, not a list
-    
+        # Overview Cards
+        total_sales=total_sales, 
+        total_orders=total_orders,
+        total_products=total_products, 
+        total_customers=total_customers,
+        
+        # Recent Orders Table
+        recent_orders=recent_orders,
+
+        # Report Table
+        report_orders=report_orders,
+        report_start=report_start,
+        report_end=report_end,
+
+        # Chart 1: Revenue
+        daily_labels=daily_labels, daily_values=daily_values,
+        monthly_labels=monthly_labels, monthly_values=monthly_values,
+        yearly_labels=yearly_labels, yearly_values=yearly_values,
+        
+        # Chart 2: Status
+        daily_status_labels=daily_status_labels, daily_status_data=daily_status_data,
+        monthly_status_labels=monthly_status_labels, monthly_status_data=monthly_status_data,
+        yearly_status_labels=yearly_status_labels, yearly_status_data=yearly_status_data,
+        
+        # Chart 3: Top Products
+        daily_prod_names=daily_prod_names, daily_prod_counts=daily_prod_counts,
+        monthly_prod_names=monthly_prod_names, monthly_prod_counts=monthly_prod_counts,
+        yearly_prod_names=yearly_prod_names, yearly_prod_counts=yearly_prod_counts
+    )
+
 UPLOAD_FOLDER = 'static/images/products'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)

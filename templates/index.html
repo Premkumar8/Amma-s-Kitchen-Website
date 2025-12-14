@@ -385,33 +385,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (loadBtn) {
     loadBtn.addEventListener('click', function() {
-      const currentPageToLoad = this.getAttribute('data-next-page');
+      // 1. Get the next page number
+      const pageToLoad = this.getAttribute('data-next-page');
       
-      const originalText = this.innerText;
       this.innerText = "Loading...";
       this.disabled = true;
 
-      fetch(`/load-products?page=${currentPageToLoad}`)
+      // 2. Fetch the new cards
+      fetch(`/load-products?page=${pageToLoad}`)
         .then(res => res.text())
         .then(html => {
           const parser = new DOMParser();
           const doc = parser.parseFromString(html, 'text/html');
           
+          // 3. Add new cards to grid
           const newCards = doc.querySelectorAll('.product-card');
           newCards.forEach(card => grid.appendChild(card));
 
-          const metadata = doc.getElementById('next-page-metadata');
+          // 4. FIND THE HIDDEN DIV (new-metadata)
+          const newMetadata = doc.getElementById('new-metadata');
           
-          if (metadata && metadata.getAttribute('data-next-page') !== 'None') {
-            loadBtn.setAttribute('data-next-page', metadata.getAttribute('data-next-page'));
-            loadBtn.innerText = originalText;
-            loadBtn.disabled = false;
+          if (newMetadata) {
+             const nextVal = newMetadata.getAttribute('data-next-page');
+             
+             // 5. UPDATE BUTTON: If there is a next page, update the attribute
+             if (nextVal && nextVal !== 'None') {
+                 loadBtn.setAttribute('data-next-page', nextVal);
+                 loadBtn.innerText = "Load More";
+                 loadBtn.disabled = false;
+             } else {
+                 // No more pages? Hide button.
+                 loadBtn.style.display = 'none';
+             }
+             newMetadata.remove(); // Clean up
           } else {
-            loadBtn.remove(); 
+             loadBtn.style.display = 'none';
           }
         })
         .catch(err => {
-          console.error('Error loading products:', err);
+          console.error(err);
           this.innerText = "Error";
         });
     });

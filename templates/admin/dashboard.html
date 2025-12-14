@@ -1,41 +1,103 @@
 {% extends "admin/base_admin.html" %}
 
 {% block admin_content %}
-<h2 class="fw-bold mb-4">Overview</h2>
+<h2 class="fw-bold mb-4">Dashboard Overview</h2>
 
 <div class="row g-4 mb-5">
     <div class="col-md-3">
-        <div class="admin-card p-4 d-flex align-items-center">
-            <div class="stat-icon bg-success-subtle text-success me-3"><i class="bi bi-currency-rupee"></i></div>
-            <div><p class="text-muted mb-0 small text-uppercase fw-bold">Total Revenue</p><h4 class="fw-bold mb-0">₹{{ "%.2f"|format(total_sales) }}</h4></div>
+        <div class="admin-card p-4 d-flex align-items-center h-100 shadow-sm rounded-4 bg-white">
+            <div class="stat-icon bg-success-subtle text-success me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="bi bi-currency-rupee fs-4"></i>
+            </div>
+            <div>
+                <p class="text-muted mb-0 small text-uppercase fw-bold">Total Revenue</p>
+                <h4 class="fw-bold mb-0">₹{{ "%.2f"|format(total_sales) }}</h4>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="admin-card p-4 d-flex align-items-center">
-            <div class="stat-icon bg-primary-subtle text-primary me-3"><i class="bi bi-cart-check"></i></div>
-            <div><p class="text-muted mb-0 small text-uppercase fw-bold">Total Orders</p><h4 class="fw-bold mb-0">{{ total_orders }}</h4></div>
+        <div class="admin-card p-4 d-flex align-items-center h-100 shadow-sm rounded-4 bg-white">
+            <div class="stat-icon bg-primary-subtle text-primary me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="bi bi-cart-check fs-4"></i>
+            </div>
+            <div>
+                <p class="text-muted mb-0 small text-uppercase fw-bold">Total Orders</p>
+                <h4 class="fw-bold mb-0">{{ total_orders }}</h4>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="admin-card p-4 d-flex align-items-center">
-            <div class="stat-icon bg-warning-subtle text-warning me-3"><i class="bi bi-box-seam"></i></div>
-            <div><p class="text-muted mb-0 small text-uppercase fw-bold">Products</p><h4 class="fw-bold mb-0">{{ total_products }}</h4></div>
+        <div class="admin-card p-4 d-flex align-items-center h-100 shadow-sm rounded-4 bg-white">
+            <div class="stat-icon bg-warning-subtle text-warning me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="bi bi-box-seam fs-4"></i>
+            </div>
+            <div>
+                <p class="text-muted mb-0 small text-uppercase fw-bold">Products</p>
+                <h4 class="fw-bold mb-0">{{ total_products }}</h4>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="admin-card p-4 d-flex align-items-center">
-            <div class="stat-icon bg-info-subtle text-info me-3"><i class="bi bi-people"></i></div>
-            <div><p class="text-muted mb-0 small text-uppercase fw-bold">Customers</p><h4 class="fw-bold mb-0">{{ total_customers }}</h4></div>
+        <div class="admin-card p-4 d-flex align-items-center h-100 shadow-sm rounded-4 bg-white">
+            <div class="stat-icon bg-info-subtle text-info me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="bi bi-people fs-4"></i>
+            </div>
+            <div>
+                <p class="text-muted mb-0 small text-uppercase fw-bold">Customers</p>
+                <h4 class="fw-bold mb-0">{{ total_customers }}</h4>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="admin-card p-4">
+<div class="row mb-4 g-4">
+    <div class="col-lg-8">
+        <div class="admin-card p-4 shadow-sm rounded-4 bg-white h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Sales Analytics</h5>
+                <div class="btn-group" role="group" aria-label="Timeframe filter">
+                    <button type="button" class="btn btn-outline-secondary btn-sm active" onclick="updateChart('daily')">Daily</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateChart('monthly')">Monthly</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateChart('yearly')">Yearly</button>
+                </div>
+            </div>
+            <div style="height: 300px; width: 100%;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="admin-card p-4 shadow-sm rounded-4 bg-white h-100">
+            <h5 class="fw-bold mb-4">Order Status</h5>
+            <div style="height: 260px; width: 100%; position: relative;">
+                <canvas id="statusChart"></canvas>
+                <div class="position-absolute top-50 start-50 translate-middle text-center" style="pointer-events: none;">
+                    <h2 class="fw-bold mb-0" id="statusTotal">0</h2>
+                    <small class="text-muted">Orders</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="admin-card p-4 shadow-sm rounded-4 bg-white">
+            <h5 class="fw-bold mb-4">Top Selling Products</h5>
+            <div style="height: 250px; width: 100%;">
+                <canvas id="productChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card p-4 shadow-sm rounded-4 bg-white">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="fw-bold mb-0">Recent Orders</h5>
         <div class="input-group" style="max-width: 250px;">
-            <span class="input-group-text bg-white border-end-0 border-0"><i class="bi bi-search"></i></span>
-            <input type="text" id="dashboardSearchInput" class="form-control border-start-0 border-0" placeholder="Filter current page...">
+            <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+            <input type="text" id="dashboardSearchInput" class="form-control bg-light border-start-0" placeholder="Filter current page...">
         </div>
     </div>
     
@@ -43,38 +105,38 @@
         <table class="table table-hover align-middle" id="recentOrderTable">
             <thead class="bg-light">
                 <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Total</th>
-                    <th>Action</th>
+                    <th class="py-3 ps-3">Order ID</th>
+                    <th class="py-3">Customer</th>
+                    <th class="py-3">Date</th>
+                    <th class="py-3">Status</th>
+                    <th class="py-3">Total</th>
+                    <th class="py-3 text-end pe-3">Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for order in recent_orders.items %}
                 <tr data-search-terms="{{ order.id }} {{ order.user.name|lower }} {{ order.status|lower }}">
-                    <td>#{{ order.id }}</td>
+                    <td class="ps-3 fw-bold text-dark">#{{ order.id }}</td>
                     <td>{{ order.user.name }}</td>
                     <td>{{ order.created.strftime('%Y-%m-%d') }}</td>
                     <td>
-                        <span class="badge rounded-pill 
-                            {% if order.status == 'Delivered' %}bg-success
-                            {% elif order.status == 'Pending' %}bg-warning text-dark
-                            {% elif order.status == 'Cancelled' %}bg-danger
-                            {% elif order.status == 'Shipped' %}bg-primary
-                            {% else %}bg-secondary{% endif %}">
+                        <span class="badge rounded-pill px-3 py-2
+                            {% if order.status == 'Delivered' %}bg-success-subtle text-success
+                            {% elif order.status == 'Pending' %}bg-warning-subtle text-warning-emphasis
+                            {% elif order.status == 'Cancelled' %}bg-danger-subtle text-danger
+                            {% elif order.status == 'Shipped' %}bg-primary-subtle text-primary
+                            {% else %}bg-secondary-subtle text-secondary{% endif %}">
                             {{ order.status }}
                         </span>
                     </td>
-                    <td>₹{{ "%.2f"|format(order.total) }}</td>
-                    <td>
-                        <a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-outline-dark">View Details</a>
+                    <td class="fw-bold">₹{{ "%.2f"|format(order.total) }}</td>
+                    <td class="text-end pe-3">
+                        <a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-light border">View Details</a>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="6" class="text-center py-3 text-muted">No orders found.</td>
+                    <td colspan="6" class="text-center py-5 text-muted">No orders found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -82,54 +144,410 @@
     </div>
 
     {% if recent_orders.pages > 1 %}
-    <nav aria-label="Order pagination" class="mt-4">
-        <ul class="pagination justify-content-center">
-            <li class="page-item {% if not recent_orders.has_prev %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('admin_dashboard', page=recent_orders.prev_num) }}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-
-            {% for page_num in recent_orders.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-                {% if page_num %}
-                    <li class="page-item {% if page_num == recent_orders.page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('admin_dashboard', page=page_num) }}">{{ page_num }}</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link">...</span></li>
-                {% endif %}
-            {% endfor %}
-
-            <li class="page-item {% if not recent_orders.has_next %}disabled{% endif %}">
-                <a class="page-link" href="{{ url_for('admin_dashboard', page=recent_orders.next_num) }}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <div class="text-center text-muted small">
-        Showing {{ recent_orders.items|length }} of {{ total_orders }} orders
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-muted small">Showing {{ recent_orders.items|length }} orders</div>
+        <nav aria-label="Order pagination">
+            <ul class="pagination mb-0">
+                <li class="page-item {% if not recent_orders.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('admin_dashboard', page=recent_orders.prev_num) }}">«</a>
+                </li>
+                {% for page_num in recent_orders.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == recent_orders.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('admin_dashboard', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {% if not recent_orders.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('admin_dashboard', page=recent_orders.next_num) }}">»</a>
+                </li>
+            </ul>
+        </nav>
     </div>
     {% endif %}
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('dashboardSearchInput');
-    const tableBody = document.getElementById('recentOrderTable').querySelector('tbody');
-    const rows = tableBody.querySelectorAll('tr[data-search-terms]');
+<div class="row mt-5" id="orderReportSection">
+    <div class="col-12">
+        <div class="admin-card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+            
+            <div class="d-flex flex-wrap justify-content-between align-items-center p-4 border-bottom">
+                <div>
+                    <h5 class="fw-bold mb-1"><i class="bi bi-file-earmark-bar-graph me-2 text-primary"></i>Sales Report</h5>
+                    <p class="text-muted small mb-0">Generate detailed reports based on date ranges.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button onclick="downloadCSV()" class="btn btn-outline-success d-flex align-items-center fw-medium">
+                        <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export CSV
+                    </button>
+                    <button onclick="downloadPDF()" class="btn btn-outline-danger d-flex align-items-center fw-medium">
+                        <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
+                    </button>
+                </div>
+            </div>
 
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
-        rows.forEach(row => {
-            const searchTerms = row.getAttribute('data-search-terms');
-            if (query === '' || searchTerms.includes(query)) {
-                row.style.display = ''; 
-            } else {
-                row.style.display = 'none'; 
+            <div class="bg-light p-4 border-bottom">
+                <form method="GET" action="{{ url_for('admin_dashboard') }}" class="row g-3 align-items-end">
+                    <input type="hidden" name="scroll" value="report">
+                    
+                    <div class="col-md-auto">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Quick Ranges</label>
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-white border text-muted" onclick="setDateRange('today')">Today</button>
+                            <button type="button" class="btn btn-white border text-muted" onclick="setDateRange('week')">Last 7 Days</button>
+                            <button type="button" class="btn btn-white border text-muted" onclick="setDateRange('month')">This Month</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-auto">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Start Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-calendar3"></i></span>
+                            <input type="date" name="report_start" id="startDate" class="form-control border-start-0 ps-0" value="{{ report_start or '' }}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-auto">
+                        <label class="form-label small text-muted fw-bold text-uppercase">End Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-calendar3"></i></span>
+                            <input type="date" name="report_end" id="endDate" class="form-control border-start-0 ps-0" value="{{ report_end or '' }}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-auto">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                <i class="bi bi-funnel-fill me-1"></i> Filter Results
+                            </button>
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-white border" data-bs-toggle="tooltip" title="Reset Filters">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-responsive" id="reportTableContainer">
+                <table class="table align-middle table-hover mb-0" id="fullReportTable">
+                    <thead class="bg-light border-bottom">
+                        <tr class="text-uppercase small text-muted">
+                            <th class="py-3 ps-4">Order ID</th>
+                            <th class="py-3">Date</th>
+                            <th class="py-3">Customer</th>
+                            <th class="py-3">Address</th>
+                            <th class="py-3 text-center">Qty</th>
+                            <th class="py-3 text-center">Status</th>
+                            <th class="py-3 text-end pe-4">Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        {% for order in report_orders.items %}
+                        <tr>
+                            <td class="ps-4 fw-bold text-primary">#{{ order.id }}</td>
+                            <td>
+                                <div class="fw-bold text-dark">{{ order.created.strftime('%b %d, %Y') }}</div>
+                                <div class="small text-muted">{{ order.created.strftime('%I:%M %p') }}</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold">{{ order.user.name }}</div>
+                                <div class="small text-muted">{{ order.user.email }}</div>
+                            </td>
+                            <td class="small text-muted" style="max-width: 250px; line-height: 1.4;">
+                                {{ order.address }}
+                            </td>
+                            <td class="text-center"><span class="badge bg-light text-dark border">{{ order.quantity }}</span></td>
+                            <td class="text-center">
+                                <span class="badge rounded-pill px-3 py-2
+                                    {% if order.status == 'Delivered' %}bg-success-subtle text-success
+                                    {% elif order.status == 'Pending' %}bg-warning-subtle text-warning-emphasis
+                                    {% elif order.status == 'Cancelled' %}bg-danger-subtle text-danger
+                                    {% else %}bg-primary-subtle text-primary{% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td class="text-end pe-4 fw-bold fs-6">₹{{ "%.2f"|format(order.total) }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="py-5 text-center text-muted">
+                                <i class="bi bi-calendar-x fs-1 d-block mb-3 text-secondary"></i>
+                                <span>No orders found for the selected date range.</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if report_orders.pages > 1 %}
+            <div class="d-flex justify-content-between align-items-center p-4 border-top bg-light">
+                <div class="text-muted small">
+                    Page <strong>{{ report_orders.page }}</strong> of <strong>{{ report_orders.pages }}</strong>
+                </div>
+                <nav aria-label="Report pagination">
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item {% if not report_orders.has_prev %}disabled{% endif %}">
+                            <a class="page-link border-0 bg-transparent" href="{{ url_for('admin_dashboard', report_page=report_orders.prev_num, report_start=report_start, report_end=report_end) }}#orderReportSection">
+                                <i class="bi bi-chevron-left"></i> Previous
+                            </a>
+                        </li>
+                        <li class="page-item {% if not report_orders.has_next %}disabled{% endif %}">
+                            <a class="page-link border-0 bg-transparent" href="{{ url_for('admin_dashboard', report_page=report_orders.next_num, report_start=report_start, report_end=report_end) }}#orderReportSection">
+                                Next <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    // ------------------------------------------------
+    // 1. CHART INITIALIZATION & UPDATES
+    // ------------------------------------------------
+    let revenueChart, statusChart, productChart;
+
+    const analyticsData = {
+        daily: {
+            revenue: { labels: JSON.parse('{{ daily_labels | tojson }}'), data: JSON.parse('{{ daily_values | tojson }}') },
+            status:  { labels: JSON.parse('{{ daily_status_labels | tojson }}'), data: JSON.parse('{{ daily_status_data | tojson }}') },
+            products:{ labels: JSON.parse('{{ daily_prod_names | tojson }}'), data: JSON.parse('{{ daily_prod_counts | tojson }}') }
+        },
+        monthly: {
+            revenue: { labels: JSON.parse('{{ monthly_labels | tojson }}'), data: JSON.parse('{{ monthly_values | tojson }}') },
+            status:  { labels: JSON.parse('{{ monthly_status_labels | tojson }}'), data: JSON.parse('{{ monthly_status_data | tojson }}') },
+            products:{ labels: JSON.parse('{{ monthly_prod_names | tojson }}'), data: JSON.parse('{{ monthly_prod_counts | tojson }}') }
+        },
+        yearly: {
+            revenue: { labels: JSON.parse('{{ yearly_labels | tojson }}'), data: JSON.parse('{{ yearly_values | tojson }}') },
+            status:  { labels: JSON.parse('{{ yearly_status_labels | tojson }}'), data: JSON.parse('{{ yearly_status_data | tojson }}') },
+            products:{ labels: JSON.parse('{{ yearly_prod_names | tojson }}'), data: JSON.parse('{{ yearly_prod_counts | tojson }}') }
+        }
+    };
+
+    function updateChart(timeframe) {
+        if (!revenueChart || !statusChart || !productChart) return;
+
+        // A. Revenue
+        revenueChart.data.labels = analyticsData[timeframe].revenue.labels;
+        revenueChart.data.datasets[0].data = analyticsData[timeframe].revenue.data;
+        revenueChart.update();
+
+        // B. Status
+        statusChart.data.labels = analyticsData[timeframe].status.labels;
+        statusChart.data.datasets[0].data = analyticsData[timeframe].status.data;
+        statusChart.update();
+        // Update Center Total
+        const total = analyticsData[timeframe].status.data.reduce((a, b) => a + b, 0);
+        document.getElementById('statusTotal').innerText = total;
+
+        // C. Products
+        productChart.data.labels = analyticsData[timeframe].products.labels;
+        productChart.data.datasets[0].data = analyticsData[timeframe].products.data;
+        productChart.update();
+
+        // D. Buttons
+        document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+        if(event && event.target) {
+            const btn = event.target.closest('button');
+            if(btn) btn.classList.add('active');
+        }
+    }
+
+    // Enhanced Date Logic
+    function setDateRange(range) {
+        const today = new Date();
+        const endStr = today.toISOString().split('T')[0];
+        let startStr = '';
+
+        if (range === 'today') {
+            startStr = endStr;
+        } else if (range === 'week') {
+            const lastWeek = new Date();
+            lastWeek.setDate(today.getDate() - 7);
+            startStr = lastWeek.toISOString().split('T')[0];
+        } else if (range === 'month') {
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            startStr = firstDay.toISOString().split('T')[0];
+        }
+
+        document.getElementById('startDate').value = startStr;
+        document.getElementById('endDate').value = endStr;
+    }
+    
+    // ------------------------------------------------
+    // 2. REPORTING UTILITIES
+    // ------------------------------------------------
+    function setToday() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').value = today;
+        document.getElementById('endDate').value = today;
+    }
+
+    function downloadCSV() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        if(!start || !end) {
+            alert("Please select a date range first.");
+            return;
+        }
+        window.location.href = `/admin/export_csv?start_date=${start}&end_date=${end}`;
+    }
+
+    function downloadPDF() {
+        // 1. Get the source table
+        const originalTable = document.getElementById('fullReportTable');
+        
+        if (!originalTable) {
+            alert("Table not found!");
+            return;
+        }
+
+        // 2. Get Date Strings for filename
+        const start = document.getElementById('startDate').value || 'All_Time';
+        const end = document.getElementById('endDate').value || 'Current';
+
+        // 3. Create a temporary container
+        const tempDiv = document.createElement('div');
+        tempDiv.style.padding = '40px'; // Add padding for the PDF edges
+        tempDiv.style.background = 'white';
+        tempDiv.style.width = '100%'; 
+        
+        // 4. Add Title
+        const title = document.createElement('h2');
+        title.innerText = `Sales Report (${start} to ${end})`;
+        title.style.textAlign = 'center';
+        title.style.marginBottom = '20px';
+        title.style.fontFamily = 'Helvetica, Arial, sans-serif';
+        title.style.color = 'black';
+        tempDiv.appendChild(title);
+
+        // 5. Clone the table
+        const tableClone = originalTable.cloneNode(true);
+        
+        // 6. FORCE STYLES (Crucial for visibility)
+        tableClone.style.width = '100%';
+        tableClone.style.color = 'black';
+        tableClone.style.background = 'white';
+        
+        // Remove Bootstrap's responsive wrapper behavior
+        tableClone.classList.remove('table-responsive'); 
+        
+        // Ensure table text is black (overriding any Bootstrap greys)
+        const cells = tableClone.querySelectorAll('td, th');
+        cells.forEach(cell => {
+            cell.style.color = 'black';
+            cell.style.borderColor = '#000'; // Make borders visible
+        });
+
+        tempDiv.appendChild(tableClone);
+
+        // 7. PLACE BEHIND CONTENT (Fix for "Blank" issue)
+        // Instead of moving it far left, we put it at top-left but behind the page background.
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.top = '0px';
+        tempDiv.style.left = '0px';
+        tempDiv.style.zIndex = '-1'; // Hide behind current content
+        document.body.appendChild(tempDiv);
+
+        // 8. PDF Options
+        const opt = {
+            margin:       0.5,
+            filename:     `Sales_Report_${start}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            // scrollY: 0 is the MAGIC FIX for blank pages
+            html2canvas:  { scale: 2, useCORS: true, scrollY: 0 }, 
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+        };
+
+        // 9. Generate and Cleanup
+        html2pdf().set(opt).from(tempDiv).save().then(() => {
+            document.body.removeChild(tempDiv);
+        });
+    }
+    // ------------------------------------------------
+    // 3. DOCUMENT READY
+    // ------------------------------------------------
+    document.addEventListener('DOMContentLoaded', function () {
+        // Table Search
+        const searchInput = document.getElementById('dashboardSearchInput');
+        if (searchInput) {
+            const rows = document.querySelectorAll('#recentOrderTable tbody tr[data-search-terms]');
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                rows.forEach(row => {
+                    row.style.display = row.getAttribute('data-search-terms').includes(query) ? '' : 'none';
+                });
+            });
+        }
+
+        // --- Init Chart 1: Revenue ---
+        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        const gradRev = ctxRev.createLinearGradient(0, 0, 0, 400);
+        gradRev.addColorStop(0, 'rgba(13, 110, 253, 0.2)');
+        gradRev.addColorStop(1, 'rgba(13, 110, 253, 0.0)');
+
+        revenueChart = new Chart(ctxRev, {
+            type: 'line',
+            data: {
+                labels: analyticsData.daily.revenue.labels,
+                datasets: [{
+                    label: 'Revenue', data: analyticsData.daily.revenue.data,
+                    borderColor: '#0d6efd', backgroundColor: gradRev, fill: true, tension: 0.3
+                }]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false, 
+                plugins: { legend: {display: false}, tooltip: {callbacks: {label: (c) => '₹' + c.raw}} },
+                scales: { x: {grid: {display: false}}, y: {beginAtZero: true, grid: {borderDash: [4, 4]}} }
+            }
+        });
+
+        // --- Init Chart 2: Status ---
+        const ctxStatus = document.getElementById('statusChart').getContext('2d');
+        statusChart = new Chart(ctxStatus, {
+            type: 'doughnut',
+            data: {
+                labels: analyticsData.daily.status.labels,
+                datasets: [{
+                    data: analyticsData.daily.status.data,
+                    backgroundColor: ['#198754', '#ffc107', '#dc3545', '#0d6efd', '#6c757d'],
+                    borderWidth: 0, hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, cutout: '75%',
+                plugins: { legend: {position: 'bottom', labels: {usePointStyle: true, padding: 15}} }
+            }
+        });
+        document.getElementById('statusTotal').innerText = analyticsData.daily.status.data.reduce((a, b) => a + b, 0);
+
+        // --- Init Chart 3: Products ---
+        const ctxProd = document.getElementById('productChart').getContext('2d');
+        productChart = new Chart(ctxProd, {
+            type: 'bar',
+            data: {
+                labels: analyticsData.daily.products.labels,
+                datasets: [{
+                    label: 'Units Sold', data: analyticsData.daily.products.data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)', borderRadius: 4, barThickness: 20
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: {display: false} },
+                scales: { x: {beginAtZero: true, grid: {display: false}}, y: {grid: {display: false}} }
             }
         });
     });
-});
 </script>
 {% endblock %}

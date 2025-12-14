@@ -1400,3 +1400,26 @@ iframe {
 iframe:hover {
     filter: grayscale(0) contrast(1) !important;
 }
+
+/* HEADER FIXES */
+.header-logo {
+    max-width: 130px;
+}
+
+/* On mobile screens (less than 768px) */
+@media (max-width: 768px) {
+    /* Shrink logo to make room for search bar */
+    .header-logo {
+        max-width: 90px; 
+    }
+    
+    /* Adjust search bar padding */
+    #search-form {
+        max-width: 100% !important; /* Allow it to fill available space */
+    }
+    
+    /* Hide the "Hi, User" text on mobile to save space */
+    #userDropdown {
+        display: none !important;
+    }
+}
