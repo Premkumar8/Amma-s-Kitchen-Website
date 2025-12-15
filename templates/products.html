@@ -2,59 +2,275 @@
 {% block title %}Shop All - Amma's Kitchen{% endblock %}
 
 {% block content %}
-<section class="py-5" style="background: #f8f9fa; min-height: 100vh;">
-  <div class="container-fluid px-4">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+    /* Base Styles */
+    body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
     
-    <!-- Header & Mobile Filter Button -->
+    /* Layout */
+    .shop-container { padding-bottom: 50px; }
+    
+    /* Card Design */
+    .elegant-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.04);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative; /* Context for absolute positioning if needed */
+    }
+    .elegant-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        border-color: rgba(190, 18, 60, 0.1);
+    }
+
+    /* Image Wrapper */
+    .img-wrapper {
+        height: 200px; /* Fixed height is CRITICAL */
+        width: 100%;
+        overflow: hidden;
+        background: #fff; /* White background for product images */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px; /* Padding inside image box */
+    }
+    .img-wrapper img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; /* Ensure whole image is visible */
+        transition: transform 0.5s ease;
+    }
+    .elegant-card:hover .img-wrapper img {
+        transform: scale(1.08);
+    }
+
+    /* Card Content */
+    .card-content {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Pushes footer down */
+    }
+    .product-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+    .price-tag {
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: #be123c;
+    }
+
+    /* --- REDESIGNED ADD TO CART ROW --- */
+    .dynamic-cart-form {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px; /* Space between Qty and Button */
+        margin-top: auto; /* Push to bottom */
+        width: 100%;
+    }
+
+    /* 1. The Quantity Pill */
+    .qty-input-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f3f4f6; /* Light gray background */
+        border-radius: 50rem; /* Pill shape */
+        padding: 4px;
+        width: 100px; /* Fixed width for stability */
+        flex-shrink: 0; /* Don't shrink */
+    }
+    
+    .btn-qty-custom {
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: #fff; /* White circle buttons */
+        color: #333;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 50%;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        transition: 0.2s;
+        font-size: 14px;
+    }
+    .btn-qty-custom:hover {
+        background: #be123c;
+        color: white;
+    }
+    
+    .qty-input {
+        width: 30px;
+        border: none;
+        background: transparent;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 0;
+        color: #333;
+    }
+    /* Remove number arrows */
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* 2. The Add Button */
+    .btn-add-cart {
+        flex-grow: 1; /* Fill remaining space */
+        border-radius: 50rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        height: 38px; /* Match height of input group */
+        border: none;
+        background-color: #212529; /* Black */
+        color: white;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+    .btn-add-cart:hover {
+        background-color: #be123c; /* Brand Red on hover */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(190, 18, 60, 0.2);
+    }
+    .btn-add-cart:disabled {
+        background-color: #e5e7eb;
+        color: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-item {
+        animation: fadeIn 0.5s ease forwards;
+    }
+</style>
+
+<section class="py-5 shop-container">
+  <div class="container-fluid px-4">
+    <br>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-0" style="color:#be123c;">All Products</h2>
+            <h2 class="fw-bold mb-0" style="color:#be123c;" data-i18n="shop.all_products">All Products</h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 small">
-                  <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none">Home</a></li>
-                  <li class="breadcrumb-item active">Shop</li>
+                  <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-muted text-decoration-none" data-i18n="nav.home">Home</a></li>
+                  <li class="breadcrumb-item active" data-i18n="shop.shop_title">Shop</li>
                 </ol>
             </nav>
         </div>
         <button class="btn btn-white border shadow-sm d-lg-none rounded-pill px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
-            <i class="bi bi-funnel-fill text-danger me-2"></i>Filters
+            <i class="bi bi-funnel-fill text-danger me-2"></i><span data-i18n="shop.filters">Filters</span>
         </button>
     </div>
 
     <div class="row g-4">
       
-      <!-- SIDEBAR (Desktop) -->
       <div class="col-lg-3 col-xl-2 d-none d-lg-block">
          {% include '_filter_sidebar_content.html' %}
       </div>
 
-      <!-- MAIN CONTENT -->
       <div class="col-lg-9 col-xl-10">
-        <!-- Sort Bar -->
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted small" id="result-count">Showing results</span>
+            <span class="text-muted small" id="result-count" data-i18n="shop.showing_results">Showing results</span>
             <select class="form-select form-select-sm border-0 shadow-sm w-auto bg-white rounded-pill" id="sortSelect" onchange="applyFilters()">
-                <option value="newest">Newest First</option>
-                <option value="price_low">Price: Low to High</option>
-                <option value="price_high">Price: High to Low</option>
+                <option value="newest" data-i18n="sort.newest">Newest First</option>
+                <option value="price_low" data-i18n="sort.price_low">Price: Low to High</option>
+                <option value="price_high" data-i18n="sort.price_high">Price: High to Low</option>
             </select>
         </div>
 
-        <!-- Products Grid Container -->
         <div id="products-grid-container" class="row g-4" style="min-height: 400px; position: relative;">
-            <!-- Initial Load -->
-            {% include '_product_grid_partial.html' %}
+            {% for p in products %}
+            <div class="col-6 col-md-4 col-lg-4 col-xl-3 product-card mb-4 product-item-col fade-in-item">
+                <div class="elegant-card">
+                    <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
+                        <div class="img-wrapper">
+                            <img src="{{ url_for('static', filename=p.image_url) }}" alt="{{ p.name }}">
+                            {% if p.stock <= 0 %}
+                                <div class="position-absolute top-50 start-50 translate-middle badge bg-secondary opacity-75 shadow">Out of Stock</div>
+                            {% endif %}
+                        </div>
+                    </a>
+
+                    <div class="card-content">
+                        <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
+                            <h5 class="product-title" title="{{ p.name }}" data-i18n="product_{{ p.id }}">{{ p.name }}</h5>
+                        </a>
+                        <p class="text-muted small mb-2">{{ p.category|capitalize }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-warning text-dark rounded-pill me-1" style="font-size:0.7rem;">{{ p.rating }} <i class="bi bi-star-fill"></i></span>
+                            </div>
+                            <div class="price-tag">₹{{ p.price }}</div>
+                        </div>
+                        
+                        <form class="dynamic-cart-form"
+                              data-url="{{ url_for('add_to_cart', product_id=p.id) }}"
+                              data-product-id="{{ p.id }}"
+                              data-product-name="{{ p.name }}"
+                              data-product-price="{{ p.price }}">
+                            
+                            <div class="qty-input-group">
+                                <button type="button" class="btn-qty-custom quantity-left-minus">-</button>
+                                <input type="number" name="quantity" class="qty-input" value="1" min="1">
+                                <button type="button" class="btn-qty-custom quantity-right-plus">+</button>
+                            </div>
+
+                            <button type="submit" class="btn-add-cart" {% if p.stock <= 0 %}disabled{% endif %}>
+                                {% if p.stock > 0 %}
+                                    <span data-i18n="buttons.add_cart">Add</span> <i class="bi bi-bag-plus"></i>
+                                {% else %}
+                                    <span data-i18n="product_page.out_of_stock">Sold Out</span>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div id="paging-metadata" data-has-next="{{ pagination.has_next }}" style="display:none;"></div>
         </div>
         
-        <!-- Loading Overlay -->
         <div id="loading-overlay" class="text-center py-5 d-none">
             <div class="spinner-border text-danger" role="status"></div>
         </div>
 
-        <!-- Load More Button Container -->
         <div class="text-center mt-5 w-100" id="load-more-container" {% if not pagination.has_next %}style="display:none;"{% endif %}>
             <button id="load-more-btn" class="btn btn-outline-danger px-5 py-2 rounded-pill fw-bold" onclick="loadMore()">
-                Load More Products <i class="bi bi-arrow-down ms-2"></i>
+                <span data-i18n="buttons.load_more">Load More Products</span> <i class="bi bi-arrow-down ms-2"></i>
             </button>
         </div>
 
@@ -63,26 +279,25 @@
   </div>
 </section>
 
-<!-- OFFCANVAS FILTER (Mobile) -->
 <div class="offcanvas offcanvas-start rounded-end-4" tabindex="-1" id="filterOffcanvas">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title fw-bold text-danger">Filters</h5>
+    <h5 class="offcanvas-title fw-bold text-danger" data-i18n="shop.filters">Filters</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
   </div>
   <div class="offcanvas-body">
      {% include '_filter_sidebar_content.html' %}
-     <button class="btn btn-danger w-100 rounded-pill mt-4" data-bs-dismiss="offcanvas">View Results</button>
+     <button class="btn btn-danger w-100 rounded-pill mt-4" data-bs-dismiss="offcanvas" data-i18n="buttons.view_results">View Results</button>
   </div>
 </div>
 
-<!-- JAVASCRIPT -->
 <script>
     let currentPage = 1;
     let isLoading = false;
 
     function resetFilters() {
         document.querySelectorAll('.cat-check').forEach(c => c.checked = false);
-        document.getElementById('priceRange').value = {{ global_max_price }};
+        // Use quotes to satisfy code editor checks
+        document.getElementById('priceRange').value = '{{ global_max_price }}';
         document.getElementById('priceVal').textContent = '₹{{ global_max_price }}';
         document.getElementById('inStockOnly').checked = false;
         document.getElementById('sortSelect').value = 'newest';
@@ -101,7 +316,6 @@
         params.append('stock', stock);
         params.append('sort', sort);
         categories.forEach(c => params.append('category', c));
-        
         return params;
     }
 
@@ -118,6 +332,11 @@
             grid.innerHTML = html;
             grid.style.opacity = '1';
             updateLoadMoreButton(html);
+            
+            // Re-apply translations for filtered content
+            if (typeof updateContent === "function") {
+                updateContent();
+            }
         });
     }
 
@@ -147,6 +366,11 @@
             currentPage++; 
             updateLoadMoreButton(html);
             
+            // Re-apply translations for loaded content
+            if (typeof updateContent === "function") {
+                updateContent();
+            }
+            
             btn.innerHTML = originalText;
             isLoading = false;
         });
@@ -165,13 +389,14 @@
         }
     }
 
-    // --- EVENT DELEGATION FOR CART (FIXED: No Redirect) ---
+    // --- EVENT DELEGATION FOR CART & QTY ---
     document.getElementById('products-grid-container').addEventListener('click', function(e) {
         
-        // 1. Handle Quantity Buttons
+        // 1. Handle Quantity Buttons (+ / -)
         if (e.target.classList.contains('quantity-right-plus') || e.target.classList.contains('quantity-left-minus')) {
             const btn = e.target;
-            const input = btn.parentElement.querySelector('.qty-input');
+            // Traverse up to the div, then find input
+            const input = btn.closest('.qty-input-group').querySelector('.qty-input');
             let val = parseInt(input.value) || 1;
             
             if (btn.classList.contains('quantity-right-plus')) {
@@ -181,52 +406,41 @@
             }
         }
 
-        // 2. Handle Add to Cart Submission
+        // 2. Handle Add to Cart
         const submitBtn = e.target.closest('button[type="submit"]');
         if (submitBtn) {
             const form = submitBtn.closest('.dynamic-cart-form');
             if (form) {
-                e.preventDefault(); // Stop page reload/submit
+                e.preventDefault(); 
 
-                // A. CLIENT-SIDE UPDATE (UI Updates Immediately)
+                // Client-side Update
                 const id = form.dataset.productId;
                 const name = form.dataset.productName;
                 const price = parseFloat(form.dataset.productPrice);
                 const qtyInput = form.querySelector('.qty-input');
                 const quantity = parseInt(qtyInput.value);
 
-                // Update global cart object (localStorage logic from base.html)
                 if (window.cart) {
                     if (!window.cart[id]) {
                         window.cart[id] = { id, name, price, quantity };
                     } else {
                         window.cart[id].quantity += quantity;
                     }
-                    // Save & Update Header
                     saveCart(); 
                     updateCartDisplay();
                 }
 
-                // B. TRIGGER VISUAL CUES
+                // Visual Feedback
                 const cartBtn = document.getElementById('navbar-cart-btn');
                 if(cartBtn) {
                     cartBtn.classList.remove('cart-bump-anim');
-                    void cartBtn.offsetWidth; // Trigger reflow
+                    void cartBtn.offsetWidth; 
                     cartBtn.classList.add('cart-bump-anim');
                 }
                 
-                const reminder = document.getElementById('cart-reminder');
-                if(reminder) {
-                    reminder.classList.add('show');
-                    setTimeout(() => {
-                        reminder.classList.remove('show');
-                        if(cartBtn) cartBtn.classList.remove('cart-bump-anim');
-                    }, 3000);
-                }
+                // Optional: Show toast or small alert logic here
 
-                // C. SERVER-SIDE SYNC (Silent)
-                // We send the data to the server. If it redirects to login, we just IGNORE it.
-                // The user sees the cart update via Step A (LocalStorage).
+                // Server Sync
                 const formData = new FormData();
                 formData.append('quantity', quantity);
                 
@@ -234,16 +448,12 @@
                     method: 'POST',
                     body: formData
                 }).then(response => {
-                    // We intentionally do NOTHING here. 
-                    // If response.redirected is true (user not logged in), we ignore it.
-                    // If response is ok (user logged in), DB is updated.
-                    // In both cases, the user stays on the page and sees the cart update.
-                }).catch(err => console.log("Background cart sync failed (likely guest user)", err));
+                    // Silent Sync
+                }).catch(err => console.log("Cart sync failed", err));
             }
         }
     });
 
-    // Attach Filter Listeners
     document.getElementById('priceRange').addEventListener('input', function() {
         document.getElementById('priceVal').textContent = '₹' + this.value;
         applyFilters();
@@ -251,14 +461,4 @@
     document.getElementById('inStockOnly').addEventListener('change', applyFilters);
     document.querySelectorAll('.cat-check').forEach(c => c.addEventListener('change', applyFilters));
 </script>
-
-<style>
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .fade-in-item {
-        animation: fadeIn 0.5s ease forwards;
-    }
-</style>
 {% endblock %}

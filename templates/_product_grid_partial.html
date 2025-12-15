@@ -2,7 +2,6 @@
     {% for p in products %}
     <div class="col-6 col-md-4 col-lg-4 col-xl-3 product-item-col fade-in-item">
         <div class="elegant-card h-100 d-flex flex-column">
-            <!-- Image Link -->
             <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
                 <div class="img-wrapper position-relative">
                     <img src="{{ url_for('static', filename=p.image_url) }}" alt="{{ p.name }}">
@@ -12,10 +11,11 @@
                 </div>
             </a>
 
-            <!-- Card Content -->
             <div class="card-content d-flex flex-column flex-grow-1">
                 <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
-                    <h5 class="product-title text-truncate" title="{{ p.name }}">{{ p.name }}</h5>
+                    <h5 class="product-title text-truncate" title="{{ p.name }}" data-i18n="product_{{ p.id }}">
+                        {{ p.name }}
+                    </h5>
                 </a>
                 <p class="text-muted small mb-2">{{ p.category|capitalize }}</p>
                 
@@ -26,8 +26,6 @@
                     <div class="price-tag">₹{{ p.price }}</div>
                 </div>
 
-                <!-- Add to Cart Form -->
-                <!-- Note: We use a special class 'dynamic-cart-form' for delegation -->
                 <form class="dynamic-cart-form mt-auto d-flex align-items-center gap-2"
                     data-url="{{ url_for('add_to_cart', product_id=p.id) }}"
                     data-product-id="{{ p.id }}"
@@ -42,14 +40,17 @@
                     </div>
 
                     <button type="submit" class="btn btn-dark btn-sm flex-grow-1 rounded-pill" {% if p.stock <= 0 %}disabled{% endif %}>
-                        {% if p.stock > 0 %}Add <i class="bi bi-bag-plus"></i>{% else %}Sold Out{% endif %}
+                        {% if p.stock > 0 %}
+                            <span data-i18n="buttons.add_cart">Add</span> <i class="bi bi-bag-plus"></i>
+                        {% else %}
+                            <span data-i18n="product_page.out_of_stock">Sold Out</span>
+                        {% endif %}
                     </button>
                 </form>
             </div>
         </div>
     </div>
     {% else %}
-    <!-- Empty State -->
     <div class="col-12 text-center py-5" id="no-products-msg">
         <div class="p-5 bg-white rounded-4 shadow-sm d-inline-block">
             <i class="bi bi-search display-4 text-muted mb-3"></i>
@@ -60,7 +61,6 @@
     </div>
     {% endfor %}
 
-    <!-- Hidden Metadata for JS -->
     <div id="paging-metadata" 
         data-has-next="{{ pagination.has_next }}" 
         data-next-page="{{ pagination.next_num }}"
