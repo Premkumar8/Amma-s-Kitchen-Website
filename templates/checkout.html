@@ -7,167 +7,85 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
-    :root {
-        --saffron: #ffab00;
-        --spice: #7952b3;
-        --spice-dark: #45287c;
-        --light-bg: #faf7ff;
-        --shadow: 0 4px 18px rgba(30,16,64,0.07), 0 1.5px 4px rgba(0,0,0,0.04);
-    }
-
+    /* ... (Your existing styles remain unchanged) ... */
+    :root { --saffron: #ffab00; --spice: #7952b3; --light-bg: #faf7ff; --shadow: 0 4px 18px rgba(30,16,64,0.07); }
     body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
-
-    .checkout-container {
-        max-width: 720px;
-        margin: 0 auto;
-    }
-
-    /* Gradient Text */
-    .text-gradient {
-        background: linear-gradient(90deg, #7952b3, #ff8d49);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-weight: 900;
-        letter-spacing: -1px;
-    }
-
-    /* Summary Card (Top Row) */
-    .summary-card {
-        background: #ffffff;
-        border-radius: 1.5rem;
-        box-shadow: var(--shadow);
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        justify-content: space-around;
-        text-align: center;
-        border: 1px solid #eee;
-    }
-    .summary-box span {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--spice);
-        display: block;
-        line-height: 1.2;
-    }
-    .summary-box .amount { color: #D32F2F; }
-    .summary-box div { font-size: 0.85rem; color: #6c757d; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-
-    /* Order List */
-    .order-list-group {
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: var(--shadow);
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .order-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px dashed #eee;
-    }
-    .order-item:last-child { border-bottom: none; }
-    .order-item-details { flex: 1; font-weight: 600; color: #333; }
-    
-    /* Coupon Box */
-    .coupon-box {
-        background: #fff8e1;
-        border: 1px solid #ffe082;
-        border-radius: 12px;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .btn-coupon {
-        background: #ffab00;
-        color: #000;
-        font-weight: 700;
-        border: none;
-        border-radius: 8px;
-        padding: 8px 16px;
-        transition: 0.2s;
-    }
-    .btn-coupon:hover { background: #ff9100; }
-
-    /* Pay Button */
-    .pay-btn {
-        width: 100%;
-        font-size: 1.2rem;
-        font-weight: 800;
-        border-radius: 12px;
-        padding: 1rem;
-        background: linear-gradient(90deg, #7952b3, #6f42c1);
-        color: white;
-        border: none;
-        box-shadow: 0 4px 15px rgba(121, 82, 179, 0.3);
-        transition: transform 0.2s;
-        margin-top: 1rem;
-    }
-    .pay-btn:hover { transform: translateY(-2px); }
-    .pay-btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
-
-    /* Dark Mode Toggle */
-    .toggle-darkmode {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: none;
-        border: none;
-        color: var(--spice);
-        font-size: 1.5rem;
-    }
+    .checkout-container { max-width: 720px; margin: 0 auto; }
+    .summary-card { background: #fff; border-radius: 1.5rem; padding: 1.5rem; display: flex; justify-content: space-around; text-align: center; border: 1px solid #eee; margin-bottom: 2rem; box-shadow: var(--shadow); }
+    .summary-box span { font-size: 1.8rem; font-weight: 700; color: var(--spice); display: block; }
+    .info-card { background: #fff; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #f0f0f0; box-shadow: var(--shadow); }
+    .order-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed #eee; }
+    .coupon-box { background: #fff8e1; border: 1px solid #ffe082; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+    .pay-btn { width: 100%; font-size: 1.2rem; font-weight: 800; border-radius: 12px; padding: 1rem; background: linear-gradient(90deg, #7952b3, #6f42c1); color: white; border: none; margin-top: 1rem; transition: 0.2s; }
+    .pay-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .address-display, .address-form { display: none; }
+    .visible { display: block; }
 </style>
 
 <section class="py-5">
-  <div class="container checkout-container position-relative">
+  <div class="container checkout-container">
     
     <div class="text-center mb-5">
-        <h2 class="display-5 fw-bold text-gradient">Checkout</h2>
+        <h2 class="display-5 fw-bold" style="color: var(--spice);">Checkout</h2>
         <p class="text-muted">Secure Payment via Razorpay</p>
     </div>
 
     <div class="summary-card">
-      <div class="summary-box">
-        <span id="summary-products">0</span>
-        <div>Items</div>
-      </div>
-      <div class="summary-box">
-        <span id="summary-qty">0</span>
-        <div>Total Qty</div>
-      </div>
-      <div class="summary-box">
-        <span class="amount" id="summary-total">₹0.00</span>
-        <div>Total Price</div>
-      </div>
+      <div class="summary-box"><span id="summary-products">0</span><div>Items</div></div>
+      <div class="summary-box"><span id="summary-qty">0</span><div>Total Qty</div></div>
+      <div class="summary-box"><span class="amount" id="summary-total">₹0.00</span><div>Total Price</div></div>
+    </div>
+
+    <div class="info-card">
+        <h5 class="fw-bold mb-3 border-bottom pb-2"><i class="fa fa-truck text-danger me-2"></i>Delivery Details</h5>
+        
+        <div id="savedAddressView" class="address-display {% if user.address1 and user.phone %}visible{% endif %}">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <p class="mb-1 fw-bold">{{ user.name }}</p>
+                    <p class="text-muted mb-1 small"><i class="fa fa-phone me-1"></i> <span id="displayPhone">{{ user.phone }}</span></p>
+                    <p class="text-muted mb-2 small"><i class="fa fa-map-marker-alt me-1"></i> <span id="displayAddrText">{{ user.address1 }}{% if user.address2 %}, {{ user.address2 }}{% endif %}</span></p>
+                </div>
+                <button class="btn btn-sm btn-light border" onclick="editAddress()"><i class="fa fa-pen"></i> Edit</button>
+            </div>
+        </div>
+
+        <div id="addressFormView" class="address-form {% if not user.address1 or not user.phone %}visible{% endif %}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="small text-muted fw-bold">Mobile Number *</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">+91</span>
+                        <input type="tel" id="phone" class="form-control border-start-0 ps-0" placeholder="9876543210" value="{{ user.phone or '' }}" maxlength="10">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-2">
+                <label class="small text-muted fw-bold">Street Address / Flat No *</label>
+                <input type="text" id="addr1" class="form-control" placeholder="e.g. 123 Main St, Apt 4B" value="{{ user.address1 or '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="small text-muted fw-bold">Area / Landmark (Optional)</label>
+                <input type="text" id="addr2" class="form-control" placeholder="e.g. Near City Park" value="{{ user.address2 or '' }}">
+            </div>
+            <button class="btn btn-dark w-100 fw-bold" onclick="saveAddress()" id="saveAddrBtn">SAVE & DELIVER HERE</button>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <h5 class="fw-bold mb-3 border-bottom pb-2">Order Summary</h5>
+        <div id="order-details-list">
+            <div class="text-center py-4"><i class="fa fa-spinner fa-spin text-muted"></i> Loading...</div>
+        </div>
     </div>
 
     <div class="coupon-box">
       <i class="fa fa-tag text-warning fs-5"></i>
       <input type="text" id="couponInput" class="form-control border-0 bg-transparent shadow-none fw-bold" placeholder="ENTER COUPON CODE">
-      <button type="button" class="btn-coupon" id="applyCouponBtn">APPLY</button>
+      <button type="button" class="btn btn-warning text-white fw-bold px-3 py-1 rounded-pill" id="applyCouponBtn">APPLY</button>
     </div>
     <div id="couponStatus" class="mb-3 ps-2 small fw-bold"></div>
-
-    <div class="order-list-group">
-        <h5 class="fw-bold mb-3 border-bottom pb-2">Order Details</h5>
-        <div id="order-details-list">
-            <div class="text-center py-4">
-                <i class="fa fa-spinner fa-spin text-muted"></i> Loading cart...
-            </div>
-        </div>
-    </div>
-
-    <div class="text-center mb-3">
-        <span class="badge bg-light text-dark border p-2">
-            <i class="fa fa-lock text-success me-1"></i> 100% Secure SSL Payment
-        </span>
-    </div>
 
     <button type="button" class="pay-btn" id="payButton">
         PAY ₹<span id="pay-amount">0.00</span>
@@ -179,111 +97,155 @@
 <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
 
 <script>
-// 1. Initialize Cart & Variables
+// 1. Initialize
 let cart = JSON.parse(localStorage.getItem('cart') || '{}');
 const validCoupons = {"YUMMY30": 0.3, "WELCOME10": 0.1};
 let currentTotal = 0;
 
-// 2. Display Cart Function
+// Logic: Check if ALL required fields exist (Address + Phone)
+let hasDetails = "{{ user.address1 }}" !== "" && "{{ user.phone }}" !== ""; 
+
+// 2. Display Cart
 function updateCheckoutDisplay() {
-  let total = 0, totalQty = 0, orderListHTML = '';
+  let total = 0, qty = 0, html = '';
   
-  // Redirect if empty
   if (Object.keys(cart).length === 0) {
-      document.getElementById('order-details-list').innerHTML = '<div class="text-center py-4 text-muted">Your cart is empty. <a href="{{ url_for("index") }}">Go Shop</a></div>';
+      document.getElementById('order-details-list').innerHTML = '<div class="text-center text-muted">Cart is empty. <a href="{{ url_for("index") }}">Shop Now</a></div>';
       document.getElementById('payButton').disabled = true;
       return;
   }
 
   for(const key in cart) {
-    const item = cart[key];
-    const itemTotal = item.price * item.quantity;
+    let item = cart[key];
+    let itemTotal = item.price * item.quantity;
     total += itemTotal;
-    totalQty += item.quantity;
-    
-    orderListHTML += `
-      <div class="order-item">
-        <div class="order-item-details">
-            ${item.name} <span class="text-muted small">x ${item.quantity}</span>
-        </div>
-        <span class="fw-bold">₹${itemTotal.toFixed(2)}</span>
-      </div>`;
+    qty += item.quantity;
+    html += `<div class="order-item">
+                <div><span class="fw-bold text-dark">${item.name}</span> <span class="text-muted small">x ${item.quantity}</span></div>
+                <span class="fw-bold text-dark">₹${itemTotal.toFixed(2)}</span>
+             </div>`;
   }
   
-  // Check for stored discount in logic (optional, for now just calc raw)
-  currentTotal = total.toFixed(2); 
-
-  // Update UI
-  document.getElementById('order-details-list').innerHTML = orderListHTML;
-  document.getElementById('summary-products').textContent = Object.keys(cart).length;
-  document.getElementById('summary-qty').textContent = totalQty;
-  document.getElementById('summary-total').textContent = `₹${currentTotal}`;
-  document.getElementById('pay-amount').textContent = currentTotal;
+  currentTotal = total.toFixed(2);
+  document.getElementById('order-details-list').innerHTML = html;
+  document.getElementById('summary-qty').innerText = qty;
+  document.getElementById('summary-total').innerText = '₹' + currentTotal;
+  document.getElementById('pay-amount').innerText = currentTotal;
+  
+  checkPayButtonStatus();
 }
 
-// Initial Run
+function checkPayButtonStatus() {
+    const payBtn = document.getElementById('payButton');
+    if (Object.keys(cart).length > 0 && hasDetails) {
+        payBtn.disabled = false;
+        payBtn.style.opacity = "1";
+        payBtn.innerHTML = `PAY ₹${document.getElementById('pay-amount').innerText}`;
+    } else {
+        payBtn.disabled = true;
+        payBtn.style.opacity = "0.6";
+        if (!hasDetails) payBtn.innerHTML = "Complete Delivery Details";
+    }
+}
+
+// 3. ADDRESS & PHONE FUNCTIONS
+function editAddress() {
+    document.getElementById('savedAddressView').classList.remove('visible');
+    document.getElementById('addressFormView').classList.add('visible');
+    hasDetails = false;
+    checkPayButtonStatus();
+}
+
+async function saveAddress() {
+    const phone = document.getElementById('phone').value.trim();
+    const addr1 = document.getElementById('addr1').value.trim();
+    const addr2 = document.getElementById('addr2').value.trim();
+    const btn = document.getElementById('saveAddrBtn');
+
+    if (!phone || phone.length < 10) { alert("Please enter a valid 10-digit phone number."); return; }
+    if (!addr1) { alert("Please enter a street address."); return; }
+
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+    
+    try {
+        const res = await fetch('/update_address', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ phone: phone, address1: addr1, address2: addr2 })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            // Update UI with new values
+            document.getElementById('displayPhone').innerText = phone;
+            document.getElementById('displayAddrText').innerText = addr1 + (addr2 ? `, ${addr2}` : '');
+            
+            document.getElementById('addressFormView').classList.remove('visible');
+            document.getElementById('savedAddressView').classList.add('visible');
+            
+            hasDetails = true; // Mark as complete
+            // checkPayButtonStatus();
+        } else {
+            alert("Error saving details: " + data.message);
+        }
+    } catch (e) {
+        alert("Server error. Please try again.");
+    } finally {
+        btn.innerHTML = 'SAVE & DELIVER HERE';
+    }
+}
+
+// Init
 updateCheckoutDisplay();
 
-// 3. Coupon Logic
+// 4. Coupon Logic
 document.getElementById('applyCouponBtn').onclick = function(){
   let code = document.getElementById('couponInput').value.trim().toUpperCase();
-  let statusEl = document.getElementById('couponStatus');
+  let status = document.getElementById('couponStatus');
   
   if(validCoupons[code]) {
     let discount = validCoupons[code];
-    let originalTotal = parseFloat(document.getElementById('summary-total').textContent.replace('₹',''));
-    
-    // Apply Discount
-    let discountedTotal = (originalTotal * (1 - discount)).toFixed(2);
-    currentTotal = discountedTotal;
-    
-    // Update UI
-    document.getElementById('pay-amount').textContent = currentTotal;
-    
-    statusEl.innerHTML = `<span class="text-success"><i class="fa fa-check-circle"></i> Coupon Applied! Saved ${Math.round(discount*100)}%</span>`;
+    let original = parseFloat(currentTotal);
+    currentTotal = (original * (1 - discount)).toFixed(2);
+    document.getElementById('pay-amount').innerText = currentTotal;
+    status.innerHTML = `<span class="text-success"><i class="fa fa-check-circle"></i> Applied!</span>`;
     this.disabled = true;
-    this.innerHTML = "APPLIED";
+    checkPayButtonStatus(); 
   } else {
-    statusEl.innerHTML = `<span class="text-danger"><i class="fa fa-times-circle"></i> Invalid Coupon Code</span>`;
+    status.innerHTML = `<span class="text-danger">Invalid Code</span>`;
   }
 };
 
-// 4. Razorpay Payment Logic
+// 5. Razorpay Payment Logic
 document.getElementById('payButton').onclick = async function(e) {
+    if (!hasDetails) { alert("Please complete your delivery details."); return; }
+    
     const btn = this;
-    btn.disabled = true;
     btn.innerHTML = '<i class="fa fa-circle-notch fa-spin"></i> Processing...';
+    btn.disabled = true;
 
     try {
-        // Step A: Create Order on Backend
         const response = await fetch('/create_order', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ amount: currentTotal })
         });
-        
-        // Handle Unauthorized (Not Logged In)
-        if (response.status === 401) {
-            window.location.href = "{{ url_for('login') }}";
-            return;
-        }
+
+        if (response.status === 401) { window.location.href = "{{ url_for('login') }}"; return; }
 
         const orderData = await response.json();
         if(orderData.error) throw new Error(orderData.error);
 
-        // Step B: Configure Razorpay
         const options = {
-            "key": "{{ key_id }}", // Key from Flask
+            "key": "{{ key_id }}",
             "amount": orderData.amount,
             "currency": "INR",
             "name": "Amma's Kitchen",
-            "description": "Delicious Food Order",
+            "description": "Food Order",
             "image": "{{ url_for('static', filename='images/logo1.png') }}",
             "order_id": orderData.id, 
             "handler": async function (response){
-                // Step C: Verify Payment
                 btn.innerHTML = 'Verifying...';
-                
                 const verifyRes = await fetch('/verify_payment', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -296,24 +258,24 @@ document.getElementById('payButton').onclick = async function(e) {
                 });
                 
                 const verifyData = await verifyRes.json();
-                
                 if(verifyData.status === 'success') {
-                    // Success!
-                    btn.className = "pay-btn bg-success";
-                    btn.innerHTML = '<i class="fa fa-check"></i> Payment Successful!';
-                    
-                    // Clear Cart & Redirect
+                    let confettiSettings = { target: 'order-details-list' };
+                    let confetti = new ConfettiGenerator(confettiSettings);
+                    confetti.render();
+                    btn.className = 'pay-btn bg-success';
+                    btn.innerHTML = '<i class="fa fa-check"></i> Order Placed!';
                     localStorage.removeItem('cart');
-                    setTimeout(() => { window.location.href = "{{ url_for('profile') }}"; }, 2000);
+                    setTimeout(() => { window.location.href = "{{ url_for('profile') }}"; }, 2500);
                 } else {
-                    alert("Verification Failed. Please contact support.");
+                    alert("Verification Failed.");
                     btn.disabled = false;
                     btn.innerHTML = `PAY ₹${currentTotal}`;
                 }
             },
             "prefill": {
-                "name": "{{ session.get('user_name', '') }}",
-                "email": "{{ session.get('user_email', '') }}"
+                "name": "{{ user.name }}",
+                "email": "{{ user.email }}",
+                "contact": document.getElementById('displayPhone').innerText // Use updated phone
             },
             "theme": { "color": "#7952b3" }
         };
@@ -328,7 +290,7 @@ document.getElementById('payButton').onclick = async function(e) {
 
     } catch (error) {
         console.error(error);
-        alert('Could not initiate payment. Please try again.');
+        alert('Payment initiation failed.');
         btn.disabled = false;
         btn.innerHTML = `PAY ₹${currentTotal}`;
     }

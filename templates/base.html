@@ -349,77 +349,120 @@
     </div>
     <script src="https://unpkg.com/i18next/i18next.min.js"></script>
     <script>
-      // 1. Define your translations
+      // 1. Define your translations (Your provided code)
       const resources = {
         en: {
           translation: {
-            "nav": {
-              "home": "Home",
-              "products": "Products",
-              "contact": "Contact Us"
-            },
-            "footer": {
-              "service": "Customer Service",
-              "subscribe": "Subscribe Us"
-            },
+            "nav": { "home": "Home", "products": "Products", "contact": "Contact Us" },
+            "footer": { "service": "Customer Service", "subscribe": "Subscribe Us" },
             "cart_total": "Total",
-            "buttons": {
-                "add_cart": "Add to Cart",
-                "view_details": "View Details"
-            }
+            "Trending_Products" : "Trending Products", 
+            "buttons": { "add_cart": "Add to Cart", "view_details": "View Details" },
+
+            // --- PRODUCT NAMES (English Fallback) ---
+            "product_1": "Sambar Powder",
+            "product_2": "Rasam Powder",
+            "product_3": "Biryani Masala",
+            "product_4": "Chicken Biryani Masala",
+            "product_5": "Curry Masala Powder",
+            "product_6": "Idli Podi",
+            "product_7": "Mutton Masala",
+            "product_8": "Curry Leaves Powder",
+            "product_9": "Murungai Keerai Powder",
+            "product_10": "Chilli Powder",
+            "product_11": "Sweet Paniyaram",
+            "product_12": "Thenkuzhal",
+            "product_13": "Murukku",
+            "product_14": "Seedai",
+            "product_15": "Mixture",
+            "product_16": "Milk",
+            "product_17": "Curd",
+            "product_18": "Butter",
+            "product_19": "Homemade Ghee",
+            "product_20": "Dosa Mix",
+            "product_21": "Ragi Dosa Mix",
+            "product_22": "Masoor Dal",
+            "product_23": "Chana Dal",
+            "product_24": "Black Peas",
+            "product_25": "Chickpeas",
+            "product_26": "Pasi Payaru",
+            "product_27": "Thattai Payaru",
+            "product_33": "Mutton Briyani Masala"
           }
         },
         ta: {
           translation: {
-            "nav": {
-              "home": "முகப்பு",
-              "products": "தயாரிப்புகள்",
-              "contact": "தொடர்பு கொள்ள"
-            },
-            "footer": {
-              "service": "வாடிக்கையாளர் சேவை",
-              "subscribe": "எங்களுக்கு குழுசேரவும்"
-            },
+            "nav": { "home": "முகப்பு", "products": "தயாரிப்புகள்", "contact": "தொடர்பு கொள்ள" },
+            "footer": { "service": "வாடிக்கையாளர் சேவை", "subscribe": "எங்களுக்கு குழுசேரவும்" },
             "cart_total": "மொத்தம்",
-            "buttons": {
-                "add_cart": "கூடை சேர்",
-                "view_details": "விவரங்களை பார்"
-            }
+            "Trending_Products" : "பொருட்கள்", 
+            "buttons": { "add_cart": "கூடை சேர்", "view_details": "விவரங்களை பார்" },
+
+            // --- PRODUCT NAMES (Tamil Translations) ---
+            "product_1": "சாம்பார் பொடி",
+            "product_2": "ரசம் பொடி",
+            "product_3": "பிரியாணி மசாலா",
+            "product_4": "சிக்கன் பிரியாணி மசாலா",
+            "product_5": "கறி மசாலா பொடி",
+            "product_6": "இட்லி பொடி",
+            "product_7": "மட்டன் மசாலா",
+            "product_8": "கறிவேப்பிலை பொடி",
+            "product_9": "முருங்கை கீரை பொடி",
+            "product_10": "மிளகாய் பொடி",
+            "product_11": "இனிப்பு பணியாரம்",
+            "product_12": "தேன்குழல்",
+            "product_13": "முறுக்கு",
+            "product_14": "சீடை",
+            "product_15": "மிக்சர்",
+            "product_16": "பால்",
+            "product_17": "தயிர்",
+            "product_18": "வெண்ணெய்",
+            "product_19": "வீட்டு நெய்",
+            "product_20": "தோசை மாவு",
+            "product_21": "ராகி தோசை மாவு",
+            "product_22": "மைசூர் பருப்பு",
+            "product_23": "கடலை பருப்பு",
+            "product_24": "கருப்பு பட்டாணி",
+            "product_25": "கொண்டைக்கடலை",
+            "product_26": "பாசிப் பயறு",
+            "product_27": "தட்டைப் பயறு",
+            "product_33": "மட்டன் பிரியாணி மசாலா"
           }
         }
       };
-
+      
       // 2. Initialize i18next
       i18next.init({
-        lng: 'en', // default language
+        lng: localStorage.getItem('userLang') || 'en', // Load saved language or default to en
         debug: true,
         resources: resources
       }, function(err, t) {
-        // initialized and ready to go!
+        // 3. Once initialized, update the text immediately
         updateContent();
       });
 
-      // 3. Function to update text on screen
+      // ----------------------------------------------------
+      // 4. THE MISSING PART: Function to update HTML text
+      // ----------------------------------------------------
       function updateContent() {
-        // Translate all elements with data-i18n attribute
+        // Find EVERY element with 'data-i18n' attribute
         document.querySelectorAll('[data-i18n]').forEach(function(element) {
           const key = element.getAttribute('data-i18n');
-          element.innerHTML = i18next.t(key);
+          // Ask i18next for the translation of that key
+          element.innerHTML = i18next.t(key); 
         });
-
-        // Handle Placeholders specifically (like Search bar)
-        const searchInput = document.getElementById('search-form')?.querySelector('input');
-        if(searchInput) {
-            searchInput.placeholder = i18next.language === 'ta' ? "தயாரிப்புகளைத் தேடுங்கள்..." : "Search for products...";
-        }
       }
 
-      // 4. Function called by buttons
+      // 5. Function to change language (Called by your flag buttons)
       function changeLanguage(lang) {
         i18next.changeLanguage(lang, () => {
-          updateContent();
-          // Optional: Save preference to localStorage so it remembers next time
-          localStorage.setItem('userLang', lang);
+          updateContent(); // Update text immediately
+          localStorage.setItem('userLang', lang); // Remember choice
+          
+          // Update the Flag Icon in Navbar (if you used the dropdown code)
+          if(typeof setLanguage === "function") {
+              setLanguage(lang); 
+          }
         });
       }
 
@@ -481,6 +524,17 @@
             fetch(`/load-products?page=${page}`)
               .then(res => res.text())
               .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // 3. Add new cards to grid
+                const newCards = doc.querySelectorAll('.product-card');
+                newCards.forEach(card => grid.appendChild(card));
+
+                if (typeof updateContent === "function") {
+                    updateContent();
+                }
+
                 const temp = document.createElement('div');
                 temp.innerHTML = html;
                 // Append new product cards

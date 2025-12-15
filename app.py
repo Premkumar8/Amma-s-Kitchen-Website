@@ -386,11 +386,6 @@ def edit_profile():
     return redirect(url_for('profile'))
 
 
-@app.route('/google-login')
-def google_login():
-    # placeholder for Google OAuth; you can redirect to a real OAuth handler here
-    return "Google login coming soon!"
-
 @app.route('/cancel_order/<int:order_id>', methods=['POST'])
 def cancel_order(order_id):
     order = Order.query.get_or_404(order_id)
@@ -578,17 +573,40 @@ razorpay_client = razorpay.Client(
     auth=(os.getenv("Razorpay_KEY_ID"), os.getenv("Razorpay_KEY_SECRET"))
 )
 
-@app.route('/checkout', methods=['GET'])
+@app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
-    # 1. Login Check
     if 'user_id' not in session:
         session['next_url'] = url_for('checkout')
-        flash("Please login to proceed with checkout.", "warning")
+        flash("Please login to proceed.", "warning")
         return redirect(url_for('login'))
     
-    # 2. Pass the Key ID to the template for the frontend script
-    return render_template('checkout.html', key_id=os.getenv("Razorpay_KEY_ID"))
+    # 1. Fetch current user to check address
+    user = User.query.get(session['user_id'])
+    
+    # 2. Pass user object to template
+    return render_template('checkout.html', 
+                           key_id=os.getenv("RAZORPAY_KEY_ID"), 
+                           user=user)
 
+@app.route('/update_address', methods=['POST'])
+def update_address():
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        data = request.get_json()
+        user = User.query.get(session['user_id'])
+        
+        # Save Address AND Phone
+        if 'address1' in data: user.address1 = data.get('address1')
+        if 'address2' in data: user.address2 = data.get('address2')
+        if 'phone' in data: user.phone = data.get('phone') # NEW
+        
+        db.session.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    
 @app.route("/create_order", methods=["POST"])
 def create_order():
     if 'user_id' not in session:
@@ -1576,5 +1594,74 @@ def chat():
         })     
 # ===== END CHATBOT ROUTES =====
 
+import os
+from authlib.integrations.flask_client import OAuth
+
+# 1. Initialize OAuth
+oauth = OAuth(app)
+
+# 2. Configure Google (Ideally, load ID/Secret from .env file)
+google = oauth.register(
+    name='google',
+    client_id=os.getenv('google_client_id'),         # Replace with actual ID
+    client_secret=os.getenv('google_client_secret'), # Replace with actual Secret
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={'scope': 'openid email profile'}
+)
+
+# 3. Route: Redirect user to Google
+@app.route('/login/google')
+def google_login():
+    redirect_uri = url_for('google_callback', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+# 4. Route: Handle Google Response
+@app.route('/login/google/callback')
+def google_callback():
+    try:
+        token = google.authorize_access_token()
+        user_info = token.get('userinfo')
+        
+        if not user_info:
+            flash("Failed to fetch user info from Google.", "danger")
+            return redirect(url_for('login'))
+
+        email = user_info.get('email')
+        name = user_info.get('name')
+        
+        # Check if user exists in database
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            # Create new user automatically (Sign Up)
+            # Note: Set a dummy password or handle passwordless logic for OAuth users
+            dummy_password = generate_password_hash("google_oauth_user") 
+            user = User(
+                name=name, 
+                email=email, 
+                password=dummy_password, 
+                phone="" # Google doesn't provide phone by default
+            )
+            db.session.add(user)
+            db.session.commit()
+            flash("Account created successfully via Google!", "success")
+        
+        # Login the user
+        session['user_id'] = user.id
+        session['user_name'] = user.name
+        session['is_admin'] = user.is_admin
+        
+        # Redirect Logic (Checkout vs Home)
+        next_page = session.pop('next_url', None)
+        if next_page:
+            return redirect(next_page)
+            
+        return redirect(url_for('index'))
+        
+    except Exception as e:
+        print(f"OAuth Error: {e}")
+        flash("Something went wrong with Google Login.", "danger")
+        return redirect(url_for('login'))
+    
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
