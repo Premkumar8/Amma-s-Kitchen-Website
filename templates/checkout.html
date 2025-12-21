@@ -93,7 +93,6 @@
 
   </div>
 </section>
-
 <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
 
 <script>
@@ -102,16 +101,19 @@ let cart = JSON.parse(localStorage.getItem('cart') || '{}');
 const validCoupons = {"YUMMY30": 0.3, "WELCOME10": 0.1};
 let currentTotal = 0;
 
-// Logic: Check if ALL required fields exist (Address + Phone)
-let hasDetails = "{{ user.address1 }}" !== "" && "{{ user.phone }}" !== ""; 
+// FIX 1: Robust check for existing details (Handles 'None' or empty strings correctly)
+// We use the 'or' operator in Jinja to ensure we get an empty string if the value is None
+let hasDetails = "{{ user.address1 or '' }}" !== "" && "{{ user.phone or '' }}" !== ""; 
 
 // 2. Display Cart
 function updateCheckoutDisplay() {
   let total = 0, qty = 0, html = '';
   
+  // Check if cart is empty
   if (Object.keys(cart).length === 0) {
       document.getElementById('order-details-list').innerHTML = '<div class="text-center text-muted">Cart is empty. <a href="{{ url_for("index") }}">Shop Now</a></div>';
       document.getElementById('payButton').disabled = true;
+      document.getElementById('payButton').innerText = "Cart is Empty";
       return;
   }
 
@@ -137,14 +139,19 @@ function updateCheckoutDisplay() {
 
 function checkPayButtonStatus() {
     const payBtn = document.getElementById('payButton');
+    
+    // Enable button ONLY if Cart has items AND Address details exist
     if (Object.keys(cart).length > 0 && hasDetails) {
         payBtn.disabled = false;
         payBtn.style.opacity = "1";
-        payBtn.innerHTML = `PAY ₹${document.getElementById('pay-amount').innerText}`;
+        // Update the text to show the amount to pay
+        payBtn.innerHTML = `PAY ₹${document.getElementById('pay-amount').innerText}`; 
     } else {
         payBtn.disabled = true;
         payBtn.style.opacity = "0.6";
-        if (!hasDetails) payBtn.innerHTML = "Complete Delivery Details";
+        if (!hasDetails) {
+            payBtn.innerHTML = "Complete Delivery Details";
+        }
     }
 }
 
@@ -152,7 +159,7 @@ function checkPayButtonStatus() {
 function editAddress() {
     document.getElementById('savedAddressView').classList.remove('visible');
     document.getElementById('addressFormView').classList.add('visible');
-    hasDetails = false;
+    hasDetails = false; // Disable pay button while editing
     checkPayButtonStatus();
 }
 
@@ -184,18 +191,22 @@ async function saveAddress() {
             document.getElementById('savedAddressView').classList.add('visible');
             
             hasDetails = true; // Mark as complete
-            // checkPayButtonStatus();
+            
+            // FIX 2: UNCOMMENTED THIS LINE so the button updates!
+            checkPayButtonStatus(); 
+            
         } else {
             alert("Error saving details: " + data.message);
         }
     } catch (e) {
+        console.error(e);
         alert("Server error. Please try again.");
     } finally {
         btn.innerHTML = 'SAVE & DELIVER HERE';
     }
 }
 
-// Init
+// Init Load
 updateCheckoutDisplay();
 
 // 4. Coupon Logic
@@ -207,9 +218,14 @@ document.getElementById('applyCouponBtn').onclick = function(){
     let discount = validCoupons[code];
     let original = parseFloat(currentTotal);
     currentTotal = (original * (1 - discount)).toFixed(2);
+    
+    // Update visual amount
     document.getElementById('pay-amount').innerText = currentTotal;
+    
     status.innerHTML = `<span class="text-success"><i class="fa fa-check-circle"></i> Applied!</span>`;
     this.disabled = true;
+    
+    // Update button text with new price
     checkPayButtonStatus(); 
   } else {
     status.innerHTML = `<span class="text-danger">Invalid Code</span>`;
@@ -221,6 +237,7 @@ document.getElementById('payButton').onclick = async function(e) {
     if (!hasDetails) { alert("Please complete your delivery details."); return; }
     
     const btn = this;
+    const originalText = btn.innerHTML; // Save text to restore on failure
     btn.innerHTML = '<i class="fa fa-circle-notch fa-spin"></i> Processing...';
     btn.disabled = true;
 
@@ -259,17 +276,23 @@ document.getElementById('payButton').onclick = async function(e) {
                 
                 const verifyData = await verifyRes.json();
                 if(verifyData.status === 'success') {
+                    // Success Animation
                     let confettiSettings = { target: 'order-details-list' };
                     let confetti = new ConfettiGenerator(confettiSettings);
                     confetti.render();
+                    
                     btn.className = 'pay-btn bg-success';
                     btn.innerHTML = '<i class="fa fa-check"></i> Order Placed!';
+                    
+                    // Clear Cart
                     localStorage.removeItem('cart');
+                    
+                    // Redirect
                     setTimeout(() => { window.location.href = "{{ url_for('profile') }}"; }, 2500);
                 } else {
                     alert("Verification Failed.");
                     btn.disabled = false;
-                    btn.innerHTML = `PAY ₹${currentTotal}`;
+                    btn.innerHTML = originalText;
                 }
             },
             "prefill": {
@@ -277,22 +300,38 @@ document.getElementById('payButton').onclick = async function(e) {
                 "email": "{{ user.email }}",
                 "contact": document.getElementById('displayPhone').innerText // Use updated phone
             },
-            "theme": { "color": "#7952b3" }
+            "theme": { "color": "#7952b3" },
+            "modal": {
+                "ondismiss": function(){
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            }
         };
 
         const rzp1 = new Razorpay(options);
         rzp1.on('payment.failed', function (response){
             alert("Payment Failed: " + response.error.description);
+            fetch('/payment_failed', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    cart_data: cart,
+                    reason: response.error.description,
+                    payment_id: response.error.metadata ? response.error.metadata.payment_id : null,
+                    payment_method: response.error.metadata ? response.error.metadata.payment_method : null
+                })
+            }).catch(err => console.error('Payment failure notify error', err));
             btn.disabled = false;
-            btn.innerHTML = `PAY ₹${currentTotal}`;
+            btn.innerHTML = originalText;
         });
         rzp1.open();
 
     } catch (error) {
         console.error(error);
-        alert('Payment initiation failed.');
+        alert('Payment initiation failed: ' + error.message);
         btn.disabled = false;
-        btn.innerHTML = `PAY ₹${currentTotal}`;
+        btn.innerHTML = originalText;
     }
 };
 </script>

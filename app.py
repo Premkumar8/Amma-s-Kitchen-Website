@@ -10,6 +10,10 @@ import json
 import razorpay
 from sqlalchemy import func, desc
 from werkzeug.utils import secure_filename
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+import smtplib
+import ssl
+from email.message import EmailMessage
 # ===== CHATBOT IMPORTS =====
 import os
 import google.generativeai as genai  # <--- NEW LIBRARY
@@ -42,12 +46,19 @@ app.secret_key = 'your_super_secret_key_change_me'
 # Database Config
 # -------------------------------
 # Make sure you have a database named 'amma' created in MySQL.
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/ammas'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db:5432/ammas_kitchen'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ammaskitchen_user:7gL0eP48duTTG8ccRfyUWrYsJMo4PuP8@dpg-d3uvp4v5r7bs73frfnmg-a:5432/ammaskitchen'
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:WelComeSai08@948@db:5432/ammas_kitchen'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+MAIL_SENDER = os.getenv('MAIL_SENDER')
+MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+MAIL_PORT = int(os.getenv('MAIL_PORT', '587'))
+MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'true').lower() == 'true'
+RESET_TOKEN_EXP_SECONDS = int(os.getenv('RESET_TOKEN_EXP_SECONDS', '3600'))
+RESET_TOKEN_SALT = os.getenv('RESET_TOKEN_SALT', 'password-reset-salt')
 
 db = SQLAlchemy(app)
 
@@ -137,6 +148,167 @@ class Contact(db.Model):
 # -------------------------------
 # Helper Functions
 # -------------------------------
+def get_serializer():
+    return URLSafeTimedSerializer(app.secret_key)
+
+
+def generate_reset_token(email):
+    return get_serializer().dumps(email, salt=RESET_TOKEN_SALT)
+
+
+def verify_reset_token(token, max_age=RESET_TOKEN_EXP_SECONDS):
+    try:
+        return get_serializer().loads(token, salt=RESET_TOKEN_SALT, max_age=max_age)
+    except (SignatureExpired, BadSignature):
+        return None
+
+
+def send_reset_email(recipient_email, token):
+    """Send password reset link to the provided email."""
+    reset_url = url_for('reset_password', token=token, _external=True)
+    subject = "Reset Password of your account in Amma's Kitchen"
+    body = (
+        "We received a request to reset your password.\n\n"
+        f"Click the link below to set a new password (valid for {RESET_TOKEN_EXP_SECONDS // 60} minutes):\n"
+        f"{reset_url}\n\n"
+        "If you did not request this, you can ignore this email."
+    )
+
+    if not MAIL_SENDER or not MAIL_PASSWORD:
+        print(f"[Password Reset] Missing email credentials. Generated link for {recipient_email}: {reset_url}")
+        return True
+
+    try:
+        msg = EmailMessage()
+        msg['Subject'] = subject
+        msg['From'] = MAIL_SENDER
+        msg['To'] = recipient_email
+        msg.set_content(body)
+
+        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT) as server:
+            if MAIL_USE_TLS:
+                server.starttls(context=ssl.create_default_context())
+            server.login(MAIL_SENDER, MAIL_PASSWORD)
+            server.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"[Password Reset] Failed to send email to {recipient_email}: {e}")
+        return False
+
+
+def send_email_message(recipient_email, subject, text_body, html_body=None):
+    """Generic email sender used for order notifications."""
+    if not recipient_email:
+        return False
+
+    if not MAIL_SENDER or not MAIL_PASSWORD:
+        print(f"[Email Fallback] To: {recipient_email}\nSubject: {subject}\n{text_body}")
+        return True
+
+    try:
+        msg = EmailMessage()
+        msg['Subject'] = subject
+        msg['From'] = MAIL_SENDER
+        msg['To'] = recipient_email
+        msg.set_content(text_body)
+        if html_body:
+            msg.add_alternative(html_body, subtype='html')
+
+        with smtplib.SMTP(MAIL_SERVER, MAIL_PORT) as server:
+            if MAIL_USE_TLS:
+                server.starttls(context=ssl.create_default_context())
+            server.login(MAIL_SENDER, MAIL_PASSWORD)
+            server.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"[Email Send Error] Failed to send email to {recipient_email}: {e}")
+        return False
+
+
+def format_order_email(user, cart_data, status, payment_method=None, payment_id=None, reason=None):
+    """Build text and HTML bodies for order emails."""
+    logo_url = url_for('static', filename='images/logo1.png', _external=True)
+    payment_label = (payment_method or 'Razorpay').upper()
+    status_line = "Payment Successful" if status == 'success' else f"Payment Failed: {reason or 'Unknown error'}"
+
+    # Build item lines
+    item_lines = []
+    total = 0.0
+    for key, item in (cart_data or {}).items():
+        name = item.get('name', 'Item')
+        qty = item.get('quantity', 1)
+        price = float(item.get('price', 0))
+        line_total = price * qty
+        total += line_total
+        item_lines.append((name, qty, price, line_total))
+
+    address_parts = [user.address1 or '', user.address2 or '']
+    address_text = ", ".join([p for p in address_parts if p])
+
+    text_items = "\n".join([f"- {n} x{q} @ {p:.2f} = {lt:.2f}" for n, q, p, lt in item_lines]) or "No items found."
+    text_body = (
+        f"Hi {user.name or 'Customer'},\n\n"
+        f"{status_line}\n"
+        f"Payment Method: {payment_label}\n"
+        f"Payment ID: {payment_id or 'N/A'}\n\n"
+        f"Order Details:\n{text_items}\n\n"
+        f"Total: {total:.2f}\n"
+        f"Delivery Address: {address_text}\n"
+        f"Phone: {user.phone or 'N/A'}\n\n"
+        "Thank you for choosing Amma's Kitchen."
+    )
+
+    html_rows = "".join([
+        f"<tr><td style='padding:6px 12px'>{n}</td><td style='padding:6px 12px;text-align:center'>{q}</td><td style='padding:6px 12px;text-align:right'>{p:.2f}</td><td style='padding:6px 12px;text-align:right'>{lt:.2f}</td></tr>"
+        for n, q, p, lt in item_lines
+    ]) or "<tr><td colspan='4' style='padding:10px;'>No items found.</td></tr>"
+
+    html_body = f"""
+    <div style="font-family: Arial, sans-serif; color:#222; max-width:600px; margin:0 auto; border:1px solid #eee; border-radius:10px; overflow:hidden;">
+      <div style="background:#f9f5ff; padding:16px 20px; display:flex; align-items:center;">
+        <img src="{logo_url}" alt="Amma's Kitchen" style="height:50px; margin-right:12px;">
+        <div>
+          <div style="font-weight:700; font-size:18px; color:#5c2d91;">Amma's Kitchen</div>
+          <div style="font-size:13px; color:#666;">Order update</div>
+        </div>
+      </div>
+      <div style="padding:20px;">
+        <p>Hi {user.name or 'Customer'},</p>
+        <p style="font-weight:700; color:{'#0f9d58' if status == 'success' else '#d93025'};">{status_line}</p>
+        <p style="margin:0 0 6px 0;"><strong>Payment Method:</strong> {payment_label}</p>
+        <p style="margin:0 0 16px 0;"><strong>Payment ID:</strong> {payment_id or 'N/A'}</p>
+
+        <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:12px;">
+          <thead>
+            <tr style="background:#f3f0ff;">
+              <th style="text-align:left; padding:8px 12px;">Item</th>
+              <th style="text-align:center; padding:8px 12px;">Qty</th>
+              <th style="text-align:right; padding:8px 12px;">Price</th>
+              <th style="text-align:right; padding:8px 12px;">Total</th>
+            </tr>
+          </thead>
+          <tbody>{html_rows}</tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" style="padding:8px 12px; text-align:right; font-weight:700;">Grand Total</td>
+              <td style="padding:8px 12px; text-align:right; font-weight:700;">{total:.2f}</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div style="font-size:14px; margin-bottom:12px;">
+          <div><strong>Delivery Address:</strong> {address_text or 'N/A'}</div>
+          <div><strong>Phone:</strong> {user.phone or 'N/A'}</div>
+        </div>
+
+        <p style="margin-top:12px;">Thank you for choosing Amma's Kitchen.</p>
+      </div>
+    </div>
+    """
+
+    return text_body, html_body
+
+
 def build_cart_context(user_id):
     """
     Builds the cart summary from 'Pending' orders for a given user.
@@ -263,6 +435,57 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
             
     return render_template('login.html')
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+
+        if not email:
+            flash('Email is required.', 'danger')
+            return redirect(url_for('forgot_password'))
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            token = generate_reset_token(user.email)
+            sent = send_reset_email(user.email, token)
+            if sent:
+                flash('If an account exists for that email, a reset link has been sent.', 'success')
+            else:
+                flash('Could not send reset email. Please try again later.', 'danger')
+        else:
+            flash('If an account exists for that email, a reset link has been sent.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('forgot_password.html')
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    email = verify_reset_token(token)
+    if not email:
+        flash('This reset link is invalid or has expired.', 'danger')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('reset_password', token=token))
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('Account not found.', 'danger')
+            return redirect(url_for('register'))
+
+        user.password = generate_password_hash(password)
+        db.session.commit()
+        flash('Password updated. Please log in with your new password.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html')
 
 # --- ADD THIS AT THE VERY TOP OF APP.PY ---
 PER_PAGE = 12
@@ -653,6 +876,31 @@ def verify_payment():
         # 2. Payment Verified - Now Save to Database
         cart_data = data.get('cart_data', {})
         user_id = session['user_id']
+        user = User.query.get(user_id)
+
+        payment_method = None
+        try:
+            payment_info = razorpay_client.payment.fetch(data['razorpay_payment_id'])
+            payment_method = payment_info.get('method')
+        except Exception as e:
+            print(f"[Payment Fetch] Could not fetch payment method: {e}")
+
+        # Send confirmation email
+        try:
+            if user:
+                text_body, html_body = format_order_email(
+                    user=user,
+                    cart_data=cart_data,
+                    status='success',
+                    payment_method=payment_method,
+                    payment_id=data.get('razorpay_payment_id'),
+                    reason=None
+                )
+                send_email_message(user.email, "Order confirmed - Amma's Kitchen", text_body, html_body)
+            else:
+                print("[Order Email] User not found; skipping email.")
+        except Exception as e:
+            print(f"[Order Email] Failed to send success email: {e}")
         
         # Example saving logic (Adjust to your exact Order model fields)
         # for item_key, item in cart_data.items():
@@ -678,6 +926,36 @@ def verify_payment():
     except Exception as e:
         print(f"Payment Error: {e}")
         return jsonify({'status': 'failed', 'message': str(e)})
+
+
+@app.route("/payment_failed", methods=["POST"])
+def payment_failed():
+    if 'user_id' not in session:
+        return jsonify({'status': 'ignored'}), 401
+
+    data = request.get_json() or {}
+    cart_data = data.get('cart_data', {})
+    reason = data.get('reason', 'Payment failed')
+    payment_id = data.get('payment_id')
+    user = User.query.get(session['user_id'])
+
+    try:
+        if user:
+            text_body, html_body = format_order_email(
+                user=user,
+                cart_data=cart_data,
+                status='failed',
+                payment_method=data.get('payment_method'),
+                payment_id=payment_id,
+                reason=reason
+            )
+            send_email_message(user.email, "Payment failed - Amma's Kitchen", text_body, html_body)
+        else:
+            print("[Order Email] User not found; skipping failure email.")
+    except Exception as e:
+        print(f"[Order Email] Failed to send failure email: {e}")
+
+    return jsonify({'status': 'notified'})
     
 @app.route('/register', methods=['GET', 'POST'])
 def register():
